@@ -223,7 +223,22 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
 @media print{.nav,.btn,.btn-hdr,.ds-sel,.dp,.fi-ta,.hdr-r,.pipe-add{display:none!important}.pg{padding:4px}.card,.kpi{box-shadow:none!important}}
 </style>
 </head>
-<body>
+
+ <div id="loginOverlay" style="position:fixed;inset:0;background:#0A0E17;z-index:9999;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif">
+  <div style="background:#fff;padding:40px;border-radius:14px;width:380px;max-width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="background:#C8102E;color:#fff;display:inline-block;padding:8px 18px;border-radius:8px;font-family:'Orbitron',sans-serif;font-weight:900;letter-spacing:4px;font-size:22px">GST</div>
+      <div style="margin-top:12px;font-weight:700;font-size:18px;color:#0A0E17">TCUV Dashboard</div>
+      <div style="font-size:12px;color:#5C6475;margin-top:4px" id="loginMode">Sign in to your account</div>
+    </div>
+    <input id="loginEmail" type="email" placeholder="Email" style="width:100%;padding:12px;border:1px solid #D4D8E1;border-radius:8px;font-size:14px;margin-bottom:10px;outline:none">
+    <input id="loginPass" type="password" placeholder="Password" style="width:100%;padding:12px;border:1px solid #D4D8E1;border-radius:8px;font-size:14px;margin-bottom:14px;outline:none">
+    <button onclick="doLogin()" id="loginBtn" style="width:100%;padding:12px;background:#C8102E;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:10px">Sign In</button>
+    <button onclick="toggleSignup()" style="width:100%;padding:10px;background:transparent;color:#3A4252;border:1px solid #D4D8E1;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer">Create new account</button>
+    <div id="loginErr" style="color:#C8102E;font-size:12px;margin-top:12px;text-align:center;min-height:16px"></div>
+  </div>
+</div> 
+  
 
 <div class="hdr">
   <div class="hdr-l">
@@ -327,7 +342,67 @@ let D=[{
     {id:3003,name:'Q1 F&I Back-End Review',stage:'Completed',notes:'$2,318/unit  -  above GST $2,082',date:'2026-03-31'}
   ]
 }];
-let ci=1,tb='crm',charts={};
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://djnjuqvamrippvskyzdi.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_yw3vXYWpK3giRGQgBtJfxQ_98aKdL-L';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let isSignupMode = false;
+
+function toggleSignup(){
+  isSignupMode = !isSignupMode;
+  document.getElementById('loginBtn').textContent = isSignupMode ? 'Create Account' : 'Sign In';
+  document.getElementById('loginMode').textContent = isSignupMode ? 'Create a new account' : 'Sign in to your account';
+  document.getElementById('loginErr').textContent = '';
+}
+
+async function doLogin(){
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginErr');
+  err.textContent = '';
+  if(!email || !pass){ err.textContent = 'Email and password required'; return; }
+  const fn = isSignupMode ? sb.auth.signUp : sb.auth.signInWithPassword;
+  const { data, error } = await fn.call(sb.auth, { email, password: pass });
+  if(error){ err.textContent = error.message; return; }
+  document.getElementById('loginOverlay').style.display = 'none';
+  await loadFromSupabase();
+  render();
+}
+
+async function doLogout(){
+  await sb.auth.signOut();
+  location.reload();
+}
+
+async function loadFromSupabase(){
+  const { data, error } = await sb.from('dealers').select('*').order('id');
+  if(error){ console.error(error); return; }
+  if(data && data.length > 0){
+    D = data.map(r => ({ id: r.id, nm: r.name, ...r.data }));
+    ci = D[0].id;
+  }
+  buildSel();
+  buildNav();
+}
+
+async function saveToSupabase(){
+  for(const dealer of D){
+    const { id, nm, ...rest } = dealer;
+    await sb.from('dealers').upsert({ id, name: nm, data: rest, updated_at: new Date().toISOString() });
+  }
+}
+
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if(session){
+    document.getElementById('loginOverlay').style.display = 'none';
+    await loadFromSupabase();
+    if(typeof render === 'function') render();
+  }
+})();
+</script>
+  let ci=1,tb='crm',charts={};
 const TABS=[
   {id:'crm',l:'CRM Dashboard'},{id:'overview',l:'Overview'},{id:'fin',l:'Financial'},
   {id:'recon',l:'Recon'},{id:'sold',l:'Sold vs Obj'},{id:'inv',l:'Inventory'},
@@ -335,8 +410,8 @@ const TABS=[
 ];
 
 // ═══ PERSISTENCE ══════════════════════════════════════════════
-async function saveAll(){try{if(!window.storage)return;await window.storage.set('tcuv-v8-d',JSON.stringify(D));await window.storage.set('tcuv-v8-s',JSON.stringify({ci,tb}));}catch(e){}}
-async function loadAll(){try{if(!window.storage)return;const dd=await window.storage.get('tcuv-v8-d');if(dd?.value){const p=JSON.parse(dd.value);if(Array.isArray(p)&&p.length>0)D=p;}const ss=await window.storage.get('tcuv-v8-s');if(ss?.value){const p=JSON.parse(ss.value);if(p.ci)ci=p.ci;if(p.tb)tb=p.tb;}}catch(e){}}
+async function saveAll(){try{await saveToSupabase();}catch(e){console.error(e);}}
+async function loadAll(){/* replaced by loadFromSupabase, kept as no-op for compatibility */}
 
 // ═══ INIT & ROUTING ═══════════════════════════════════════════
 async function init(){await loadAll();buildNav();buildSel();render();}
