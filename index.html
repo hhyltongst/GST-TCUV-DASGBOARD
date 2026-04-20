@@ -233,7 +233,7 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
       <div class="t">Gulf States Toyota &nbsp;·&nbsp; TCUV Performance CRM</div>
       <div class="s">Certified Used Vehicle District Management System</div>
     </div>
-    <span class="hdr-badge">v9 · build 14</span>
+    <span class="hdr-badge">v9 · build 21</span>
   </div>
   <div class="hdr-r">
     <button class="btn-hdr" onclick="window.print()">Print</button>
@@ -246,7 +246,7 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
 <div class="nav" id="navBar"></div>
 <div class="pg" id="mainContent"></div>
 
-<footer>&copy; 2026 Gulf States Toyota &nbsp;&middot;&nbsp; TCUV CRM Dashboard v9 (build 14) &nbsp;&middot;&nbsp; Engineered by <strong style="color:var(--red)">Hussein Hylton</strong> &nbsp;&middot;&nbsp; All rights reserved</footer>
+<footer>&copy; 2026 Gulf States Toyota &nbsp;&middot;&nbsp; TCUV CRM Dashboard v9 (build 21) &nbsp;&middot;&nbsp; Engineered by <strong style="color:var(--red)">Hussein Hylton</strong> &nbsp;&middot;&nbsp; All rights reserved</footer>
 
 <script>
 // ═══ EXTERNAL LIBS ═══════════════════════════════════════════
@@ -933,16 +933,13 @@ function rSold(mc,c){
   const ms=c.moSold||Array(12).fill(0),mo=c.moObj||Array(12).fill(0);
   const yc=c.yoyCur||Array(12).fill(0),yp=c.yoyPrior||Array(12).fill(0);
   const dAvg=rc.ds.length>0?Math.round(di.t/rc.ds.length):0;
-  // Rank: sort by raw attainment ratio (desc), then by units sold (desc) as tiebreak.
-  // Only rank dealers with a real objective so zero-objective rows don't dilute.
+  // Rank by units sold (descending). All dealers in the recap are ranked.
   const distRank=(selMatched&&rc.ds.length>0)?(()=>{
-    const rankable=rc.ds.map((d,i)=>({...d,_i:i,_r:d.o>0?d.t/d.o:-1}))
-                        .filter(d=>d._r>=0)
-                        .sort((a,b)=>b._r-a._r||b.t-a.t);
+    const rankable=rc.ds.map((d,i)=>({...d,_i:i})).sort((a,b)=>b.t-a.t);
     const pos=rankable.findIndex(d=>d._i===selIdx);
     return pos>=0?pos+1:null;
   })():null;
-  const rankDenom=rc.ds.filter(d=>d.o>0).length;
+  const rankDenom=rc.ds.length;
   mc.innerHTML=`
   <div class="pg-hdr"><div class="pg-ttl">Sold vs Objective</div><div class="pg-sub">GST Recap · ${rc.dt}</div><div class="pg-rule"></div></div>
   <div class="kpi-row">
@@ -951,7 +948,7 @@ function rSold(mc,c){
     ${kpi('Variance',sel.t-sel.o,sel.t>=sel.o?'Above obj ✓':'Need: '+(sel.o-sel.t)+' more',sel.t>=sel.o?GN:RE)}
     ${kpi('District Avg',dAvg,'Total: '+di.t+' · Obj: '+di.o,BL)}
     ${kpi('District Total',di.t,di.p+'% attainment · '+rc.ds.length+' dealers',DM)}
-    ${distRank?kpi('District Rank','#'+distRank+' of '+rankDenom,'By % attainment',distRank===1?GN:distRank<=3?GD:distRank<=Math.ceil(rankDenom/2)?BL:RE):kpi('District Rank',' - ',selMatched?'No ranked dealers':'Dealer name not matched in recap',DM)}
+    ${distRank?kpi('District Rank','#'+distRank+' of '+rankDenom,'By units sold',distRank===1?GN:distRank<=3?GD:distRank<=Math.ceil(rankDenom/2)?BL:RE):kpi('District Rank',' - ',selMatched?'No ranked dealers':'Dealer name not matched in recap',DM)}
   </div>
   ${!selMatched&&rc.ds.length>0?`<div class="tip tip-blue" style="margin-bottom:12px;font-size:12px">⚠ "<strong>${c.nm}</strong>" was not matched to any dealer in the recap. Showing data for "<strong>${sel.n}</strong>" as a fallback. Verify the dealer name matches the recap file to get an accurate rank.</div>`:''}
 
@@ -1835,9 +1832,132 @@ function pDept(wb,n){
   document.getElementById('d2').classList.add('done');
   document.getElementById('m2').innerHTML=`<div class="ok">✓ ${dlrNm||'Dealer'}  -  TCUV: ${Math.round(tuVal)} avg/mo · Recon: $${Math.round(reconPU).toLocaleString()}/unit · F&amp;I: $${Math.round(fiPU).toLocaleString()}/unit · U:N: ${unRatio.toFixed(2)}${rd&&rd.status==='created'?' · <span style="color:'+BL+';font-weight:700">New dealer created</span>':''}</div>`;
 }
-function pRecap(wb,n){const ws=wb.Sheets[wb.SheetNames[0]];const R=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});let cS=-1,cG=-1,cT=-1,cO=-1;for(let h=0;h<Math.min(5,R.length);h++){const hr=R[h];if(!hr)continue;for(let j=0;j<hr.length;j++){const v=(hr[j]||'').toString().toUpperCase().trim();if(v.includes('SILVER'))cS=j;if(v.includes('GOLD'))cG=j;}}if(cS>=0){if(cG<0)cG=cS+1;cT=cG+1;cO=cG+2;}let rcDate='Current';if(R[0]){const dm=(R[0][0]||'').toString().match(/(\d{2}\/\d{4})/);if(dm)rcDate=dm[1];}const ds=[];let dT=0,dO=0;for(let i=0;i<R.length;i++){const rw=R[i];if(!rw?.[0])continue;const lb=rw[0].toString().trim();if(!lb||lb.length<2)continue;if(lb.match(/^(DEALER|NAME|SILVER|GOLD|SOLD|OBJ)/i))continue;if(lb.match(/^district/i)){if(cT>=0)dT=n(rw[cT]);if(cO>=0)dO=n(rw[cO]);continue;}if(lb.match(/^(gst|group|national)/i))continue;let code='',dname=lb.toUpperCase();const cdm=lb.match(/^(\d+)\s*[-.]\s*(.+)/);if(cdm){code=cdm[1];dname=cdm[2].trim().toUpperCase();}const s=cS>=0?n(rw[cS]):0,g=cG>=0?n(rw[cG]):0,sold=cT>=0?n(rw[cT]):0,obj=cO>=0?n(rw[cO]):0;if(sold>0||obj>0)ds.push({c:code,n:dname,s,g,t:sold,o:obj,p:obj>0?Math.round(sold/obj*100):0});}if(ds.length>0){const cc=gc();if(cc){ensureDealerShape(cc);cc.rc={dt:rcDate,ds,di:{t:dT||ds.reduce((a,d)=>a+d.t,0),o:dO||ds.reduce((a,d)=>a+d.o,0),p:0},gs:{t:0,o:0,p:0}};cc.rc.di.p=cc.rc.di.o>0?Math.round(cc.rc.di.t/cc.rc.di.o*100):0;showToast('✓ District recap loaded for '+cc.nm+' ('+ds.length+' dealers)',GN);}buildSel();if(tb!=='up')render();saveAll();}
+function pRecap(wb,n){
+  const msg=e=>document.getElementById('m3').innerHTML=`<div style="color:${RE};font-size:12px;margin-top:6px;font-weight:600">⚠ ${e}</div>`;
+  const ws=wb.Sheets[wb.SheetNames[0]];
+  const R=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});
+  if(!R.length){msg('File is empty.');return;}
+
+  const up=v=>(v==null?'':v).toString().toUpperCase().trim();
+
+  // Business Barometer layout:
+  //   Row 1: date banner ("selected date MM/YYYY")
+  //   Row 2: group headers ("New Vehicle Sales" ... "TCUV Sales" ...)
+  //   Row 3: column headers ("MTD", "Obj", ... "MTD Silver", "MTD Gold", "MTD Total", "Obj", "Obj %")
+  //   Row 4+: dealer rows
+  // The TCUV columns sit under the "TCUV Sales" span in row 2. Anchor there.
+
+  // 1) Find the group-header row and the start/end of the TCUV group
+  let groupRow=-1,tcuvStart=-1,tcuvEnd=-1;
+  for(let h=0;h<Math.min(R.length,5);h++){
+    const row=R[h];if(!row)continue;
+    for(let j=0;j<row.length;j++){
+      if(/\bTCUV\b/.test(up(row[j]))){groupRow=h;tcuvStart=j;break;}
+    }
+    if(groupRow>=0)break;
+  }
+  if(groupRow>=0){
+    // The TCUV group ends where the next non-blank group label starts (or row end)
+    const row=R[groupRow];
+    for(let j=tcuvStart+1;j<row.length;j++){
+      if(up(row[j])){tcuvEnd=j-1;break;}
+    }
+    if(tcuvEnd<0)tcuvEnd=row.length-1;
+  }
+
+  // 2) Find the column-header row (the row immediately below the group row, or
+  //    the first row with "MTD" / "Obj" text)
+  let hdrRow=groupRow>=0?groupRow+1:-1;
+  if(hdrRow<0){
+    for(let h=0;h<Math.min(R.length,10);h++){
+      const row=R[h];if(!row)continue;
+      const hasMTD=row.some(c=>up(c)==='MTD'||/\bMTD\b/.test(up(c)));
+      const hasObj=row.some(c=>up(c)==='OBJ'||/\bOBJECTIVE\b/.test(up(c)));
+      if(hasMTD&&hasObj){hdrRow=h;break;}
+    }
+  }
+  if(hdrRow<0){msg('Could not find the column header row.');return;}
+
+  // 3) Inside the TCUV group (or across the whole row if we could not detect
+  //    the group), find the Sold column (prefer "MTD TOTAL", then "MTD") and
+  //    the Objective column.
+  const hdr=R[hdrRow]||[];
+  const colStart=tcuvStart>=0?tcuvStart:0;
+  const colEnd  =tcuvEnd>=0?tcuvEnd:hdr.length-1;
+  let cSold=-1,cObj=-1,cSil=-1,cGold=-1;
+  // Pass 1: look for "MTD TOTAL" (TCUV uses this) and the Obj column that follows it
+  for(let j=colStart;j<=colEnd;j++){
+    const v=up(hdr[j]);
+    if(cSold<0&&/MTD\s*TOTAL/.test(v))cSold=j;
+    if(cSil<0&&/MTD\s*SILVER|^SILVER/.test(v))cSil=j;
+    if(cGold<0&&/MTD\s*GOLD|^GOLD/.test(v))cGold=j;
+  }
+  // If MTD TOTAL was found, Obj is the first OBJ header to the right of it
+  if(cSold>=0){
+    for(let j=cSold+1;j<=colEnd;j++){
+      const v=up(hdr[j]);
+      if(v==='OBJ'||v==='OBJECTIVE'){cObj=j;break;}
+    }
+  }
+  // Pass 2: fallback - use any MTD / OBJ within the TCUV group
+  if(cSold<0){
+    for(let j=colStart;j<=colEnd;j++){if(up(hdr[j])==='MTD'){cSold=j;break;}}
+  }
+  if(cObj<0){
+    for(let j=colStart;j<=colEnd;j++){const v=up(hdr[j]);if(v==='OBJ'||v==='OBJECTIVE'){cObj=j;break;}}
+  }
+
+  if(cSold<0||cObj<0){
+    msg('Could not find TCUV Sold/Objective columns. Header row: '+(hdrRow+1)+'. Group row: '+(groupRow+1)+'. TCUV span: cols '+(tcuvStart+1)+'-'+(tcuvEnd+1)+'.');
+    return;
+  }
+
+  // 4) Report date from row 1 or the filename cell
+  let rcDate='Current';
+  for(let h=0;h<Math.min(R.length,3);h++){
+    for(const cell of (R[h]||[])){
+      const m=(cell||'').toString().match(/(\d{1,2})\/(\d{4})/);
+      if(m){rcDate=m[1].padStart(2,'0')+'/'+m[2];break;}
+    }
+    if(rcDate!=='Current')break;
+  }
+
+  // 5) Parse dealer rows. Dealer name is col 0 in Business Barometer format.
+  const ds=[];let dT=0,dO=0;
+  for(let i=hdrRow+1;i<R.length;i++){
+    const rw=R[i];if(!rw)continue;
+    const raw=(rw[0]||'').toString().trim();
+    if(!raw||raw.length<2)continue;
+    // District / GST / group total rows: capture totals, skip as dealer
+    if(/^district/i.test(raw)){dT=n(rw[cSold])||dT;dO=n(rw[cObj])||dO;continue;}
+    if(/^(gst|group total|grand total|tms|national|region)/i.test(raw))continue;
+    // Clean up "42273-GROUP 1 TOYOTA FORT BEND" -> "GROUP 1 TOYOTA FORT BEND"
+    let dname=raw.toUpperCase();
+    const cdm=raw.match(/^(\d+)\s*[-.]\s*(.+)/);
+    if(cdm)dname=cdm[2].trim().toUpperCase();
+    const sold=n(rw[cSold]);
+    const obj=n(rw[cObj]);
+    const s=cSil>=0?n(rw[cSil]):0;
+    const g=cGold>=0?n(rw[cGold]):0;
+    if(sold>0||obj>0)ds.push({c:'',n:dname,s,g,t:sold,o:obj,p:obj>0?Math.round(sold/obj*100):0});
+  }
+
+  if(!ds.length){msg('Found header row but no dealer rows with TCUV values.');return;}
+
+  const cc=gc();
+  if(cc){
+    ensureDealerShape(cc);
+    const t=dT||ds.reduce((a,d)=>a+d.t,0);
+    const o=dO||ds.reduce((a,d)=>a+d.o,0);
+    cc.rc={dt:rcDate,ds,di:{t,o,p:o>0?Math.round(t/o*100):0},gs:{t:0,o:0,p:0}};
+    showToast('✓ Loaded '+ds.length+' dealers ('+t+' sold / '+o+' obj)',GN);
+  }
+  buildSel();
+  if(tb!=='up')render();
+  saveAll();
   document.getElementById('d3').classList.add('done');
-  document.getElementById('m3').innerHTML=`<div class="ok">✓ Parsed ${ds.length} dealers · District: ${dT} sold / ${dO} obj</div>`;}
+  document.getElementById('m3').innerHTML=`<div class="ok">✓ ${ds.length} dealers · ${dT||ds.reduce((a,d)=>a+d.t,0)} sold / ${dO||ds.reduce((a,d)=>a+d.o,0)} obj · TCUV cols: Sold=col${cSold+1}, Obj=col${cObj+1}</div>`;
+}
 
 // ═══ BOOT ══════════════════════════════════════════════════════
 init();
