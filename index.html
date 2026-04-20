@@ -642,6 +642,7 @@ function rOv(mc,c){
   const moMap={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
   const pmatch=pr.toLowerCase().match(/(\w{3})\w*\s+\d{4}.*?(?:to|-|-)\s*(\w{3})\w*\s+\d{4}/);
   const numMo=pmatch?(moMap[pmatch[2]]||1)-(moMap[pmatch[1]]||1)+1:1;
+  const periodParsed=!!pmatch;
   const periodTotal=Math.round(f.tu*numMo);
 
   // ── Growth Goal: PY FULL YEAR + user-configurable growth %
@@ -649,13 +650,17 @@ function rOv(mc,c){
   const growthPct=f.growthGoalPct||20;
   const growthGoal=pyFull>0?Math.round(pyFull*(1+growthPct/100)):0;
   const monthlyTarget=growthGoal>0?Math.round(growthGoal/12):0;
-  const cyMonthly=f.tu;
-  const monthlyGap=monthlyTarget>0?Math.round(monthlyTarget-cyMonthly):0;
-  // PY same period comparison - manual entry with auto-calc fallback
+  // PY / CY This Period: manual entry with auto-calc fallback
   const pyThisPeriodCalc=pyFull>0?Math.round(pyFull/12*numMo):0;
   const cyThisPeriodCalc=Math.round(f.tu*numMo);
-  const pyThisPeriod=(f.pyThisPeriod!=null&&f.pyThisPeriod!=='')?f.pyThisPeriod:pyThisPeriodCalc;
-  const cyThisPeriod=(f.cyThisPeriod!=null&&f.cyThisPeriod!=='')?f.cyThisPeriod:cyThisPeriodCalc;
+  const pyManualSet=(f.pyThisPeriod!=null&&f.pyThisPeriod!=='');
+  const cyManualSet=(f.cyThisPeriod!=null&&f.cyThisPeriod!=='');
+  const pyThisPeriod=pyManualSet?+f.pyThisPeriod:pyThisPeriodCalc;
+  const cyThisPeriod=cyManualSet?+f.cyThisPeriod:cyThisPeriodCalc;
+  // Current Monthly Avg: derive from manual CY This Period when provided so
+  // Monthly Target, Current Monthly Avg, and YoY Change all stay consistent.
+  const cyMonthly=cyManualSet?(numMo>0?cyThisPeriod/numMo:cyThisPeriod):f.tu;
+  const monthlyGap=monthlyTarget>0?Math.round(monthlyTarget-cyMonthly):0;
 
   const rcD=c.rc?.ds?.find(d=>nm(d.n,c.nm));
   const ovN=rcD&&rcD.o>0?Math.max(0,rcD.o-rcD.t):0;
@@ -727,11 +732,12 @@ function rOv(mc,c){
   <div class="card" style="margin-bottom:14px">
     <div class="card-title">TCUV Growth Goal${pyFull>0?' - +'+growthPct+'% Over Prior Year':''}</div>
     ${pyFull>0?`
+    ${!periodParsed?`<div class="tip tip-blue" style="margin-bottom:12px;font-size:12px">⚠ Reporting period not detected (current value: <strong>${pr||'blank'}</strong>). The Current Monthly Avg and period calculations assume <strong>1 month</strong>. Set the period on the Upload tab as e.g. "Jan 2026 to Mar 2026" for accurate math, or enter CY This Period manually below.</div>`:''}
     <div class="kpi-row" style="margin-bottom:14px">
       ${kpi('PY Total Sold',fN(pyFull),'Full year',BL)}
       ${kpi('Growth Goal (+'+growthPct+'%)',fN(growthGoal),'Annual target',GN)}
       ${kpi('Monthly Target',fN(monthlyTarget),'Units per month',monthlyTarget<=Math.round(cyMonthly)?GN:RE)}
-      ${kpi('Current Monthly Avg',fN(Math.round(cyMonthly)),monthlyGap>0?'Need '+monthlyGap+' more/mo':monthlyGap===0?'On pace':'Exceeding by '+Math.abs(monthlyGap)+'/mo',monthlyGap<=0?GN:RE)}
+      ${kpi('Current Monthly Avg',fN(Math.round(cyMonthly)),(monthlyGap>0?'Need '+monthlyGap+' more/mo':monthlyGap===0?'On pace':'Exceeding by '+Math.abs(monthlyGap)+'/mo')+(cyManualSet?' · from CY Period ÷ '+numMo+' mo':''),monthlyGap<=0?GN:RE)}
     </div>
     <div class="g2" style="margin-bottom:14px">
       <div style="display:flex;align-items:center;gap:20px;padding:16px;background:var(--surface);border:1px solid var(--bdr);border-radius:10px">
