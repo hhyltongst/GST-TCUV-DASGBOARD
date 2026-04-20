@@ -646,7 +646,7 @@ function rOv(mc,c){
     ${kpi('TCUV Avg Recon/Unit',f$(aR),'GST: '+f$(gR),aR<=gR?GN:RE)}
     ${ovN>0?kpi('Units to Target',fN(ovN),pace2+' units/day · '+dl+'d left',RE):kpi('Units to Target','On Track',rcD?'Obj met':'No recap',GN)}
   </div>
-  <div class="g4" style="margin-bottom:14px">
+  <div class="g3" style="margin-bottom:14px">
     <div class="card">
       <div class="card-title">MTD Volume vs Objective</div>
       <div class="g2" style="gap:8px;margin-bottom:10px">
@@ -664,30 +664,30 @@ function rOv(mc,c){
         <label class="fl" style="text-align:center;margin-bottom:6px">Enter Used / New Ratio <span style="color:var(--red)">(Manual)</span></label>
         <input id="unRatioInput" type="number" step="0.01" min="0" max="5" class="fi"
           value="${nuR||''}" placeholder="e.g. 0.72" oninput="sUNRatio()"
-          style="font-size:22px;font-weight:800;text-align:center;color:${nuR>=1.0?GN:nuR>=0.8?GD:RE}">
-        <div style="font-size:11px;color:var(--dim-m);margin-top:5px">
+          style="font-size:26px;font-weight:800;text-align:center;color:${nuR>=1.0?GN:nuR>=0.8?GD:RE}">
+        <div style="font-size:12px;color:var(--dim-m);margin-top:6px">
           Used units sold / New units sold &nbsp;·&nbsp; Goal: <strong>1.00</strong>
         </div>
       </div>
       ${nuR>0?`
-      <div style="width:100%;position:relative;margin-bottom:8px">
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--dim-m);font-weight:600;margin-bottom:4px"><span>0.00</span><span>TARGET: 1.00</span><span>2.00</span></div>
-        <div style="width:100%;height:24px;background:${DK};border-radius:6px;overflow:hidden;position:relative">
-          <div style="width:${Math.min(nuR/2*100,100)}%;height:100%;background:${nuR>=1.0?GN:RE};border-radius:6px;transition:width .4s"></div>
+      <div style="width:100%;position:relative;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--dim-m);font-weight:600;margin-bottom:5px"><span>0.00</span><span>TARGET: 1.00</span><span>2.00</span></div>
+        <div style="width:100%;height:30px;background:${DK};border-radius:8px;overflow:hidden;position:relative">
+          <div style="width:${Math.min(nuR/2*100,100)}%;height:100%;background:${nuR>=1.0?GN:RE};border-radius:8px;transition:width .4s"></div>
           <div style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:${BL};transform:translateX(-50%)"></div>
         </div>
       </div>
-      <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:${nuR>=1.0?GN:RE};margin-bottom:6px">${nuR.toFixed(2)}</div>
-      <div style="display:flex;gap:16px;margin-top:2px;justify-content:center;flex-wrap:wrap">
-        <div><div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px">Dealer</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:${nuR>=1.0?GN:nuR>=0.8?GD:RE}">${nuR.toFixed(2)}</div></div>
-        <div><div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px">Target</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:${DM}">1.00</div></div>
-        <div><div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px">Gap</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:${nuR>=1.0?GN:RE}">${nuR>=1.0?'+':''}${(nuR-1.0).toFixed(2)}</div></div>
+      <div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:800;color:${nuR>=1.0?GN:RE};margin-bottom:10px">${nuR.toFixed(2)}</div>
+      <div style="display:flex;gap:22px;margin-top:4px;justify-content:center;flex-wrap:wrap">
+        <div><div style="font-size:11px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px">Dealer</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:${nuR>=1.0?GN:nuR>=0.8?GD:RE}">${nuR.toFixed(2)}</div></div>
+        <div><div style="font-size:11px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px">Target</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:${DM}">1.00</div></div>
+        <div><div style="font-size:11px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px">Gap</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:${nuR>=1.0?GN:RE}">${nuR>=1.0?'+':''}${(nuR-1.0).toFixed(2)}</div></div>
       </div>
-      <div style="font-size:11px;color:var(--dim-m);margin-top:4px">GST Avg: ${gstNuR>0?gstNuR.toFixed(2):'0.90'}</div>
-      <div style="margin-top:4px;font-size:12px;color:${nuR>=1.0?GN:RE};font-weight:600">
+      <div style="font-size:12px;color:var(--dim-m);margin-top:8px">GST Avg: ${gstNuR>0?gstNuR.toFixed(2):'0.90'}</div>
+      <div style="margin-top:6px;font-size:13px;color:${nuR>=1.0?GN:RE};font-weight:600">
         ${nuR>=1.0?'At or above 1:1 target':((1.0-nuR)*100).toFixed(0)+'% below target - sell more used'}
       </div>`
       :`<div class="tip tip-blue" style="margin-top:8px;font-size:12px;width:100%">Enter ratio above - find it on your Departmental Report Line 56 "USED/NEW RATIO"</div>`}
