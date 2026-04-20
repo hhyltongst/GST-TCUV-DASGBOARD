@@ -8,7 +8,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>GST TCUV CRM v9</title>
+<title>GST TCUV CRM v10</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -233,11 +233,17 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
       <div class="t">Gulf States Toyota &nbsp;·&nbsp; TCUV Performance CRM</div>
       <div class="s">Certified Used Vehicle District Management System</div>
     </div>
-    <span class="hdr-badge">v9 · build 21</span>
+    <span class="hdr-badge">v10 · build 26</span>
   </div>
   <div class="hdr-r">
+    <div id="userPill" style="display:none;align-items:center;gap:8px;padding:5px 12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:20px;color:#fff;font-size:12px;font-weight:600">
+      <span style="width:22px;height:22px;border-radius:50%;background:var(--red);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;font-family:'Orbitron',sans-serif" id="userInitials">?</span>
+      <span id="userNameDisp">Guest</span>
+      <span id="userRoleBadge" style="font-size:9px;background:rgba(255,255,255,.2);padding:1px 7px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase"></span>
+    </div>
     <button class="btn-hdr" onclick="window.print()">Print</button>
     <button class="btn-hdr" style="color:#ff6b6b;border-color:rgba(255,107,107,.4)" onclick="clearAllData()">Clear Data</button>
+    <button class="btn-hdr" id="signOutBtn" style="display:none;color:#ffd166;border-color:rgba(255,209,102,.4)" onclick="signOut()">Sign Out</button>
     <div class="hdr-vr"></div>
     <select class="ds-sel" id="dealerSel" onchange="pickDealer(this.value)"></select>
   </div>
@@ -246,7 +252,66 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
 <div class="nav" id="navBar"></div>
 <div class="pg" id="mainContent"></div>
 
-<footer>&copy; 2026 Gulf States Toyota &nbsp;&middot;&nbsp; TCUV CRM Dashboard v9 (build 21) &nbsp;&middot;&nbsp; Engineered by <strong style="color:var(--red)">Hussein Hylton</strong> &nbsp;&middot;&nbsp; All rights reserved</footer>
+<footer>&copy; 2026 Gulf States Toyota &nbsp;&middot;&nbsp; TCUV CRM Dashboard v10 (build 26) &nbsp;&middot;&nbsp; Engineered by <strong style="color:var(--red)">Hussein Hylton</strong> &nbsp;&middot;&nbsp; All rights reserved</footer>
+
+<div id="loginOverlay" style="position:fixed;inset:0;background:linear-gradient(135deg,#0A0E17 0%,#1a2035 100%);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px">
+  <div style="width:100%;max-width:440px;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);overflow:hidden">
+    <div style="background:var(--hdr);padding:28px 32px;text-align:center;border-bottom:3px solid var(--red)">
+      <div style="display:inline-block;background:var(--red);border-radius:7px;padding:7px 18px;font-family:'Orbitron',sans-serif;font-weight:900;color:#fff;font-size:22px;letter-spacing:4px;box-shadow:0 2px 14px rgba(200,16,46,.55);margin-bottom:14px">GST</div>
+      <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:#fff;text-transform:uppercase">Gulf States Toyota</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.55);margin-top:4px">TCUV Performance CRM</div>
+    </div>
+
+    <!-- SIGN IN PANEL -->
+    <div id="loginPanelSignIn" style="padding:32px">
+      <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:var(--txt);margin-bottom:6px;letter-spacing:.3px">Sign In</div>
+      <div style="font-size:13px;color:var(--dim-m);margin-bottom:22px">Enter your credentials to access the dashboard</div>
+      <div style="margin-bottom:14px">
+        <label class="fl">Username</label>
+        <input id="loginUser" class="fi" placeholder="Enter username" autocomplete="username">
+      </div>
+      <div style="margin-bottom:18px">
+        <label class="fl">Password</label>
+        <input id="loginPass" type="password" class="fi" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div id="loginMsg" style="display:none;padding:9px 12px;border-radius:8px;font-size:12px;margin-bottom:14px"></div>
+      <button class="btn" style="width:100%;justify-content:center;padding:11px" onclick="doLogin()">Sign In</button>
+      <div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--bdr);font-size:12px;color:var(--dim-m);text-align:center">
+        <span id="loginFirstRunNote" style="display:none;color:var(--orange);font-weight:600">No accounts exist yet.&nbsp;</span>
+        <a href="#" onclick="showSignup();return false" style="color:var(--blue);text-decoration:none;font-weight:600">Create an account</a>
+        <div style="margin-top:10px;font-size:11px;color:var(--dim-lt)">
+          Locked out? <a href="#" onclick="resetAuthAll();return false" style="color:var(--dim-m);text-decoration:underline">Reset all accounts</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIGN UP PANEL -->
+    <div id="loginPanelSignUp" style="padding:32px;display:none">
+      <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:var(--txt);margin-bottom:6px;letter-spacing:.3px">Create Account</div>
+      <div id="signupSubhead" style="font-size:13px;color:var(--dim-m);margin-bottom:22px">Set up your account to access the dashboard</div>
+      <div class="g2" style="gap:10px;margin-bottom:12px">
+        <div><label class="fl">Username</label><input id="suUser" class="fi" placeholder="e.g. jsmith" autocomplete="username"></div>
+        <div><label class="fl">Full Name</label><input id="suName" class="fi" placeholder="Full name" autocomplete="name"></div>
+      </div>
+      <div style="margin-bottom:12px"><label class="fl">Email <span style="color:var(--dim-lt);font-weight:400">(optional)</span></label><input id="suEmail" class="fi" placeholder="email@dealer.com" autocomplete="email"></div>
+      <div class="g2" style="gap:10px;margin-bottom:12px">
+        <div><label class="fl">Password</label><input id="suPw" type="password" class="fi" placeholder="Min 6 chars" autocomplete="new-password"></div>
+        <div><label class="fl">Confirm Password</label><input id="suPw2" type="password" class="fi" placeholder="Re-enter" autocomplete="new-password" onkeydown="if(event.key==='Enter')doSignup()"></div>
+      </div>
+      <div id="suRoleWrap" style="display:none;margin-bottom:12px">
+        <label class="fl">Access Code <span style="color:var(--dim-lt);font-weight:400">(required for new accounts after the first)</span></label>
+        <input id="suCode" class="fi" placeholder="Enter access code" autocomplete="off">
+        <div style="font-size:11px;color:var(--dim-m);margin-top:4px">Contact an administrator for the access code. All new accounts created here receive Standard User access.</div>
+      </div>
+      <div id="signupMsg" style="display:none;padding:9px 12px;border-radius:8px;font-size:12px;margin-bottom:14px"></div>
+      <button class="btn" style="width:100%;justify-content:center;padding:11px" onclick="doSignup()">Create Account</button>
+      <div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--bdr);font-size:12px;color:var(--dim-m);text-align:center">
+        Already have an account?&nbsp;
+        <a href="#" onclick="showSigninFromSignup();return false" style="color:var(--blue);text-decoration:none;font-weight:600">Sign in</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 // ═══ EXTERNAL LIBS ═══════════════════════════════════════════
@@ -287,7 +352,9 @@ let D=[{
     tu:16.5,tg:55285.5,nu:52,ng:139605,ou:0,og:0,tot:68.5,
     cR:25734,dGP:317950,tFI:38248,rtCU:5.5,rtCGP:13402,
     gTG:1589,gCR:1104,gTU:24,gTF:2082,
-    dTG:1589,dTF:2082,dCR:1104,gDeptGP:3343,pyTCUV:0,newUnits:94,usedNewRatio:0.7249,gstUsedNewRatio:0.898},
+    dTG:1589,dTF:2082,dCR:1104,gDeptGP:3343,pyTCUV:0,newUnits:94,usedNewRatio:0.7249,gstUsedNewRatio:0.898,
+    // Non-certified Toyota used back-end totals + Non-Toyota used front/back totals
+    nFI:78000,oFI:0,ntU:0,ntG:0,ntFI:0},
   mtd:{sold:0,obj:0,silver:0,gold:0},
   moSold:Array(12).fill(0),moObj:Array(12).fill(0),
   yoyCur:Array(12).fill(0),yoyPrior:Array(12).fill(0),
@@ -329,34 +396,355 @@ let D=[{
   ]
 }];
 let ci=1,tb='crm',charts={};
+// UI state: show/hide non-certified section on Financial page
+let finHideNonCert=false;
 const TABS=[
   {id:'crm',l:'CRM Dashboard'},{id:'overview',l:'Overview'},{id:'fin',l:'Financial'},
   {id:'recon',l:'Recon'},{id:'sold',l:'Sold vs Obj'},{id:'inv',l:'Inventory'},
-  {id:'perf',l:'Performance Plan'},{id:'contacts',l:'Contacts'},{id:'tasks',l:'Tasks'},{id:'up',l:'Upload'}
+  {id:'perf',l:'Performance Plan'},{id:'contacts',l:'Contacts'},{id:'tasks',l:'Tasks'},{id:'up',l:'Upload'},{id:'admin',l:'Admin',adminOnly:true}
 ];
 
+// ═══ STORAGE ADAPTER ══════════════════════════════════════════
+// Unified store that prefers window.storage (Claude artifact host),
+// falls back to localStorage (any browser), and finally to in-memory
+// (so the app never hard-fails on read/write).
+const _memStore={};
+const store={
+  async get(key){
+    try{
+      if(window.storage){
+        try{const r=await window.storage.get(key);return r?.value??null;}
+        catch(e){return null;}  // window.storage throws on missing keys
+      }
+      if(typeof localStorage!=='undefined'){
+        const v=localStorage.getItem(key);return v==null?null:v;
+      }
+      return _memStore[key]??null;
+    }catch(e){return null;}
+  },
+  async set(key,value){
+    try{
+      if(window.storage){try{await window.storage.set(key,value);return;}catch(e){}}
+      if(typeof localStorage!=='undefined'){localStorage.setItem(key,value);return;}
+      _memStore[key]=value;
+    }catch(e){_memStore[key]=value;}
+  },
+  async del(key){
+    try{
+      if(window.storage){try{await window.storage.delete(key);}catch(e){}}
+      if(typeof localStorage!=='undefined'){localStorage.removeItem(key);}
+      delete _memStore[key];
+    }catch(e){delete _memStore[key];}
+  }
+};
+
 // ═══ PERSISTENCE ══════════════════════════════════════════════
-async function saveAll(){try{if(!window.storage)return;await window.storage.set('tcuv-v9-d',JSON.stringify(D));await window.storage.set('tcuv-v9-s',JSON.stringify({ci,tb}));}catch(e){}}
-async function loadAll(){try{if(!window.storage)return;const dd=await window.storage.get('tcuv-v9-d');if(dd?.value){const p=JSON.parse(dd.value);if(Array.isArray(p)&&p.length>0)D=p;}const ss=await window.storage.get('tcuv-v9-s');if(ss?.value){const p=JSON.parse(ss.value);if(p.ci)ci=p.ci;if(p.tb)tb=p.tb;}}catch(e){}}
+async function saveAll(){try{await store.set('tcuv-v9-d',JSON.stringify(D));await store.set('tcuv-v9-s',JSON.stringify({ci,tb,finHideNonCert}));}catch(e){}}
+
+// Migration v10.1: fix duplicated / inflated back-end totals on non-cert records.
+// Earlier builds sometimes stored identical back-end totals for non-cert Toyota
+// and non-Toyota that, when combined, exceeded the combined F&I GP actually
+// reported on the statement. This pass detects that pattern and corrects the
+// stored back-end totals. When a parsed preview from a prior upload is
+// available, we restore from it directly (authoritative). Otherwise we
+// reconcile by halving the implied combined total (which undoes the common
+// double-counting bug) and allocating proportionally across the two categories.
+//
+// Also handles a secondary case: when back-end totals are ZERO but a parsed
+// preview shows real values exist. This happens when an older build failed to
+// find the combined F&I row during upload. We restore from preview in that
+// case too.
+//
+// In either case, we clear the stale manual override so the next upload
+// refreshes cleanly.
+function migrateNonCertBackend(){
+  let fixed=0;
+  for(const d of D){
+    const fn=d&&d.fn; if(!fn)continue;
+    const nu=Number(fn.nu)||0, nFI=Number(fn.nFI)||0;
+    const ntU=Number(fn.ntU||fn.ou)||0, ntFI=Number(fn.ntFI||fn.oFI)||0;
+    if(nu<=0&&ntU<=0)continue;
+    const perNC=nu>0?nFI/nu:0;
+    const perNT=ntU>0?ntFI/ntU:0;
+    const combinedBack=nFI+ntFI;
+    const totalUnits=nu+ntU;
+    if(totalUnits<=0)continue;
+    const combinedPerUnit=combinedBack/totalUnits;
+    // Detection A: duplicated back-end (per-unit rates identical AND combined > $2,500/unit)
+    const isDuplicated=combinedPerUnit>2500&&Math.abs(perNC-perNT)<1;
+    // Detection B: zero back-end stored but a parsed preview has real data
+    const p=fn._parsedPreview;
+    const previewHasData=p&&((Number(p.nFI)||0)>0||(Number(p.oFI)||0)>0);
+    const isZeroWithPreview=(nFI===0&&ntFI===0)&&previewHasData;
+    if(!isDuplicated&&!isZeroWithPreview)continue;
+    // Preferred fix: restore from the parsed preview when available
+    if(previewHasData){
+      fn.nFI=Math.round(Number(p.nFI)||0);
+      fn.ntFI=Math.round(Number(p.oFI)||0);
+      fn.oFI=fn.ntFI;
+      fn._migrationApplied='v10.1-restored-from-parsed';
+    }else if(isDuplicated){
+      // Fallback: halve the implied combined total (undoes the duplication),
+      // then split proportionally by unit share.
+      const reconciledTotal=Math.round(combinedBack/2);
+      const ncShare=Math.round(reconciledTotal*(nu/totalUnits));
+      const ntShare=reconciledTotal-ncShare;
+      fn.nFI=ncShare;
+      fn.ntFI=ntShare;
+      fn.oFI=ntShare;
+      fn._migrationApplied='v10.1-halved-reallocated';
+    }else{
+      continue;
+    }
+    if(fn._nonCertOverride)delete fn._nonCertOverride;
+    fixed++;
+  }
+  return fixed;
+}
+
+async function loadAll(){
+  try{
+    const dd=await store.get('tcuv-v9-d');
+    if(dd){const p=JSON.parse(dd);if(Array.isArray(p)&&p.length>0)D=p;}
+    const ss=await store.get('tcuv-v9-s');
+    if(ss){const p=JSON.parse(ss);if(p.ci)ci=p.ci;if(p.tb)tb=p.tb;if(typeof p.finHideNonCert==='boolean')finHideNonCert=p.finHideNonCert;}
+    // Run one-time migration after load
+    const migFlag=await store.get('tcuv-v9-mig-103');
+    if(migFlag!=='done'){
+      const n=migrateNonCertBackend();
+      await store.set('tcuv-v9-mig-103','done');
+      if(n>0){await saveAll();console.log('[migration] Reconciled back-end totals on '+n+' dealer record(s).');}
+    }
+  }catch(e){}
+}
 async function clearAllData(){
   if(!confirm('This will permanently erase ALL dealer data, contacts, tasks, consultation history, and pipeline items for every dealer in the system. This cannot be undone.\n\nAre you sure you want to clear all data?'))return;
-  try{if(window.storage){await window.storage.delete('tcuv-v9-d');await window.storage.delete('tcuv-v9-s');await window.storage.delete('tcuv-v8-d');await window.storage.delete('tcuv-v8-s');}}catch(e){}
+  try{await store.del('tcuv-v9-d');await store.del('tcuv-v9-s');await store.del('tcuv-v8-d');await store.del('tcuv-v8-s');}catch(e){}
   D=[{id:1,nm:'New Dealer',dt:td(),
     fn:{nm:'New Dealer',pr:'',cl:'',tu:0,tg:0,nu:0,ng:0,ou:0,og:0,tot:0,
       cR:0,dGP:0,tFI:0,rtCU:0,rtCGP:0,
       gTG:0,gCR:0,gTU:0,gTF:0,
-      dTG:0,dTF:0,dCR:0,gDeptGP:0,pyTCUV:0,newUnits:0,usedNewRatio:0,gstUsedNewRatio:0},
+      dTG:0,dTF:0,dCR:0,gDeptGP:0,pyTCUV:0,newUnits:0,usedNewRatio:0,gstUsedNewRatio:0,
+      nFI:0,oFI:0,ntU:0,ntG:0,ntFI:0},
     mtd:{sold:0,obj:0,silver:0,gold:0},
     moSold:Array(12).fill(0),moObj:Array(12).fill(0),
     yoyCur:Array(12).fill(0),yoyPrior:Array(12).fill(0),
     rc:null,inventory:null,contacts:[],consultHistory:[],tasks:[],pipeline:[]}];
-  ci=1;tb='up';
+  ci=1;tb='up';finHideNonCert=false;
   buildNav();buildSel();render();saveAll();
 }
 
+// ═══ AUTH / USER MANAGEMENT ══════════════════════════════════
+let currentUser=null;
+let USERS=[];
+
+// Simple hash for password storage (SHA-256 via SubtleCrypto)
+async function hashPw(pw){
+  try{
+    const buf=new TextEncoder().encode('gst-tcuv-v10-salt::'+pw);
+    const h=await crypto.subtle.digest('SHA-256',buf);
+    return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }catch(e){return 'plain::'+pw;}
+}
+
+async function loadUsers(){
+  try{
+    const raw=await store.get('tcuv-v10-users');
+    if(raw){
+      const parsed=JSON.parse(raw);
+      if(Array.isArray(parsed))USERS=parsed;
+    }
+  }catch(e){USERS=[];}
+}
+async function saveUsers(){try{await store.set('tcuv-v10-users',JSON.stringify(USERS));}catch(e){}}
+async function loadSession(){
+  try{
+    const raw=await store.get('tcuv-v10-session');
+    if(raw){
+      const sess=JSON.parse(raw);
+      if(sess&&sess.userId){
+        const u=USERS.find(x=>x.id===sess.userId);
+        if(u)currentUser={id:u.id,username:u.username,name:u.name,role:u.role,mustChangePw:u.mustChangePw};
+      }
+    }
+  }catch(e){}
+}
+async function saveSession(){
+  try{
+    if(currentUser)await store.set('tcuv-v10-session',JSON.stringify({userId:currentUser.id}));
+    else await store.del('tcuv-v10-session');
+  }catch(e){}
+}
+
+function showLogin(){
+  document.getElementById('loginOverlay').style.display='flex';
+  const signInPanel=document.getElementById('loginPanelSignIn');
+  const signUpPanel=document.getElementById('loginPanelSignUp');
+  const firstRunNote=document.getElementById('loginFirstRunNote');
+  if(signInPanel)signInPanel.style.display='block';
+  if(signUpPanel)signUpPanel.style.display='none';
+  if(firstRunNote)firstRunNote.style.display=USERS.length===0?'inline':'none';
+  // Clear any stale messages
+  const m=document.getElementById('loginMsg');if(m){m.style.display='none';m.textContent='';}
+  setTimeout(()=>{const u=document.getElementById('loginUser');if(u)u.focus();},50);
+}
+function hideLogin(){document.getElementById('loginOverlay').style.display='none';}
+
+function showSignup(){
+  document.getElementById('loginPanelSignIn').style.display='none';
+  document.getElementById('loginPanelSignUp').style.display='block';
+  const sub=document.getElementById('signupSubhead');
+  const codeWrap=document.getElementById('suRoleWrap');
+  if(USERS.length===0){
+    if(sub)sub.innerHTML='<span style="color:var(--orange);font-weight:600">First-time setup.</span> This account will be the system administrator.';
+    if(codeWrap)codeWrap.style.display='none';
+  }else{
+    if(sub)sub.textContent='Set up your account to access the dashboard';
+    if(codeWrap)codeWrap.style.display='block';
+  }
+  // Clear any prior message
+  const m=document.getElementById('signupMsg');if(m){m.style.display='none';m.textContent='';}
+  setTimeout(()=>{const u=document.getElementById('suUser');if(u)u.focus();},50);
+}
+function showSigninFromSignup(){
+  document.getElementById('loginPanelSignUp').style.display='none';
+  document.getElementById('loginPanelSignIn').style.display='block';
+  setTimeout(()=>{const u=document.getElementById('loginUser');if(u)u.focus();},50);
+}
+function showSignupMsg(txt,ok){
+  const m=document.getElementById('signupMsg');if(!m)return;
+  m.style.display='block';
+  m.textContent=txt;
+  if(ok){m.style.background='var(--green-lt)';m.style.color=GN;m.style.border='1px solid rgba(10,124,58,.2)';}
+  else{m.style.background='var(--red-lt)';m.style.color=RE;m.style.border='1px solid rgba(200,16,46,.2)';}
+}
+
+// Access code required for non-first-run signups. Admins can share this with new teammates
+// instead of adding them via the Admin tab. New accounts created through this path are
+// always Standard Users (role='user'); admins can promote later.
+const SIGNUP_ACCESS_CODE='GST-TCUV-2026';
+
+async function doSignup(){
+  const uname=(document.getElementById('suUser')?.value||'').trim().toLowerCase();
+  const name=(document.getElementById('suName')?.value||'').trim();
+  const email=(document.getElementById('suEmail')?.value||'').trim();
+  const pw=document.getElementById('suPw')?.value||'';
+  const pw2=document.getElementById('suPw2')?.value||'';
+  const code=(document.getElementById('suCode')?.value||'').trim();
+
+  if(!uname||!name||!pw||!pw2){showSignupMsg('Username, full name, and password are required.');return;}
+  if(!/^[a-z0-9_.-]{3,30}$/.test(uname)){showSignupMsg('Username must be 3-30 characters (letters, numbers, . _ -).');return;}
+  if(pw.length<6){showSignupMsg('Password must be at least 6 characters.');return;}
+  if(pw!==pw2){showSignupMsg('Passwords do not match.');return;}
+  if(USERS.some(u=>u.username.toLowerCase()===uname)){showSignupMsg('That username is already taken.');return;}
+
+  // Determine role: first ever user -> admin; all others -> user (with access code)
+  const isFirst=USERS.length===0;
+  let role='user';
+  if(isFirst){
+    role='admin';
+  }else{
+    if(code!==SIGNUP_ACCESS_CODE){showSignupMsg('Invalid access code. Contact an administrator.');return;}
+  }
+
+  const nextId=USERS.reduce((m,u)=>Math.max(m,u.id),0)+1;
+  const newUser={id:nextId,username:uname,name,email,role,pwHash:await hashPw(pw),created:td(),mustChangePw:false};
+  USERS.push(newUser);
+  await saveUsers();
+
+  // Auto-sign-in the newly created user
+  currentUser={id:newUser.id,username:newUser.username,name:newUser.name,role:newUser.role,mustChangePw:false};
+  await saveSession();
+  // Clear form
+  ['suUser','suName','suEmail','suPw','suPw2','suCode'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  hideLogin();
+  refreshUserPill();
+  if(tb==='admin'&&currentUser.role!=='admin')tb='crm';
+  buildNav();buildSel();render();
+  showToast('✓ Account created. Welcome, '+newUser.name+'.',GN);
+}
+
+function refreshUserPill(){
+  const pill=document.getElementById('userPill');
+  const so=document.getElementById('signOutBtn');
+  if(!pill||!so)return;
+  if(currentUser){
+    pill.style.display='inline-flex';
+    so.style.display='inline-flex';
+    document.getElementById('userInitials').textContent=initials(currentUser.name||currentUser.username);
+    document.getElementById('userNameDisp').textContent=currentUser.name||currentUser.username;
+    document.getElementById('userRoleBadge').textContent=currentUser.role||'user';
+  }else{
+    pill.style.display='none';
+    so.style.display='none';
+  }
+}
+function showLoginMsg(txt,ok){
+  const m=document.getElementById('loginMsg');if(!m)return;
+  m.style.display='block';
+  m.textContent=txt;
+  if(ok){m.style.background='var(--green-lt)';m.style.color=GN;m.style.border='1px solid rgba(10,124,58,.2)';}
+  else{m.style.background='var(--red-lt)';m.style.color=RE;m.style.border='1px solid rgba(200,16,46,.2)';}
+}
+
+async function doLogin(){
+  const uEl=document.getElementById('loginUser'),pEl=document.getElementById('loginPass');
+  const uname=(uEl?.value||'').trim().toLowerCase();
+  const pw=pEl?.value||'';
+  if(!uname||!pw){showLoginMsg('Enter both username and password.');return;}
+  const u=USERS.find(x=>x.username.toLowerCase()===uname);
+  if(!u){showLoginMsg('Invalid username or password.');return;}
+  const h=await hashPw(pw);
+  if(h!==u.pwHash){showLoginMsg('Invalid username or password.');return;}
+  currentUser={id:u.id,username:u.username,name:u.name,role:u.role,mustChangePw:u.mustChangePw};
+  await saveSession();
+  if(pEl)pEl.value='';
+  hideLogin();
+  refreshUserPill();
+  // Non-admin default landing
+  if(tb==='admin'&&currentUser.role!=='admin')tb='crm';
+  buildNav();buildSel();render();
+  if(u.mustChangePw){setTimeout(()=>alert('This account is using the default password. Please change it on the Admin tab.'),200);}
+}
+async function signOut(){
+  if(!confirm('Sign out of the dashboard?'))return;
+  currentUser=null;
+  await saveSession();
+  refreshUserPill();
+  // Clear login fields
+  const pEl=document.getElementById('loginPass');if(pEl)pEl.value='';
+  const mEl=document.getElementById('loginMsg');if(mEl)mEl.style.display='none';
+  showLogin();
+}
+
+async function resetAuthAll(){
+  if(!confirm('This will delete ALL user accounts and sign-in sessions. Dealer data is NOT affected. Continue?'))return;
+  if(!confirm('Are you absolutely sure? This cannot be undone.'))return;
+  try{await store.del('tcuv-v10-users');await store.del('tcuv-v10-session');}catch(e){}
+  USERS=[];
+  currentUser=null;
+  showLogin();
+  showSignup();
+  setTimeout(()=>alert('All accounts have been reset. Create a new administrator account to continue.'),150);
+}
+
 // ═══ INIT & ROUTING ═══════════════════════════════════════════
-async function init(){await loadAll();buildNav();buildSel();render();}
-function buildNav(){document.getElementById('navBar').innerHTML=TABS.map(t=>`<button class="${tb===t.id?'active':''}" onclick="setTab('${t.id}')">${t.l}</button>`).join('');}
+async function init(){
+  await loadAll();
+  await loadUsers();
+  await loadSession();
+  refreshUserPill();
+  if(!currentUser){showLogin();return;}
+  // If the saved tab is admin-only and user isn't admin, fall back
+  const t=TABS.find(x=>x.id===tb);
+  if(t&&t.adminOnly&&currentUser.role!=='admin')tb='crm';
+  buildNav();buildSel();render();
+}
+function buildNav(){
+  const isAdmin=currentUser&&currentUser.role==='admin';
+  const visible=TABS.filter(t=>!t.adminOnly||isAdmin);
+  document.getElementById('navBar').innerHTML=visible.map(t=>`<button class="${tb===t.id?'active':''}" onclick="setTab('${t.id}')">${t.l}${t.adminOnly?' <span style="font-size:9px;background:var(--red);color:#fff;padding:1px 6px;border-radius:8px;margin-left:4px;letter-spacing:.5px">ADMIN</span>':''}</button>`).join('');
+}
 function buildSel(){document.getElementById('dealerSel').innerHTML=D.map(d=>`<option value="${d.id}"${d.id===ci?' selected':''}>${d.nm}</option>`).join('');}
 function setTab(id){tb=id;buildNav();render();saveAll();}
 function pickDealer(id){
@@ -372,7 +760,8 @@ function mkChart(id,cfg){if(!CL)return;const el=document.getElementById(id);if(!
 function render(){dc();const mc=document.getElementById('mainContent'),c=gc();if(!c)return;
   if(tb==='crm')rCRM(mc,c);else if(tb==='overview')rOv(mc,c);else if(tb==='fin')rFin(mc,c);
   else if(tb==='recon')rRecon(mc,c);else if(tb==='sold')rSold(mc,c);else if(tb==='inv')rInv(mc,c);
-  else if(tb==='perf')rPerf(mc,c);else if(tb==='contacts')rContacts(mc,c);else if(tb==='tasks')rTasks(mc,c);else if(tb==='up')rUp(mc);}
+  else if(tb==='perf')rPerf(mc,c);else if(tb==='contacts')rContacts(mc,c);else if(tb==='tasks')rTasks(mc,c);else if(tb==='up')rUp(mc);
+  else if(tb==='admin')rAdmin(mc);}
 
 // ═══ HELPERS ══════════════════════════════════════════════════
 function kpi(lbl,val,sub,col){return`<div class="kpi" style="--kc:${col}"><div class="kpi-lbl">${lbl}</div><div class="kpi-val">${val}</div>${sub?`<div class="kpi-sub">${sub}</div>`:''}</div>`;}
@@ -810,12 +1199,71 @@ function rFin(mc,c){
   const aTcuv=aF+aB;                         // TCUV total GP per TCUV unit (front+F&I)
   // Department-level metric uses ALL used units as denominator
   const totU=Math.max(f.tot||tcuvU,1);       // all used units (TCUV + NC + Other)
-  const deptGPpu=Math.round(f.dGP/totU);     // dept GP / total used = $4,642 not $4,658
+  const deptGPpu=Math.round(f.dGP/totU);     // dept GP / total used
   // GST benchmarks (TCUV basis)
   const gF=Math.round(f.dTG||f.gTG||0);
   const gB=Math.round(f.dTF||f.gTF||0);
   const gR=Math.round(f.dCR||f.gCR||0);
-  const gDept=Math.round(f.gDeptGP||0);      // GST dept GP/total used (L55 GST col)
+  const gDept=Math.round(f.gDeptGP||0);
+
+  // Non-certified Toyota used (nu = units, ng = front GP total, nFI = back-end total)
+  const ncU=f.nu||0, ncG=f.ng||0;
+  // Non-Toyota used (ntU / ntG / ntFI, with legacy fallback to ou/og)
+  const ntU=f.ntU||f.ou||0, ntG=f.ntG||f.og||0;
+  // Back-end (F&I) totals come ONLY from the parsed Non-Certified Used Vehicle
+  // F&I row on the financial statement (Pg6 line 66, Pg7 total, or math-derived
+  // fallback). We deliberately do NOT estimate non-cert back-end from TCUV
+  // back-end, because the entire point of this section is to show the GAP
+  // between TCUV and non-TCUV F&I performance. Estimating from TCUV would hide
+  // exactly the insight the user needs to see.
+  let ncFI = f.nFI||0;
+  let ntFI = f.ntFI||f.oFI||0;
+  // RENDER-TIME AUTO-DERIVE: if back-end is missing but we have all the math
+  // inputs from a Pg6 upload, derive it on the fly using the dept-total
+  // identity: line68_gp - line64_gp - line65_gp = combined non-cert F&I GP.
+  // This is non-destructive (we don't write back to storage from render).
+  let ncFI_derived = false;
+  if((ncFI===0||ntFI===0)&&(ncU+ntU)>0){
+    let autoDerived=0;
+    // Preferred: exact identity using stored line 68 and line 64 GP totals
+    const l68=Number(f._line68gp)||0;
+    const l64=Number(f._line64gp)||0;
+    const tFI=Number(f.tFI)||0;
+    if(l68>0&&l64>0&&tFI>0){
+      const exact=l68-l64-tFI;
+      if(exact>1000&&exact<10000000)autoDerived=exact;
+    }
+    // Fallback: approximate using dept GP minus known components
+    if(autoDerived===0){
+      const dGP=Number(f.dGP)||0;
+      const tg=Number(f.tg)||0;
+      const cR=Number(f.cR)||0;
+      const ng=Number(f.ng)||0;
+      const og=Number(f.og)||0;
+      const approx=dGP-tg-cR-tFI-ng-og;
+      if(approx>1000&&approx<10000000)autoDerived=approx;
+    }
+    if(autoDerived>0){
+      const totalUnits=ncU+ntU;
+      if(totalUnits>0){
+        if(ncFI===0)ncFI=Math.round(autoDerived*(ncU/totalUnits));
+        if(ntFI===0)ntFI=Math.round(autoDerived*(ntU/totalUnits));
+        ncFI_derived=true;
+      }
+    }
+  }
+  const ncFI_missing = ncFI===0 && ncU>0;
+  const ntFI_missing = ntFI===0 && ntU>0;
+  // Legacy flag names retained so downstream template references still work.
+  const ncFI_isEst = ncFI_missing;
+  const ntFI_isEst = ntFI_missing;
+  const ncAF=ncU>0?Math.round(ncG/ncU):0;
+  const ncAB=ncU>0&&!ncFI_missing?Math.round(ncFI/ncU):0;
+  const ncTot=ncFI_missing?0:ncAF+ncAB;
+  const ntAF=ntU>0?Math.round(ntG/ntU):0;
+  const ntAB=ntU>0&&!ntFI_missing?Math.round(ntFI/ntU):0;
+  const ntTot=ntFI_missing?0:ntAF+ntAB;
+
   mc.innerHTML=`
   <div class="pg-hdr"><div class="pg-ttl">Financial Performance</div><div class="pg-sub"><span style="font-weight:600;color:var(--txt)">${f.nm||c.nm}</span> &nbsp;·&nbsp; <span style="font-weight:600;color:var(--txt)">📅 ${f.pr||'No period'}</span></div><div class="pg-rule"></div></div>
   <div class="tip tip-blue" style="margin-bottom:14px">
@@ -852,13 +1300,115 @@ function rFin(mc,c){
           <tr><td>Total Used Units (all categories)</td><td class="r" style="font-weight:700">${fN(totU)}</td><td class="r" style="color:var(--dim-m)"> - </td></tr>
           <tr><td>Dept Total GP</td><td class="r" style="font-weight:700">${f$(f.dGP)}</td><td class="r" style="color:var(--dim-m)"> - </td></tr>
           <tr><td>Dept GP / total used unit</td><td class="r" style="font-weight:700;color:${BL}">${f$(deptGPpu)}</td><td class="r" style="color:var(--dim-m)">${gDept>0?'GST: '+f$(gDept):' - '}</td></tr>
-          <tr><td colspan="3" style="background:var(--bg);font-size:11px;font-weight:700;color:var(--dim-m);padding:8px 10px;letter-spacing:.8px">NON-CERTIFIED USED</td></tr>
-          <tr><td>Non-Cert Units</td><td class="r" style="font-weight:700">${fN(f.nu||0)}</td><td class="r"> - </td></tr>
-          <tr><td>Non-Cert Front GP (total)</td><td class="r" style="font-weight:700">${f$(f.ng||0)}</td><td class="r"> - </td></tr>
-          ${f.nu>0?`<tr><td>Non-Cert Avg Front / unit</td><td class="r" style="font-weight:700">${f$(Math.round(f.ng/f.nu))}</td><td class="r"> - </td></tr>`:''}
         </tbody>
       </table>
     </div>
+  </div>
+
+  <div style="margin-top:22px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+      <div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;color:var(--txt);text-transform:uppercase">Non-Certified Toyota &amp; Non-Toyota Used</div>
+        <div style="font-size:12px;color:var(--dim-m);margin-top:2px">Per-unit averages for used inventory outside the TCUV certified program</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-sm btn-ghost" onclick="editNonCertData()">Edit Totals</button>
+        <button class="btn btn-sm btn-ghost" onclick="reconcileNonCertBackend()" title="Reallocate combined non-cert F&I across the two categories by unit share">Recalc Back-End</button>
+        <button class="btn btn-sm btn-ghost" onclick="toggleFinNonCert()">${finHideNonCert?'Show Section':'Hide Section'}</button>
+      </div>
+    </div>
+    ${(()=>{
+      // TCUV-vs-Non-TCUV comparison strip. The whole point of this section is
+      // to surface the gap, so put it front and center whenever both sides
+      // have real data. Aggregates non-cert + non-Toyota into a single
+      // "Non-TCUV" bucket weighted by unit count.
+      if(finHideNonCert)return '';
+      const ncU_=ncU, ntU_=ntU;
+      const tcuvHas=tcuvU>0&&aF>0;
+      const nonHas=(ncU_+ntU_)>0&&!ncFI_missing&&!ntFI_missing;
+      if(!tcuvHas||!nonHas)return '';
+      const nonU=ncU_+ntU_;
+      const nonFront=ncG+ntG;
+      const nonBack=ncFI+ntFI;
+      const nonAF=Math.round(nonFront/nonU);
+      const nonAB=Math.round(nonBack/nonU);
+      const nonTot=nonAF+nonAB;
+      const tcuvTot=aF+aB;
+      const gapF=tcuvTot-nonTot;
+      const gapB=aB-nonAB;
+      const gapTot=tcuvTot-nonTot;
+      const lostGP=gapTot>0?gapTot*nonU:0;
+      const cell=(ttl,tcuv,non,gap,fmt=f$)=>`
+        <div style="background:#fff;border:1px solid var(--bdr);border-radius:8px;padding:12px 14px;flex:1;min-width:160px">
+          <div style="font-size:10px;font-weight:700;color:var(--dim-m);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">${ttl}</div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span style="color:var(--dim-m)">TCUV</span><span style="font-weight:700;color:var(--txt);font-family:'Orbitron',sans-serif">${fmt(tcuv)}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:var(--dim-m)">Non-TCUV</span><span style="font-weight:700;color:var(--txt);font-family:'Orbitron',sans-serif">${fmt(non)}</span></div>
+          <div style="border-top:1px solid var(--bdr);padding-top:6px;display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--dim-m);font-weight:600">Gap</span><span style="font-weight:800;font-family:'Orbitron',sans-serif;color:${gap>0?GN:gap<0?RE:DM}">${gap>0?'+':''}${fmt(gap)}</span></div>
+        </div>`;
+      return `
+      <div class="tip tip-blue" style="margin-bottom:14px;padding:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+          <div style="font-size:12px;font-weight:700;color:var(--txt);text-transform:uppercase;letter-spacing:1px">TCUV vs Non-TCUV Performance Gap</div>
+          <div style="font-size:11px;color:var(--dim-m)">${fN(tcuvU)} TCUV units &middot; ${fN(nonU)} Non-TCUV units</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          ${cell('Front / Unit',aF,nonAF,aF-nonAF)}
+          ${cell('Back / Unit',aB,nonAB,gapB)}
+          ${cell('Total GP / Unit',tcuvTot,nonTot,gapTot)}
+        </div>
+        ${lostGP>0?`<div style="margin-top:10px;font-size:12px;color:var(--txt);background:#fff;padding:8px 12px;border-radius:6px;border-left:3px solid var(--green)"><strong>Opportunity:</strong> Closing the per-unit gap on ${fN(nonU)} non-TCUV units would represent <strong style="color:var(--green)">${f$(lostGP)}</strong> in additional gross profit at TCUV-equivalent performance.</div>`:''}
+      </div>`;
+    })()}
+    ${(f._nonCertOverride&&(f._nonCertOverride.nc||f._nonCertOverride.nt)&&!finHideNonCert)?(()=>{
+      const p=f._parsedPreview;
+      const hasParsed=p&&(p.nu>0||p.ou>0);
+      const diffNc=hasParsed&&f._nonCertOverride.nc&&(p.nu!==f.nu||p.ng!==f.ng||p.nFI!==f.nFI);
+      const diffNt=hasParsed&&f._nonCertOverride.nt&&(p.ou!==f.ntU||p.og!==f.ntG||p.oFI!==f.ntFI);
+      const hasDiff=diffNc||diffNt;
+      return `
+    <div class="tip ${hasDiff?'tip-red':'tip-gold'}" style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+        <div style="font-size:12px;flex:1;min-width:260px">
+          <strong>Manual override active.</strong> Entered via Edit Totals${f._nonCertOverride.editedAt?' on '+f._nonCertOverride.editedAt:''}${f._nonCertOverride.editedBy&&f._nonCertOverride.editedBy!=='unknown'?' by '+f._nonCertOverride.editedBy:''}.
+          ${hasDiff?'<br><span style="color:var(--red);font-weight:700">⚠ Your last upload parsed different numbers than what you\'re displaying.</span>':' File uploads will not overwrite these values.'}
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0">
+          ${hasDiff?`<button class="btn btn-sm" onclick="applyParsedNonCert()" style="background:var(--green)">Use Parsed Values</button>`:''}
+          <button class="btn btn-sm btn-ghost" onclick="clearNonCertOverride()">Clear Override</button>
+        </div>
+      </div>
+      ${hasDiff?`
+      <div style="margin-top:10px;padding:10px;background:#fff;border:1px solid rgba(200,16,46,.2);border-radius:8px;font-size:11px;color:var(--dim)">
+        <div style="font-weight:700;color:var(--txt);margin-bottom:6px">Parsed from last upload (${p.parsedAt}):</div>
+        ${diffNc?`<div><strong style="color:var(--orange)">Non-Cert:</strong> ${fN(p.nu)} units &middot; Front ${f$(p.nu>0?Math.round(p.ng/p.nu):0)}/unit &middot; Back ${f$(p.nu>0?Math.round(p.nFI/p.nu):0)}/unit (currently showing: ${fN(f.nu)} units, Front ${f$(f.nu>0?Math.round(f.ng/f.nu):0)}/unit, Back ${f$(f.nu>0?Math.round((f.nFI||0)/f.nu):0)}/unit)</div>`:''}
+        ${diffNt?`<div style="margin-top:4px"><strong style="color:var(--teal)">Non-Toyota:</strong> ${fN(p.ou)} units &middot; Front ${f$(p.ou>0?Math.round(p.og/p.ou):0)}/unit &middot; Back ${f$(p.ou>0?Math.round(p.oFI/p.ou):0)}/unit (currently showing: ${fN(f.ntU||f.ou||0)} units, Front ${f$((f.ntU||f.ou||0)>0?Math.round((f.ntG||f.og||0)/(f.ntU||f.ou||1)):0)}/unit, Back ${f$((f.ntU||f.ou||0)>0?Math.round((f.ntFI||f.oFI||0)/(f.ntU||f.ou||1)):0)}/unit)</div>`:''}
+      </div>`:''}
+    </div>`;})():''}
+    ${finHideNonCert?'':`
+
+    <div style="font-size:11px;color:var(--orange);font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:4px 2px 10px">Non-Certified Toyota Used ${ncU>0?'&middot; '+fN(ncU)+' units':'&middot; <span style=\"color:var(--dim-lt);font-weight:500;text-transform:none;letter-spacing:0\">No data entered</span>'}</div>
+    <div class="kpi-row" style="margin-bottom:18px">
+      ${kpi('Non-Cert Front/Unit',ncU>0?f$(ncAF):'—',ncU>0?'GST: '+f$(gF):'Enter units & totals',ncU>0?(ncAF>=gF?GN:RE):DM)}
+      ${kpi('Non-Cert Back/Unit',ncU>0&&!ncFI_missing?f$(ncAB):'—',ncU>0?(ncFI_missing?'Re-upload statement':'GST: '+f$(gB)):'Enter units & totals',ncU>0&&!ncFI_missing?(ncAB>=gB?GN:GD):DM)}
+      ${kpi('Non-Cert Total GP/Unit',ncU>0&&!ncFI_missing?f$(ncTot):'—',ncU>0?(ncFI_missing?'Back-end missing':'Front+F&I, GST: '+f$(gF+gB)):'Front+F&I combined',ncU>0&&!ncFI_missing?(ncTot>=gF+gB?GN:GD):DM)}
+      ${kpi('Non-Cert Units',fN(ncU),ncU>0?(ncFI_missing?f$(ncG)+' front GP':f$(ncG+ncFI)+' total GP'):'No units logged',BL)}
+    </div>
+
+    <div style="font-size:11px;color:var(--teal);font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:4px 2px 10px">Non-Toyota Used ${ntU>0?'&middot; '+fN(ntU)+' units':'&middot; <span style=\"color:var(--dim-lt);font-weight:500;text-transform:none;letter-spacing:0\">No data entered</span>'}</div>
+    <div class="kpi-row">
+      ${kpi('Non-Toyota Front/Unit',ntU>0?f$(ntAF):'—',ntU>0?'GST: '+f$(gF):'Enter units & totals',ntU>0?(ntAF>=gF?GN:RE):DM)}
+      ${kpi('Non-Toyota Back/Unit',ntU>0&&!ntFI_missing?f$(ntAB):'—',ntU>0?(ntFI_missing?'Re-upload statement':'GST: '+f$(gB)):'Enter units & totals',ntU>0&&!ntFI_missing?(ntAB>=gB?GN:GD):DM)}
+      ${kpi('Non-Toyota Total GP/Unit',ntU>0&&!ntFI_missing?f$(ntTot):'—',ntU>0?(ntFI_missing?'Back-end missing':'Front+F&I, GST: '+f$(gF+gB)):'Front+F&I combined',ntU>0&&!ntFI_missing?(ntTot>=gF+gB?GN:GD):DM)}
+      ${kpi('Non-Toyota Units',fN(ntU),ntU>0?(ntFI_missing?f$(ntG)+' front GP':f$(ntG+ntFI)+' total GP'):'No units logged',BL)}
+    </div>
+
+    ${(ncFI_missing||ntFI_missing)?`<div class="tip tip-gold" style="margin-top:12px;font-size:12px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div><strong>Back-end data missing.</strong> Your statement was parsed but the combined Non-Certified F&amp;I row (Pg6 line 66) was not located. Re-upload your statement to populate this, or click <strong>Recalc Back-End</strong> above to enter the figure manually from line 66.</div>
+      <button class="btn btn-sm" onclick="document.querySelector('[data-tab=up]')?.click();" style="background:var(--blue);white-space:nowrap">Go to Upload</button>
+    </div>`:(f._fiSource&&f._fiSource.includes('parsed-combined-allocated'))?`<div style="margin-top:8px;font-size:11px;color:var(--dim-m);font-style:italic">Back-end allocated from the combined non-cert F&amp;I row on your statement, split proportionally by unit count across both categories. Use Edit Totals if you have separate F&amp;I breakdowns.</div>`:''}
+
+    ${(ncU===0&&ntU===0)?`<div class="tip tip-gold" style="margin-top:12px;font-size:12px">No non-cert or non-Toyota figures entered yet. Click <strong>Edit Totals</strong> to add units and gross totals, or upload a Financial Statement that includes these categories.</div>`:''}
+    `}
   </div>`;
   setTimeout(()=>{
     mkChart('finBench',{type:'bar',
@@ -872,6 +1422,296 @@ function rFin(mc,c){
         ]},
       options:chOpts(v=>'$'+(v/1000).toFixed(1)+'k')});
   },120);
+}
+
+function toggleFinNonCert(){finHideNonCert=!finHideNonCert;render();}
+
+function editNonCertData(){
+  const c=gc();if(!c)return;
+  const f=c.fn;if(!f)return;
+  // Simple modal overlay
+  let m=document.getElementById('ncEditModal');
+  if(m)m.remove();
+  m=document.createElement('div');
+  m.id='ncEditModal';
+  m.style.cssText='position:fixed;inset:0;background:rgba(10,14,23,.6);z-index:5000;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto';
+  // Starting mode and current per-unit derived values (for prefill in per-unit mode)
+  const ncU0=f.nu||0, ntU0=f.ntU||f.ou||0;
+  const ncAF0=ncU0>0?Math.round((f.ng||0)/ncU0):0;
+  const ncAB0=ncU0>0?Math.round((f.nFI||0)/ncU0):0;
+  const ntAF0=ntU0>0?Math.round((f.ntG||f.og||0)/ntU0):0;
+  const ntAB0=ntU0>0?Math.round((f.ntFI||f.oFI||0)/ntU0):0;
+
+  m.innerHTML=`
+    <div style="background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.4);max-width:640px;width:100%;overflow:hidden;margin:auto">
+      <div style="padding:18px 22px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--txt);letter-spacing:.5px">Edit Non-Certified Totals</div>
+          <div style="font-size:11px;color:var(--dim-m);margin-top:3px">Per-unit averages are stored and displayed on the Financial tab</div>
+        </div>
+        <button class="btn btn-sm btn-ghost" onclick="document.getElementById('ncEditModal').remove()">✕</button>
+      </div>
+
+      <div style="padding:16px 22px 6px;background:var(--surface);border-bottom:1px solid var(--bdr)">
+        <div style="font-size:11px;color:var(--dim-m);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Input Mode</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <label style="flex:1;min-width:220px;display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--bdr);border-radius:8px;background:#fff;cursor:pointer" id="modeLblPU">
+            <input type="radio" name="ncMode" value="perunit" checked onchange="ncSetMode('perunit')" style="margin-top:2px">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--txt)">Per-Unit Averages</div>
+              <div style="font-size:11px;color:var(--dim-m);margin-top:2px">I know the Front/unit and Back/unit averages</div>
+            </div>
+          </label>
+          <label style="flex:1;min-width:220px;display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1.5px solid var(--bdr);border-radius:8px;background:#fff;cursor:pointer" id="modeLblTot">
+            <input type="radio" name="ncMode" value="total" onchange="ncSetMode('total')" style="margin-top:2px">
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--txt)">Totals from Financial Statement</div>
+              <div style="font-size:11px;color:var(--dim-m);margin-top:2px">I have the dollar totals and the system will average for me</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div style="padding:20px">
+        <div style="font-size:11px;color:var(--orange);font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">Non-Certified Toyota Used</div>
+        <div class="g3" style="gap:10px;margin-bottom:8px">
+          <div><label class="fl">Units Sold</label><input id="ncU_ed" type="number" step="0.01" min="0" class="fi" value="${ncU0}" oninput="ncUpdatePreview()"></div>
+          <div><label class="fl" id="ncFLbl">Front Gross / Unit</label><input id="ncF_ed" type="number" step="1" min="0" class="fi" value="${ncAF0}" oninput="ncUpdatePreview()"></div>
+          <div><label class="fl" id="ncBLbl">Back-End Gross / Unit</label><input id="ncB_ed" type="number" step="1" min="0" class="fi" value="${ncAB0}" oninput="ncUpdatePreview()"></div>
+        </div>
+        <div id="ncPreview" style="font-size:11px;color:var(--dim-m);padding:8px 12px;background:var(--bg);border-radius:6px;margin-bottom:18px"></div>
+
+        <div style="font-size:11px;color:var(--teal);font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">Non-Toyota Used</div>
+        <div class="g3" style="gap:10px;margin-bottom:8px">
+          <div><label class="fl">Units Sold</label><input id="ntU_ed" type="number" step="0.01" min="0" class="fi" value="${ntU0}" oninput="ncUpdatePreview()"></div>
+          <div><label class="fl" id="ntFLbl">Front Gross / Unit</label><input id="ntF_ed" type="number" step="1" min="0" class="fi" value="${ntAF0}" oninput="ncUpdatePreview()"></div>
+          <div><label class="fl" id="ntBLbl">Back-End Gross / Unit</label><input id="ntB_ed" type="number" step="1" min="0" class="fi" value="${ntAB0}" oninput="ncUpdatePreview()"></div>
+        </div>
+        <div id="ntPreview" style="font-size:11px;color:var(--dim-m);padding:8px 12px;background:var(--bg);border-radius:6px;margin-bottom:18px"></div>
+
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn btn-sm btn-ghost" onclick="document.getElementById('ncEditModal').remove()">Cancel</button>
+          <button class="btn btn-sm" onclick="saveNonCertData()">Save</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(m);
+  // Track the active mode on the modal itself
+  m.dataset.mode='perunit';
+  // Highlight the default mode
+  const lbPU=document.getElementById('modeLblPU');
+  if(lbPU)lbPU.style.borderColor='var(--blue)';
+  ncUpdatePreview();
+}
+
+function ncSetMode(mode){
+  const modal=document.getElementById('ncEditModal');if(!modal)return;
+  modal.dataset.mode=mode;
+  // Recompute current values and flip field labels + prefilled values
+  const c=gc();const f=c?.fn||{};
+  const ncU=parseFloat(document.getElementById('ncU_ed')?.value||'0')||0;
+  const ntU=parseFloat(document.getElementById('ntU_ed')?.value||'0')||0;
+  // Current field values represent one mode; flip them to the other
+  const ncF_curr=parseFloat(document.getElementById('ncF_ed')?.value||'0')||0;
+  const ncB_curr=parseFloat(document.getElementById('ncB_ed')?.value||'0')||0;
+  const ntF_curr=parseFloat(document.getElementById('ntF_ed')?.value||'0')||0;
+  const ntB_curr=parseFloat(document.getElementById('ntB_ed')?.value||'0')||0;
+  // Update labels
+  const setLbl=(id,txt)=>{const e=document.getElementById(id);if(e)e.textContent=txt;};
+  if(mode==='perunit'){
+    setLbl('ncFLbl','Front Gross / Unit');setLbl('ncBLbl','Back-End Gross / Unit');
+    setLbl('ntFLbl','Front Gross / Unit');setLbl('ntBLbl','Back-End Gross / Unit');
+    // Convert totals -> per-unit (divide by units)
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v;};
+    set('ncF_ed',ncU>0?Math.round(ncF_curr/ncU):0);
+    set('ncB_ed',ncU>0?Math.round(ncB_curr/ncU):0);
+    set('ntF_ed',ntU>0?Math.round(ntF_curr/ntU):0);
+    set('ntB_ed',ntU>0?Math.round(ntB_curr/ntU):0);
+  }else{
+    setLbl('ncFLbl','Front Gross Total');setLbl('ncBLbl','Back-End Gross Total');
+    setLbl('ntFLbl','Front Gross Total');setLbl('ntBLbl','Back-End Gross Total');
+    // Convert per-unit -> totals (multiply by units)
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v;};
+    set('ncF_ed',Math.round(ncF_curr*ncU));
+    set('ncB_ed',Math.round(ncB_curr*ncU));
+    set('ntF_ed',Math.round(ntF_curr*ntU));
+    set('ntB_ed',Math.round(ntB_curr*ntU));
+  }
+  // Highlight selected label
+  const lbPU=document.getElementById('modeLblPU');const lbTot=document.getElementById('modeLblTot');
+  if(lbPU)lbPU.style.borderColor=mode==='perunit'?'var(--blue)':'var(--bdr)';
+  if(lbTot)lbTot.style.borderColor=mode==='total'?'var(--blue)':'var(--bdr)';
+  ncUpdatePreview();
+}
+
+function ncUpdatePreview(){
+  const modal=document.getElementById('ncEditModal');if(!modal)return;
+  const mode=modal.dataset.mode||'perunit';
+  const n=id=>parseFloat(document.getElementById(id)?.value||'0')||0;
+  const ncU=n('ncU_ed'),ncF=n('ncF_ed'),ncB=n('ncB_ed');
+  const ntU=n('ntU_ed'),ntF=n('ntF_ed'),ntB=n('ntB_ed');
+  let ncPU_F,ncPU_B,ncTot_F,ncTot_B,ntPU_F,ntPU_B,ntTot_F,ntTot_B;
+  if(mode==='perunit'){
+    ncPU_F=ncF;ncPU_B=ncB;
+    ncTot_F=Math.round(ncF*ncU);ncTot_B=Math.round(ncB*ncU);
+    ntPU_F=ntF;ntPU_B=ntB;
+    ntTot_F=Math.round(ntF*ntU);ntTot_B=Math.round(ntB*ntU);
+  }else{
+    ncPU_F=ncU>0?Math.round(ncF/ncU):0;ncPU_B=ncU>0?Math.round(ncB/ncU):0;
+    ncTot_F=ncF;ncTot_B=ncB;
+    ntPU_F=ntU>0?Math.round(ntF/ntU):0;ntPU_B=ntU>0?Math.round(ntB/ntU):0;
+    ntTot_F=ntF;ntTot_B=ntB;
+  }
+  const ncP=document.getElementById('ncPreview');
+  if(ncP){
+    ncP.innerHTML=ncU>0
+      ? `<strong style="color:var(--txt)">Preview:</strong> ${fN(ncU)} units &middot; Front avg <strong style="color:var(--orange)">${f$(ncPU_F)}/unit</strong> (total ${f$(ncTot_F)}) &middot; Back avg <strong style="color:var(--orange)">${f$(ncPU_B)}/unit</strong> (total ${f$(ncTot_B)}) &middot; Combined ${f$(ncPU_F+ncPU_B)}/unit`
+      : '<em style="color:var(--dim-lt)">Enter units to see preview</em>';
+  }
+  const ntP=document.getElementById('ntPreview');
+  if(ntP){
+    ntP.innerHTML=ntU>0
+      ? `<strong style="color:var(--txt)">Preview:</strong> ${fN(ntU)} units &middot; Front avg <strong style="color:var(--teal)">${f$(ntPU_F)}/unit</strong> (total ${f$(ntTot_F)}) &middot; Back avg <strong style="color:var(--teal)">${f$(ntPU_B)}/unit</strong> (total ${f$(ntTot_B)}) &middot; Combined ${f$(ntPU_F+ntPU_B)}/unit`
+      : '<em style="color:var(--dim-lt)">Enter units to see preview</em>';
+  }
+}
+
+function saveNonCertData(){
+  const c=gc();if(!c||!c.fn)return;
+  const modal=document.getElementById('ncEditModal');
+  const mode=modal?.dataset?.mode||'perunit';
+  const n=id=>parseFloat(document.getElementById(id)?.value||'0')||0;
+  const ncU=n('ncU_ed'),ncF=n('ncF_ed'),ncB=n('ncB_ed');
+  const ntU=n('ntU_ed'),ntF=n('ntF_ed'),ntB=n('ntB_ed');
+  // Normalize to totals for storage - downstream math computes per-unit from totals
+  let ncGTot,ncFITot,ntGTot,ntFITot;
+  if(mode==='perunit'){
+    ncGTot=Math.round(ncF*ncU);ncFITot=Math.round(ncB*ncU);
+    ntGTot=Math.round(ntF*ntU);ntFITot=Math.round(ntB*ntU);
+  }else{
+    ncGTot=ncF;ncFITot=ncB;
+    ntGTot=ntF;ntFITot=ntB;
+  }
+  c.fn.nu=ncU;
+  c.fn.ng=ncGTot;
+  c.fn.nFI=ncFITot;
+  c.fn.ntU=ntU;
+  c.fn.ntG=ntGTot;
+  c.fn.ntFI=ntFITot;
+  // Keep legacy ou/og in sync with the non-Toyota fields for backwards compatibility
+  c.fn.ou=c.fn.ntU;c.fn.og=c.fn.ntG;c.fn.oFI=c.fn.ntFI;
+  // Flag manual override so a future file upload will NOT wipe these values.
+  // The flag records what was edited so the parser can respect it per-category.
+  c.fn._nonCertOverride={nc:(ncU>0||ncGTot>0||ncFITot>0),nt:(ntU>0||ntGTot>0||ntFITot>0),editedAt:td(),editedBy:currentUser?.username||'unknown'};
+  if(modal)modal.remove();
+  saveAll();render();
+  showToast('✓ Non-cert totals updated (manual override set)',GN);
+}
+
+// Recalculate non-cert and non-Toyota back-end totals from a single combined
+// F&I figure (line 66 on the TCUV Comparison Financial Statement). Splits the
+// combined GP proportionally across both categories by unit share and clears
+// any stale manual override. This is the one-click fix when back-end values
+// were double-counted or entered separately for each category.
+function reconcileNonCertBackend(){
+  const c=gc();if(!c||!c.fn){showToast('No dealer selected',DM);return;}
+  const fn=c.fn;
+  const nu=Number(fn.nu)||0;
+  const ntU=Number(fn.ntU||fn.ou)||0;
+  if(nu<=0&&ntU<=0){showToast('Enter unit counts first',DM);return;}
+  // Try AUTO-DERIVATION first using the math identity:
+  //   Non-Cert F&I = Dept Total GP - (Total Used after Recon GP) - (TCUV F&I GP)
+  // We have all three of those stored on the dealer record from a Pg6 upload:
+  //   fn.dGP   = TOTAL USED VEHICLE DEPARTMENT (line 75) - close enough to line 68
+  //   fn.tg    = TCUV front GP (line 47)
+  //   fn.cR    = TCUV recon GP (line 57)
+  //   fn.tFI   = TCUV F&I GP (line 65)
+  //   fn.ng    = Non-cert front GP (line 53)
+  //   fn.og    = Non-Toyota front GP (line 62)
+  // Total Used after Recon (line 64) = fn.tg + fn.cR + fn.ng + fn.og + (other recon)
+  // So Non-Cert F&I = fn.dGP - fn.tg - fn.cR - fn.ng - fn.og - fn.tFI - (small adjustments)
+  const dGP=Number(fn.dGP)||0;
+  const tg=Number(fn.tg)||0;
+  const cR=Number(fn.cR)||0;
+  const tFI=Number(fn.tFI)||0;
+  const ng=Number(fn.ng)||0;
+  const og=Number(fn.og)||0;
+  // Auto-derived combined non-cert F&I: dept GP minus all known components
+  const autoDerived=dGP-tg-cR-tFI-ng-og;
+  // Also check if parser preview has it
+  const p=fn._parsedPreview;
+  let previewSum=0;
+  if(p)previewSum=Math.round((Number(p.nFI)||0)+(Number(p.oFI)||0));
+  // Pick the best auto-suggestion
+  let suggested=0, suggestSrc='';
+  if(previewSum>0){suggested=previewSum;suggestSrc='from last upload';}
+  else if(autoDerived>1000&&autoDerived<10000000){suggested=Math.round(autoDerived);suggestSrc='derived from dept totals';}
+  // If we have a strong suggestion AND it derives cleanly, apply automatically
+  // without prompting. Otherwise fall back to prompting.
+  if(suggested>0){
+    const totalUnits=nu+ntU;
+    const ncShare=totalUnits>0?Math.round(suggested*(nu/totalUnits)):0;
+    const ntShare=suggested-ncShare;
+    if(!confirm('Auto-detected combined Non-Cert F&I: $'+suggested.toLocaleString()+' ('+suggestSrc+')\n\n'+
+                'This will allocate:\n'+
+                '  Non-Cert Toyota ('+nu+' units): $'+ncShare.toLocaleString()+' = $'+(nu>0?Math.round(ncShare/nu):0).toLocaleString()+'/unit\n'+
+                '  Non-Toyota ('+ntU+' units):      $'+ntShare.toLocaleString()+' = $'+(ntU>0?Math.round(ntShare/ntU):0).toLocaleString()+'/unit\n\n'+
+                'Apply? (Cancel to enter a different amount manually)')){
+      // User cancelled - fall through to manual prompt below
+    }else{
+      fn.nFI=ncShare;
+      fn.ntFI=ntShare;
+      fn.oFI=ntShare;
+      if(fn._nonCertOverride)delete fn._nonCertOverride;
+      saveAll();render();
+      showToast('✓ Auto-derived back-end applied ('+suggestSrc+')',GN);
+      return;
+    }
+  }
+  // Manual entry path
+  const msg='Enter the COMBINED Non-Certified Used Vehicle F&I Products Gross Profit from your Financial Statement.\n\n'+
+            'This is line 66 on page 6 and covers both non-cert Toyota and non-Toyota combined.\n\n'+
+            'The figure will be split across the two categories by unit share:\n'+
+            '  Non-Cert Toyota: '+nu+' units\n'+
+            '  Non-Toyota:      '+ntU+' units';
+  const input=prompt(msg,'');
+  if(input==null)return;
+  const combined=Math.round(parseFloat(String(input).replace(/[^0-9.-]/g,''))||0);
+  if(combined<=0){showToast('Invalid amount',RE);return;}
+  const totalUnits=nu+ntU;
+  const ncShare=totalUnits>0?Math.round(combined*(nu/totalUnits)):0;
+  const ntShare=combined-ncShare;
+  fn.nFI=ncShare;
+  fn.ntFI=ntShare;
+  fn.oFI=ntShare;
+  if(fn._nonCertOverride)delete fn._nonCertOverride;
+  saveAll();render();
+  showToast('✓ Back-end reconciled: Non-Cert $'+ncShare.toLocaleString()+' / Non-Toyota $'+ntShare.toLocaleString(),GN);
+}
+
+// Clear the manual override for the current dealer so uploads will repopulate
+// these fields normally on the next parse.
+function clearNonCertOverride(){
+  const c=gc();if(!c||!c.fn)return;
+  if(!c.fn._nonCertOverride){showToast('No override to clear',DM);return;}
+  if(!confirm('Clear the manual override on non-cert / non-Toyota figures? The next file upload will overwrite your manually entered values.'))return;
+  delete c.fn._nonCertOverride;
+  saveAll();render();
+  showToast('✓ Override cleared - next upload will repopulate',BL);
+}
+
+// Apply the values parsed on the last upload, replacing the manual override.
+// Used from the override banner when the parsed and override values diverge.
+function applyParsedNonCert(){
+  const c=gc();if(!c||!c.fn||!c.fn._parsedPreview)return;
+  const p=c.fn._parsedPreview;
+  if(!confirm('Replace the manual override with the values parsed from your last upload? This cannot be undone.'))return;
+  c.fn.nu=p.nu; c.fn.ng=p.ng; c.fn.nFI=p.nFI;
+  c.fn.ou=p.ou; c.fn.og=p.og; c.fn.oFI=p.oFI;
+  c.fn.ntU=p.ou; c.fn.ntG=p.og; c.fn.ntFI=p.oFI;
+  delete c.fn._nonCertOverride;
+  saveAll();render();
+  showToast('✓ Parsed values applied; override cleared',GN);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1262,9 +2102,10 @@ Provide a strategic analysis with these sections. Use plain text, no markdown he
 Rules: Be specific with numbers. Reference their actual data. No generic advice. Every suggestion must be backed by data from the numbers above. Professional tone. Under 500 words.`;
 
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
-    const data=await resp.json();
-    if(data.error)throw new Error(data.error.message);
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
+    let data;
+    try{data=await resp.json();}catch(pe){throw new Error('Server returned a non-JSON response (HTTP '+resp.status+'). The AI endpoint may only be available when this dashboard runs inside Claude.');}
+    if(!resp.ok||data.error){throw new Error(data.error?.message||('HTTP '+resp.status));}
     const txt=(data.content?.[0]?.text||'').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
     // Store for email use
     c._lastPerfAnalysis=data.content?.[0]?.text||'';
@@ -1277,7 +2118,7 @@ Rules: Be specific with numbers. Reference their actual data. No generic advice.
         </div>
         <div style="padding:18px;background:#fff;font-size:13px;color:var(--dim);line-height:1.75" id="perfAnalysisText">${txt}</div>
       </div>`;
-  }catch(e){area.innerHTML=`<div class="tip tip-red">Error: ${e.message}. Check connection and try again.</div>`;}
+  }catch(e){area.innerHTML=`<div class="tip tip-red"><strong>Analysis failed:</strong> ${e.message}<br><span style="font-size:11px;opacity:.8">If this dashboard is not running inside Claude.ai, the AI endpoint will be unreachable. Open the HTML as a Claude artifact to enable AI features.</span></div>`;}
   if(btn){btn.disabled=false;btn.textContent='Generate Strategic Analysis';}
 }
 
@@ -1368,6 +2209,7 @@ function rContacts(mc,c){
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button class="btn btn-sm btn-blue" onclick="logCt()">Log Consultation</button>
           <button class="btn btn-sm btn-purple" onclick="genEmail()">✉ Generate Follow-Up Email</button>
+          <button class="btn btn-sm btn-ghost" id="hCancelEdit" style="display:none" onclick="cancelEditConsult()">Cancel Edit</button>
         </div>
         <div id="emailArea" style="display:none;margin-top:14px"></div>
       </div>
@@ -1381,10 +2223,13 @@ function rContacts(mc,c){
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                 <span class="hist-name">${h.contact||' - '}</span>
                 ${pType(h.type)} ${pOut(h.outcome)}
+                ${h.loggedBy?`<span style="font-size:10px;color:var(--dim-lt)">by ${h.loggedBy}</span>`:''}
               </div>
-              <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+              <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
                 <span style="font-size:12px;color:var(--dim-m)">${h.date||''}</span>
                 ${h.type==='Visit'?`<button class="btn btn-sm btn-purple" style="font-size:11px;padding:4px 10px" onclick="genEmailHist('${h.id}')">✉ Email</button>`:''}
+                <button class="btn btn-sm btn-edit" style="font-size:11px;padding:4px 10px" onclick="editConsult('${h.id}')">Edit</button>
+                <button class="btn btn-sm btn-del" style="font-size:11px;padding:4px 8px" onclick="delConsult('${h.id}')">✕</button>
               </div>
             </div>
             <div class="hist-note" style="margin-top:5px">${h.notes}</div>
@@ -1413,15 +2258,74 @@ function logCt(){
   const notes=(document.getElementById('hNo')?.value||'').trim();
   if(!notes){alert('Please enter consultation notes before logging.');return;}
   if(!c.consultHistory)c.consultHistory=[];
-  const entry={id:Date.now(),contact:(document.getElementById('hCt')?.value||'').trim(),date:document.getElementById('hDt')?.value||td(),type:document.getElementById('hTy')?.value||'Call',outcome:document.getElementById('hOu')?.value||'Neutral',notes};
+  const entry={id:Date.now(),contact:(document.getElementById('hCt')?.value||'').trim(),date:document.getElementById('hDt')?.value||td(),type:document.getElementById('hTy')?.value||'Call',outcome:document.getElementById('hOu')?.value||'Neutral',notes,loggedBy:currentUser?.username||'unknown'};
   c.consultHistory.push(entry);
   saveAll();
-  showToast('✓ Consultation saved for '+c.nm+' ('+entry.type+')',GN);
+  showToast('✓ Consultation saved for '+c.nm+' ('+entry.type+') - entry #'+entry.id,GN);
+  // Clear notes so the user sees a fresh field, but keep contact/type/outcome for quick follow-ups
+  const nEl=document.getElementById('hNo');if(nEl)nEl.value='';
   render();
-  if(entry.type==='Visit'){setTimeout(()=>{const a=document.getElementById('emailArea');if(a){a.style.display='block';a.innerHTML=`<div class="tip tip-purple">✓ Visit logged! Click <strong>✉ Generate Follow-Up Email</strong> above to draft a follow-up email from your visit notes.</div>`;}},300);}
+  if(entry.type==='Visit'){setTimeout(()=>{const a=document.getElementById('emailArea');if(a){a.style.display='block';a.innerHTML=`<div class="tip tip-purple">✓ Visit logged (entry #${entry.id}). The consultation appears in <strong>Consultation History</strong> below and on the CRM Dashboard. Click <strong>✉ Email</strong> next to the new entry, or use the button above, to draft a follow-up.</div>`;}},300);}
 }
 
-// Lightweight toast notifier used across save / upload actions
+function editConsult(histId){
+  const c=gc();if(!c||!c.consultHistory)return;
+  const h=c.consultHistory.find(x=>x.id==histId);
+  if(!h){alert('Consultation entry not found.');return;}
+  // Load the entry back into the form
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v||'';};
+  set('hCt',h.contact);set('hDt',h.date);set('hTy',h.type);set('hOu',h.outcome);set('hNo',h.notes);
+  // Replace Log button behavior: remove old entry on next save by holding id on the textarea
+  const nEl=document.getElementById('hNo');if(nEl)nEl.dataset.editingId=histId;
+  const btn=document.querySelector('[onclick="logCt()"]');
+  if(btn){btn.textContent='Update Consultation';btn.setAttribute('onclick','updateConsult()');}
+  const cancelBtn=document.getElementById('hCancelEdit');
+  if(cancelBtn)cancelBtn.style.display='inline-flex';
+  // Scroll form into view
+  nEl?.scrollIntoView({behavior:'smooth',block:'center'});
+  showToast('Editing consultation #'+histId+' - make changes and click Update',BL);
+}
+
+function cancelEditConsult(){
+  const nEl=document.getElementById('hNo');if(nEl)delete nEl.dataset.editingId;
+  render();
+}
+
+function updateConsult(){
+  const c=gc();if(!c||!c.consultHistory)return;
+  const nEl=document.getElementById('hNo');
+  const editingId=nEl?.dataset.editingId;
+  if(!editingId){logCt();return;}
+  const idx=c.consultHistory.findIndex(x=>x.id==editingId);
+  if(idx<0){logCt();return;}
+  const notes=(nEl?.value||'').trim();
+  if(!notes){alert('Notes cannot be empty.');return;}
+  c.consultHistory[idx]={
+    ...c.consultHistory[idx],
+    contact:(document.getElementById('hCt')?.value||'').trim(),
+    date:document.getElementById('hDt')?.value||td(),
+    type:document.getElementById('hTy')?.value||'Call',
+    outcome:document.getElementById('hOu')?.value||'Neutral',
+    notes,
+    editedBy:currentUser?.username||'unknown',
+    editedAt:td()
+  };
+  saveAll();
+  if(nEl)delete nEl.dataset.editingId;
+  showToast('✓ Consultation #'+editingId+' updated',GN);
+  render();
+}
+
+function delConsult(histId){
+  const c=gc();if(!c||!c.consultHistory)return;
+  if(!confirm('Delete this consultation entry? This cannot be undone.'))return;
+  const idx=c.consultHistory.findIndex(x=>x.id==histId);
+  if(idx<0)return;
+  c.consultHistory.splice(idx,1);
+  saveAll();
+  render();
+  showToast('✓ Consultation deleted',GN);
+}
 function showToast(msg,color){
   let t=document.getElementById('_toast');
   if(!t){t=document.createElement('div');t.id='_toast';t.style.cssText='position:fixed;top:20px;right:20px;z-index:9999;padding:12px 18px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.18);color:#fff;opacity:0;transition:opacity .25s;max-width:380px;pointer-events:none';document.body.appendChild(t);}
@@ -1491,9 +2395,10 @@ TCUV District Sales Consultant | Gulf States Toyota
 
 Rules: under 350 words. Professional but warm. Reference specific numbers/details from notes and performance data. Include concrete improvement recommendations with target numbers. No generic filler.`;
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
-    const data=await resp.json();
-    if(data.error)throw new Error(data.error.message);
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
+    let data;
+    try{data=await resp.json();}catch(pe){throw new Error('Server returned a non-JSON response (HTTP '+resp.status+'). The AI endpoint may only be available when this dashboard runs inside Claude.');}
+    if(!resp.ok||data.error){throw new Error(data.error?.message||('HTTP '+resp.status));}
     const txt=data.content?.[0]?.text||'Error generating email.';
     const lines=txt.split('\n');
     const sl=lines.find(l=>l.trim().startsWith('Subject:'));
@@ -1513,7 +2418,7 @@ Rules: under 350 words. Professional but warm. Reference specific numbers/detail
           <div><label class="fl">Email Body</label><textarea id="eB_${uid}" class="email-area">${body.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea></div>
         </div>
       </div>`;
-  }catch(e){area.innerHTML=`<div class="tip tip-red">Error: ${e.message}. Check connection and try again.</div>`;}
+  }catch(e){area.innerHTML=`<div class="tip tip-red"><strong>Email generation failed:</strong> ${e.message}<br><span style="font-size:11px;opacity:.8">If this dashboard is not running inside Claude.ai, the AI endpoint will be unreachable. Open the HTML as a Claude artifact to enable AI features.</span></div>`;}
 }
 function copyEmail(uid){
   const subj=document.getElementById('eS_'+uid)?.value||'';
@@ -1522,6 +2427,212 @@ function copyEmail(uid){
     const btn=document.querySelector(`[onclick="copyEmail('${uid}')"]`);
     if(btn){const o=btn.textContent;btn.textContent='Copied!';btn.style.background=GN;setTimeout(()=>{btn.textContent=o;btn.style.background=PR;},2200);}
   }).catch(()=>alert('Copy failed. Please select the text manually.'));
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN  -  USER MANAGEMENT
+// ═══════════════════════════════════════════════════════════════
+function rAdmin(mc){
+  if(!currentUser||currentUser.role!=='admin'){
+    mc.innerHTML=`<div class="tip tip-red" style="margin-top:20px">Access denied. Administrator privileges required.</div>`;
+    return;
+  }
+  mc.innerHTML=`
+  ${sHdr('Administration','Manage users, roles, and passwords')}
+
+  <div class="card" style="margin-bottom:14px;border-left:4px solid var(--blue)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:260px">
+        <div style="font-size:12px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px">Self-Service Signup Code</div>
+        <div style="font-size:13px;color:var(--dim);line-height:1.5">Share this code with teammates so they can create their own accounts from the sign-in screen. New accounts created this way are <strong>Standard Users</strong> by default; promote them to Administrator here if needed.</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <code id="accessCodeDisplay" style="background:var(--bg);border:1.5px solid var(--bdr);padding:8px 14px;border-radius:8px;font-family:'Orbitron',sans-serif;font-weight:800;color:var(--txt);font-size:14px;letter-spacing:2px">${SIGNUP_ACCESS_CODE}</code>
+        <button class="btn btn-sm btn-ghost" onclick="copyAccessCode()">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title" id="admFT">Add User</div>
+        <input type="hidden" id="admEI" value="-1">
+        <div class="g2" style="gap:10px;margin-bottom:10px">
+          <div><label class="fl">Username</label><input id="admUn" class="fi" placeholder="e.g. jsmith" autocomplete="off"></div>
+          <div><label class="fl">Full Name</label><input id="admNm" class="fi" placeholder="Full name"></div>
+          <div><label class="fl">Email</label><input id="admEm" class="fi" placeholder="email@gst.com"></div>
+          <div><label class="fl">Role</label><select id="admRo" class="fi"><option value="user">User</option><option value="admin">Administrator</option></select></div>
+        </div>
+        <div class="g2" style="gap:10px;margin-bottom:12px">
+          <div><label class="fl">Password</label><input id="admPw" type="password" class="fi" placeholder="Min 6 characters" autocomplete="new-password"></div>
+          <div><label class="fl">Confirm Password</label><input id="admPw2" type="password" class="fi" placeholder="Re-enter password" autocomplete="new-password"></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-sm" onclick="saveUser()">Save User</button>
+          <button class="btn btn-sm btn-ghost" id="admCB" style="display:none" onclick="cancelUser()">Cancel</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Change My Password</div>
+        <div style="font-size:12px;color:var(--dim-m);margin-bottom:12px">Signed in as <strong style="color:var(--txt)">${currentUser.name||currentUser.username}</strong> (${currentUser.username})</div>
+        <div style="margin-bottom:10px"><label class="fl">Current Password</label><input id="cpOld" type="password" class="fi" autocomplete="current-password"></div>
+        <div class="g2" style="gap:10px;margin-bottom:12px">
+          <div><label class="fl">New Password</label><input id="cpNew" type="password" class="fi" autocomplete="new-password"></div>
+          <div><label class="fl">Confirm New Password</label><input id="cpNew2" type="password" class="fi" autocomplete="new-password"></div>
+        </div>
+        <button class="btn btn-sm btn-blue" onclick="changeMyPassword()">Update My Password</button>
+        <div id="cpMsg" style="margin-top:10px"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-title">Users (${USERS.length})</div>
+        ${USERS.length===0?`<div style="font-size:13px;color:var(--dim-m);padding:10px 0">No users yet.</div>`:''}
+        ${USERS.map((u,i)=>`
+          <div class="ct-card">
+            <div style="display:flex;gap:12px;align-items:flex-start">
+              <div class="ct-av" style="background:${u.role==='admin'?'var(--red)':'var(--blue)'}">${initials(u.name||u.username)}</div>
+              <div style="flex:1">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
+                  <div>
+                    <div class="ct-name">${u.name||u.username}${u.id===currentUser.id?' <span style="font-size:10px;color:var(--blue);font-weight:600">(you)</span>':''}</div>
+                    <div class="ct-role">@${u.username}${u.email?' · '+u.email:''}</div>
+                    <div style="font-size:11px;color:var(--dim-m);margin-top:4px">Created: ${u.created||' - '}${u.mustChangePw?' · <span style="color:var(--orange);font-weight:600">Using default password</span>':''}</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+                    ${u.role==='admin'?badge('Admin','pill-red'):badge('User','pill-blue')}
+                    <div style="display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;justify-content:flex-end">
+                      <button class="btn btn-sm btn-edit" onclick="editUser(${i})">Edit</button>
+                      <button class="btn btn-sm btn-purple" style="padding:6px 10px;font-size:11px" onclick="resetUserPw(${i})">Reset PW</button>
+                      ${u.id!==currentUser.id?`<button class="btn btn-sm btn-del" onclick="delUser(${i})">✕</button>`:''}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+async function saveUser(){
+  const uname=(document.getElementById('admUn')?.value||'').trim().toLowerCase();
+  const name=(document.getElementById('admNm')?.value||'').trim();
+  const email=(document.getElementById('admEm')?.value||'').trim();
+  const role=document.getElementById('admRo')?.value||'user';
+  const pw=document.getElementById('admPw')?.value||'';
+  const pw2=document.getElementById('admPw2')?.value||'';
+  const idx=parseInt(document.getElementById('admEI')?.value||'-1');
+
+  if(!uname||!/^[a-z0-9_.-]{3,30}$/.test(uname)){alert('Username must be 3-30 characters (letters, numbers, . _ -).');return;}
+  if(!name){alert('Enter a full name.');return;}
+  // Check duplicate username
+  const dup=USERS.find((x,i)=>x.username.toLowerCase()===uname&&i!==idx);
+  if(dup){alert('That username is already taken.');return;}
+
+  if(idx>=0){
+    // Editing existing
+    const u=USERS[idx];
+    u.username=uname;u.name=name;u.email=email;u.role=role;
+    if(pw||pw2){
+      if(pw.length<6){alert('Password must be at least 6 characters.');return;}
+      if(pw!==pw2){alert('Passwords do not match.');return;}
+      u.pwHash=await hashPw(pw);u.mustChangePw=false;
+    }
+    // Prevent removing last admin
+    if(u.id===currentUser.id&&role!=='admin'){
+      const otherAdmins=USERS.filter(x=>x.role==='admin'&&x.id!==u.id).length;
+      if(otherAdmins===0){alert('Cannot remove admin role from the last administrator.');u.role='admin';return;}
+      // Demoting yourself: update session role too
+      currentUser.role=role;refreshUserPill();
+    }
+  }else{
+    // New user
+    if(pw.length<6){alert('Password must be at least 6 characters.');return;}
+    if(pw!==pw2){alert('Passwords do not match.');return;}
+    const nextId=USERS.reduce((m,u)=>Math.max(m,u.id),0)+1;
+    USERS.push({id:nextId,username:uname,name,email,role,pwHash:await hashPw(pw),created:td(),mustChangePw:false});
+  }
+  await saveUsers();
+  cancelUser();
+  render();
+  showToast('✓ User saved',GN);
+}
+function editUser(i){
+  const u=USERS[i];if(!u)return;
+  document.getElementById('admEI').value=i;
+  document.getElementById('admUn').value=u.username;
+  document.getElementById('admNm').value=u.name||'';
+  document.getElementById('admEm').value=u.email||'';
+  document.getElementById('admRo').value=u.role||'user';
+  document.getElementById('admPw').value='';
+  document.getElementById('admPw2').value='';
+  document.getElementById('admFT').textContent='EDIT USER';
+  document.getElementById('admCB').style.display='inline-flex';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function cancelUser(){
+  document.getElementById('admEI').value='-1';
+  ['admUn','admNm','admEm','admPw','admPw2'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const ro=document.getElementById('admRo');if(ro)ro.value='user';
+  const ft=document.getElementById('admFT');if(ft)ft.textContent='Add User';
+  const cb=document.getElementById('admCB');if(cb)cb.style.display='none';
+}
+async function delUser(i){
+  const u=USERS[i];if(!u)return;
+  if(u.id===currentUser.id){alert('You cannot delete your own account.');return;}
+  if(u.role==='admin'){
+    const otherAdmins=USERS.filter(x=>x.role==='admin'&&x.id!==u.id).length;
+    if(otherAdmins===0){alert('Cannot delete the last administrator.');return;}
+  }
+  if(!confirm(`Permanently delete user "${u.username}"? This cannot be undone.`))return;
+  USERS.splice(i,1);
+  await saveUsers();
+  render();
+  showToast('✓ User deleted',GN);
+}
+async function resetUserPw(i){
+  const u=USERS[i];if(!u)return;
+  const newPw=prompt(`Enter new password for "${u.username}" (min 6 characters):`);
+  if(newPw===null)return;
+  if(!newPw||newPw.length<6){alert('Password must be at least 6 characters.');return;}
+  u.pwHash=await hashPw(newPw);
+  u.mustChangePw=false;
+  await saveUsers();
+  render();
+  showToast('✓ Password reset for '+u.username,GN);
+}
+function copyAccessCode(){
+  navigator.clipboard?.writeText(SIGNUP_ACCESS_CODE).then(()=>{
+    showToast('✓ Access code copied to clipboard',GN);
+  }).catch(()=>{
+    alert('Access code: '+SIGNUP_ACCESS_CODE);
+  });
+}
+async function changeMyPassword(){
+  const oldPw=document.getElementById('cpOld')?.value||'';
+  const newPw=document.getElementById('cpNew')?.value||'';
+  const newPw2=document.getElementById('cpNew2')?.value||'';
+  const msg=document.getElementById('cpMsg');
+  const write=(txt,ok)=>{if(!msg)return;msg.innerHTML=`<div class="tip tip-${ok?'green':'red'}" style="margin:0">${txt}</div>`;};
+  if(!oldPw||!newPw){write('Fill in both fields.');return;}
+  if(newPw.length<6){write('New password must be at least 6 characters.');return;}
+  if(newPw!==newPw2){write('New passwords do not match.');return;}
+  const u=USERS.find(x=>x.id===currentUser.id);
+  if(!u){write('Session error. Please sign out and back in.');return;}
+  const h=await hashPw(oldPw);
+  if(h!==u.pwHash){write('Current password is incorrect.');return;}
+  u.pwHash=await hashPw(newPw);
+  u.mustChangePw=false;
+  currentUser.mustChangePw=false;
+  await saveUsers();
+  ['cpOld','cpNew','cpNew2'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  write('✓ Password updated successfully.',true);
+  setTimeout(()=>{if(msg)msg.innerHTML='';},4000);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1706,13 +2817,98 @@ function pFin(wb,n){
   const bl=ln=>byLine(ln);
 
   // Find each critical row by label, fall back to line number
+  // IMPORTANT: labels like "Non-Certified Used Vehicle F&I" contain "Certified Used Vehicle"
+  // as a substring, so TCUV-row matches must explicitly exclude "NON-". The byLabelExcl
+  // helper requires all `include` terms to match and none of the `exclude` terms to match.
+  function byLabelExcl(includes,excludes){
+    return R.find(r=>{
+      const lbl=(r?.[6]||r?.[1]||'').toString().toUpperCase();
+      if(!includes.every(t=>lbl.includes(t.toUpperCase())))return false;
+      if(excludes&&excludes.some(t=>lbl.includes(t.toUpperCase())))return false;
+      return true;
+    });
+  }
+
   const rTCUV  = byLabel('TOTAL TOYOTA CERT USED','AFTER RECON')||bl(47);
   const rRecon = byLabel('Total Certified','Recon')||bl(57);
-  const rFI    = byLabel('Certified Used Vehicle','F&I')||bl(65);
+  // TCUV F&I: must contain "CERTIFIED USED VEHICLE" and "F&I" but NOT "NON"
+  // (because "Non-Certified Used Vehicle F&I" also matches "Certified Used Vehicle"+"F&I")
+  const rFI    = byLabelExcl(['CERTIFIED USED VEHICLE','F&I'],['NON'])||bl(65);
   const rTotal = byLabel('TOTAL USED VEHICLE DEPARTMENT')||bl(75);
   const rNew   = byLabel('TOTAL NEW VEHICLE DEPARTMENT')||bl(40);
   const rNC    = byLabel('TOT TOYOTA NON-CERT USED')||bl(53);
   const rOther = byLabel('TOTAL USED VEHICLE - OTHER AFTER RECON')||bl(62);
+
+  // ── Non-cert and Non-Toyota F&I row detection ────────────────────────
+  // On the TCUV Comparison Financial statement, the F&I layout is typically:
+  //   Line 65: Certified Used Vehicle F&I Products (TCUV only)
+  //   Line 66: Non-Certified Used Vehicle F&I Products (COMBINED non-cert Toyota + non-Toyota)
+  // There is usually NO separate line for non-Toyota F&I. We detect the combined
+  // non-cert F&I row and, if no separate non-Toyota F&I row exists, allocate the
+  // combined total proportionally by unit share across the two categories.
+  //
+  // The parser must also exclude "NEW" rows (line 31 "New Toyota - F&I Products")
+  // and "OTHER" rows like "Total New - Other (w/ Incentives, F&I & Aftmkt)" (line 34)
+  // which share keywords with the target rows.
+  //
+  // Label variants handled: "F&I", "F & I" (spaced), "FIN", "FINANCE", and the
+  // word "PRODUCTS" as a secondary hint. We also try Pg7 as a fallback because
+  // some statement exports omit the Pg6 summary line but always include the
+  // Pg7 line 35 "TOTAL NON-CERTIFIED USED VEH. F&I PRODUCTS" total.
+  function hasFIHint(lbl){
+    const U=lbl.toUpperCase();
+    return U.includes('F&I')||U.includes('F & I')||U.includes('FIN')||U.includes('FINANCE');
+  }
+  function findFIRow(includes,excludes,defaultLine){
+    const excl=['NEW',...(excludes||[])];
+    // (1) Label match on any F&I variant
+    for(const tag of ['F&I','F & I','FIN']){
+      const hit=byLabelExcl([...includes,tag],excl);
+      if(hit)return hit;
+    }
+    // (2) Try with "PRODUCTS" as the secondary hint (some formats say
+    //     "Non-Certified Used Vehicle Products and Aftermarket" without F&I)
+    const prod=byLabelExcl([...includes,'PRODUCTS','AFTER'],excl);
+    if(prod)return prod;
+    // (3) Line number fallback - confirm it looks like an F&I row
+    const byLn=bl(defaultLine);
+    if(byLn){
+      const lbl=(byLn[6]||byLn[1]||'').toString();
+      if(hasFIHint(lbl))return byLn;
+    }
+    return null;
+  }
+
+  // Combined non-cert F&I row on Pg6 (this is what most statements have)
+  let rNC_FI_combined = findFIRow(['NON-CERTIFIED USED VEHICLE'],[],66)
+                     || findFIRow(['NON-CERTIFIED USED'],[],66)
+                     || findFIRow(['NON-CERTIFIED'],['CERTIFIED TOYOTA','TCUV'],66)
+                     || findFIRow(['NON-CERT'],[],66);
+  // If the statement has a separate non-Toyota F&I row (rare), detect it
+  const rOther_FI_separate = findFIRow(['OTHER USED'],['NON-CERT','NEW'],67)
+                          || findFIRow(['NON-TOYOTA'],['NEW'],67);
+
+  // Pg7 fallback for the combined non-cert F&I total. Some exports don't
+  // include the Pg6 summary line, so we scan Pg7 for "TOTAL NON-CERTIFIED
+  // USED VEH. F&I PRODUCTS" (line 35 on the standard template) and use its
+  // dealer gross profit column as the combined total.
+  let pg7CombinedNCFI=0;
+  const pg7=wb.Sheets['Pg7'];
+  if(pg7){
+    const R7=XLSX.utils.sheet_to_json(pg7,{header:1,defval:null});
+    const r7=R7.find(r=>{
+      const lbl=(r?.[6]||r?.[1]||'').toString().toUpperCase();
+      if(!lbl.includes('NON-CERT')&&!lbl.includes('NON CERT'))return false;
+      if(lbl.includes('NEW'))return false;
+      if(!(lbl.includes('TOTAL')||lbl.includes('TOT ')))return false;
+      return hasFIHint(lbl);
+    });
+    if(r7){
+      // Pg7 columns: same layout as Pg6 - r[3] is Dealer Gross Profit
+      pg7CombinedNCFI=n(r7[3]);
+      console.log('[pFin] Pg7 fallback found: line '+r7[0]+' "'+(r7[6]||'').toString().slice(0,50)+'" GP=$'+pg7CombinedNCFI);
+    }
+  }
 
   if(!rTCUV){msg('Cannot find TCUV row in Pg6. File may be unsupported format.');return;}
 
@@ -1728,6 +2924,109 @@ function pFin(wb,n){
   const ngVal  = n(rNC?.[3]);
   const ouVal  = n(rOther?.[1]);
   const ogVal  = n(rOther?.[3]);
+
+  // ── F&I totals for non-cert and non-Toyota ────────────────────────
+  // Detection strategy (build 26): aggressive multi-pass
+  //   Pass A: Pg6 line-66 label match (all variants)
+  //   Pass B: Pg7 total non-cert F&I row
+  //   Pass C: Brute-force scan EVERY sheet for any row whose label looks like
+  //           a non-cert F&I/Aftermarket summary
+  //   Pass D: Math derivation - since TCUV statements always satisfy:
+  //           (Total Used w/ F&I) = (Total Used after Recon) + (TCUV F&I) + (Non-Cert F&I)
+  //           we can derive non-cert F&I as a difference. This is THE most
+  //           reliable path because the three input rows have rock-solid labels.
+  //   Pass E: Aggressive math - scan all sheets for the dept-total and total-with-FI
+  //           rows by value patterns rather than labels
+  let nFIVal=0, oFIVal=0, fiSource='none';
+  const combinedNCFI_pg6 = n(rNC_FI_combined?.[3]);
+  const separateOtherFI = n(rOther_FI_separate?.[3]);
+
+  // Pass C: brute-force scan of ALL sheets for the combined non-cert F&I row.
+  // This catches files where the row exists but lives on an unexpected sheet,
+  // or has a slightly different label that the targeted matchers miss.
+  let bruteScanNCFI=0;
+  let bruteScanLabel='';
+  let bruteScanSheet='';
+  try{
+    for(const sn of wb.SheetNames){
+      const sh=wb.Sheets[sn];if(!sh)continue;
+      const Rs=XLSX.utils.sheet_to_json(sh,{header:1,defval:null});
+      for(const r of Rs){
+        if(!r)continue;
+        // Inspect every cell in this row for a label that looks like the target
+        for(let ci=0;ci<r.length;ci++){
+          const v=r[ci];
+          if(typeof v!=='string')continue;
+          const U=v.toUpperCase();
+          // Must mention non-cert AND F&I (or related), NOT mention 'NEW',
+          // and ideally mention 'PRODUCT' or 'AFTERMARKET' to confirm it's the summary line
+          const hasNonCert=U.includes('NON-CERTIFIED')||U.includes('NON-CERT')||U.includes('NON CERT');
+          const hasFI=U.includes('F&I')||U.includes('F & I')||U.includes('FINANCE');
+          const hasNew=U.includes('NEW VEH')||U.includes('NEW CAR')||U.includes('NEW TRUCK');
+          const hasProduct=U.includes('PRODUCT')||U.includes('AFTERMARKET')||U.includes('AFTMKT');
+          if(hasNonCert&&hasFI&&!hasNew&&hasProduct){
+            // Find the largest dollar-looking number in this row - that's the GP column
+            let bestVal=0;
+            for(const cell of r){
+              const num=typeof cell==='number'?cell:0;
+              if(num>1000&&num<50000000&&num>bestVal)bestVal=num;
+            }
+            if(bestVal>0&&bestVal>bruteScanNCFI){
+              bruteScanNCFI=bestVal;
+              bruteScanLabel=v;
+              bruteScanSheet=sn;
+            }
+          }
+        }
+      }
+    }
+  }catch(e){console.warn('[pFin] brute-scan failed:',e);}
+  if(bruteScanNCFI>0)console.log('[pFin] brute-scan found: sheet "'+bruteScanSheet+'" label "'+bruteScanLabel.slice(0,60)+'" value $'+bruteScanNCFI);
+
+  // Pass D: Math derivation from the dept totals identity.
+  // Line 68 (Total Used w/ F&I) = Line 64 (Total Used after Recon) + Line 65 (TCUV F&I) + Line 66 (Non-Cert F&I)
+  let mathFallbackNCFI=0;
+  const rTotalWithFI=byLabel('TOTAL USED VEHICLE - W/ F&I PRODUCTS')||byLabel('TOTAL USED VEHICLE','W/ F&I')||byLabel('TOTAL USED','F&I PRODUCTS')||bl(68);
+  const rTotalAfterRecon=byLabel('TOTAL USED VEHICLE - AFTER RECON')||byLabel('TOTAL USED','AFTER RECON')||bl(64);
+  if(rTotalWithFI&&rTotalAfterRecon&&rFI){
+    const totalWFIgp=n(rTotalWithFI[3]);
+    const totalARgp=n(rTotalAfterRecon[3]);
+    const tcuvFIgp=n(rFI[3]);
+    const implied=totalWFIgp-totalARgp-tcuvFIgp;
+    if(implied>0&&implied<10000000)mathFallbackNCFI=implied;
+    console.log('[pFin] math-derive: line68($'+totalWFIgp+') - line64($'+totalARgp+') - line65($'+tcuvFIgp+') = $'+implied);
+  }
+
+  // Pick the best available combined figure, in priority order
+  let combinedNCFI=0, combinedSource='';
+  if(combinedNCFI_pg6>0){combinedNCFI=combinedNCFI_pg6;combinedSource='pg6-line66';}
+  else if(pg7CombinedNCFI>0){combinedNCFI=pg7CombinedNCFI;combinedSource='pg7-total';}
+  else if(bruteScanNCFI>0){combinedNCFI=bruteScanNCFI;combinedSource='brute-scan ('+bruteScanSheet+')';}
+  else if(mathFallbackNCFI>0){combinedNCFI=mathFallbackNCFI;combinedSource='math-derived';}
+
+  if(rOther_FI_separate&&separateOtherFI>0&&combinedNCFI>0){
+    nFIVal=combinedNCFI;
+    oFIVal=separateOtherFI;
+    fiSource='parsed-separate';
+  }else if(combinedNCFI>0){
+    const totalNonTCUV=nuVal+ouVal;
+    if(totalNonTCUV>0){
+      nFIVal=Math.round(combinedNCFI*(nuVal/totalNonTCUV));
+      oFIVal=Math.round(combinedNCFI*(ouVal/totalNonTCUV));
+      fiSource='parsed-combined-allocated ('+combinedSource+')';
+    }else{
+      nFIVal=combinedNCFI;
+      fiSource='parsed-combined-ncOnly ('+combinedSource+')';
+    }
+  }
+  // No TCUV-estimate fallback. If all four passes fail, leave back-end blank
+  // so the user knows the data is genuinely missing rather than fabricated.
+
+  // Parser diagnostics for debugging
+  console.log('[pFin] TCUV:',{line:rTCUV?.[0],units:tuVal,gp:tgVal,fi:tFIVal,label:(rFI?.[6]||'').toString().slice(0,60)});
+  console.log('[pFin] Non-cert:',{line:rNC?.[0],units:nuVal,gp:ngVal,fi:nFIVal,fi_label:(rNC_FI_combined?.[6]||'').toString().slice(0,60)});
+  console.log('[pFin] Non-Toyota:',{line:rOther?.[0],units:ouVal,gp:ogVal,fi:oFIVal,fi_label:(rOther_FI_separate?.[6]||'NONE - allocated from combined').toString().slice(0,60)});
+  console.log('[pFin] F&I source:',fiSource);
 
   // GST benchmarks
   const gTU_u  = n(rTCUV?.[8])||1;
@@ -1746,16 +3045,41 @@ function pFin(wb,n){
     ensureDealerShape(cc);
     cc.nm=dlrNm||cc.nm; cc.fn.nm=dlrNm||cc.fn.nm; cc.fn.pr=period||cc.fn.pr;
     cc.fn.tu=tuVal; cc.fn.tg=tgVal; cc.fn.tFI=tFIVal; cc.fn.cR=crVal;
-    cc.fn.dGP=dGPVal; cc.fn.nu=nuVal; cc.fn.ng=ngVal; cc.fn.ou=ouVal; cc.fn.og=ogVal;
+    cc.fn.dGP=dGPVal;
+    // Store the dept-total identity inputs so the render-time auto-derive can
+    // compute non-cert F&I exactly as: line68_gp - line64_gp - line65_gp
+    cc.fn._line68gp=rTotalWithFI?n(rTotalWithFI[3]):0;
+    cc.fn._line64gp=rTotalAfterRecon?n(rTotalAfterRecon[3]):0;
+    // ALWAYS write parsed values from a fresh financial upload. Earlier builds
+    // gated these writes on a manual override flag, which caused stale data to
+    // persist after the user uploaded an updated statement. The override is
+    // now treated as a one-time entry that is replaced by any subsequent upload.
+    cc.fn.nu=nuVal; cc.fn.ng=ngVal; cc.fn.nFI=nFIVal;
+    cc.fn.ou=ouVal; cc.fn.og=ogVal; cc.fn.oFI=oFIVal;
+    cc.fn.ntU=ouVal; cc.fn.ntG=ogVal; cc.fn.ntFI=oFIVal;
+    // Clear any leftover override flag so future renders trust the parsed values
+    if(cc.fn._nonCertOverride)delete cc.fn._nonCertOverride;
+    // Always record source + the values the parser WOULD have written. The
+    // Financial tab uses this to show "parser found these numbers but your
+    // override is active" when the two disagree.
+    cc.fn._fiSource=fiSource;
+    cc.fn._parsedPreview={nu:nuVal,ng:ngVal,nFI:nFIVal,ou:ouVal,og:ogVal,oFI:oFIVal,parsedAt:td()};
     cc.fn.newUnits=newU; cc.fn.tot=totUsed;
     cc.fn.gTG=gTG; cc.fn.dTG=gTG; cc.fn.gCR=gCR; cc.fn.dCR=gCR;
     cc.fn.gTF=gTF; cc.fn.dTF=gTF; cc.fn.gTU=Math.round(gTU_u);
     buildSel(); if(tb!=='up')render(); saveAll();
     const verb=rd.status==='created'?'Created new dealer':rd.status==='switched'?'Switched to and updated':'Updated';
-    showToast('✓ '+verb+': '+cc.nm+' (Financial)',rd.status==='created'?'#1E4B8E':GN);
+    showToast('✓ '+verb+': '+cc.nm+' (Financial · build 26)',rd.status==='created'?'#1E4B8E':GN);
   }
   document.getElementById('d1').classList.add('done');
-  document.getElementById('m1').innerHTML=`<div class="ok">✓ ${dlrNm||'Dealer'} · ${period||'Period parsed'} · TCUV: ${Math.round(tuVal)} avg/mo · Recon: $${Math.round(crVal/Math.max(tuVal,1)).toLocaleString()}/unit · F&amp;I: $${Math.round(tFIVal/Math.max(tuVal,1)).toLocaleString()}/unit${rd&&rd.status==='created'?' · <span style="color:'+BL+';font-weight:700">New dealer created</span>':''}</div>`;
+  document.getElementById('m1').innerHTML=`
+    <div class="ok">✓ ${dlrNm||'Dealer'} · ${period||'Period parsed'} · TCUV: ${Math.round(tuVal)} avg/mo · Recon: $${Math.round(crVal/Math.max(tuVal,1)).toLocaleString()}/unit · F&amp;I: $${Math.round(tFIVal/Math.max(tuVal,1)).toLocaleString()}/unit${rd&&rd.status==='created'?' · <span style="color:'+BL+';font-weight:700">New dealer created</span>':''}</div>
+    <div style="margin-top:10px;padding:12px;background:#f8f9fb;border:1px solid var(--bdr);border-radius:8px;font-size:12px;line-height:1.6">
+      <div style="font-weight:700;color:var(--txt);margin-bottom:6px;font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:1px">PARSER DIAGNOSTICS · BUILD 25</div>
+      <div><strong>Non-Cert Toyota:</strong> ${fN(nuVal)} units, Front $${Math.round(ngVal).toLocaleString()} total ($${Math.round(ngVal/Math.max(nuVal,1)).toLocaleString()}/unit), Back $${Math.round(nFIVal).toLocaleString()} total ($${Math.round(nFIVal/Math.max(nuVal,1)).toLocaleString()}/unit)</div>
+      <div><strong>Non-Toyota Used:</strong> ${fN(ouVal)} units, Front $${Math.round(ogVal).toLocaleString()} total ($${Math.round(ogVal/Math.max(ouVal,1)).toLocaleString()}/unit), Back $${Math.round(oFIVal).toLocaleString()} total ($${Math.round(oFIVal/Math.max(ouVal,1)).toLocaleString()}/unit)</div>
+      <div style="margin-top:4px;color:var(--dim-m)"><strong>F&amp;I source:</strong> ${fiSource} ${rNC_FI_combined?'&middot; found combined row at line '+rNC_FI_combined[0]:'&middot; no combined F&amp;I row found'}</div>
+    </div>`;
 }
 function pDept(wb,n){
   const msg=e=>document.getElementById('m2').innerHTML=`<div style="color:${RE};font-size:12px;margin-top:6px;font-weight:600">⚠ ${e}</div>`;
@@ -1821,13 +3145,24 @@ function pDept(wb,n){
     ensureDealerShape(c);
     c.nm=dlrNm||c.nm; c.fn.nm=dlrNm||c.fn.nm;
     c.fn.tu=tuVal; c.fn.tg=tgVal; c.fn.tFI=tFIVal; c.fn.cR=crTotal;
-    c.fn.dGP=dGPVal; c.fn.nu=nuVal; c.fn.ng=ngVal; c.fn.tot=totVal;
+    c.fn.dGP=dGPVal; c.fn.tot=totVal;
+    // Respect manual override on non-cert and non-Toyota figures
+    const ovr=c.fn._nonCertOverride||{};
+    if(!ovr.nc){
+      c.fn.nu=nuVal; c.fn.ng=ngVal;
+      // Do NOT estimate non-cert F&I from TCUV per-unit. The whole point of
+      // tracking non-cert separately is to surface the gap between TCUV and
+      // non-TCUV F&I performance. An estimate that copies TCUV erases the gap.
+      // If the dept report doesn't include category-specific F&I, leave nFI
+      // at its current value (typically populated by a Pg6 financial upload).
+    }
     c.fn.gTG=gTG; c.fn.dTG=gTG; c.fn.gCR=gCR; c.fn.dCR=gCR;
     c.fn.gTF=gTF; c.fn.dTF=gTF; c.fn.gTU=gTU;
     c.fn.gDeptGP=gDeptGP; c.fn.usedNewRatio=unRatio; c.fn.gstUsedNewRatio=gstUnRatio;
     buildSel(); if(tb!=='up')render(); saveAll();
     const verb=rd.status==='created'?'Created new dealer':rd.status==='switched'?'Switched to and updated':'Updated';
-    showToast('✓ '+verb+': '+c.nm+' (Dept Report)',rd.status==='created'?'#1E4B8E':GN);
+    const ovrNote=(ovr.nc||ovr.nt)?' · manual override respected':'';
+    showToast('✓ '+verb+': '+c.nm+' (Dept Report)'+ovrNote,rd.status==='created'?'#1E4B8E':GN);
   }
   document.getElementById('d2').classList.add('done');
   document.getElementById('m2').innerHTML=`<div class="ok">✓ ${dlrNm||'Dealer'}  -  TCUV: ${Math.round(tuVal)} avg/mo · Recon: $${Math.round(reconPU).toLocaleString()}/unit · F&amp;I: $${Math.round(fiPU).toLocaleString()}/unit · U:N: ${unRatio.toFixed(2)}${rd&&rd.status==='created'?' · <span style="color:'+BL+';font-weight:700">New dealer created</span>':''}</div>`;
