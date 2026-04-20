@@ -359,7 +359,13 @@ async function init(){await loadAll();buildNav();buildSel();render();}
 function buildNav(){document.getElementById('navBar').innerHTML=TABS.map(t=>`<button class="${tb===t.id?'active':''}" onclick="setTab('${t.id}')">${t.l}</button>`).join('');}
 function buildSel(){document.getElementById('dealerSel').innerHTML=D.map(d=>`<option value="${d.id}"${d.id===ci?' selected':''}>${d.nm}</option>`).join('');}
 function setTab(id){tb=id;buildNav();render();saveAll();}
-function pickDealer(id){ci=parseInt(id);if(tb==='up')tb='crm';buildNav();render();saveAll();}
+function pickDealer(id){
+  const prev=ci;
+  ci=parseInt(id);
+  if(tb==='up')tb='crm';
+  buildNav();render();saveAll();
+  if(prev!==ci){const d=gc();if(d)showToast('Switched to '+d.nm,'#1E4B8E');}
+}
 function gc(){return D.find(d=>d.id===ci)||D[0];}
 function dc(){Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};}
 function mkChart(id,cfg){if(!CL)return;const el=document.getElementById(id);if(!el)return;if(charts[id])try{charts[id].destroy();}catch(e){}charts[id]=new Chart(el,cfg);}
@@ -372,7 +378,23 @@ function render(){dc();const mc=document.getElementById('mainContent'),c=gc();if
 function kpi(lbl,val,sub,col){return`<div class="kpi" style="--kc:${col}"><div class="kpi-lbl">${lbl}</div><div class="kpi-val">${val}</div>${sub?`<div class="kpi-sub">${sub}</div>`:''}</div>`;}
 function sHdr(t,s=''){return`<div class="sec-hdr"><div class="sec-dot"></div><div><div class="sec-ttl">${t}</div>${s?`<div class="sec-sub">${s}</div>`:''}</div></div>`;}
 function badge(lbl,cls){return`<span class="badge ${cls}">${lbl}</span>`;}
-function nm(h,n){if(!h||!n)return false;const hh=h.toUpperCase().replace(/[^A-Z0-9 ]/g,'').trim(),nn=n.toUpperCase().replace(/[^A-Z0-9 ]/g,'').trim();return hh.includes(nn)||nn.includes(hh);}
+// Token-based dealer name matcher. Strips stop words, requires at least one
+// meaningful token to match (or a full normalized-string match).
+const NM_STOP=new Set(['TOYOTA','MOTOR','MOTORS','AUTO','AUTOS','CARS','CAR','GROUP','THE','OF','AT','INC','LLC','CO','COMPANY','DEALER','DEALERSHIP']);
+function nmTokens(s){return (s||'').toUpperCase().replace(/[^A-Z0-9 ]/g,' ').split(/\s+/).filter(w=>w.length>=3&&!NM_STOP.has(w));}
+function nmNorm(s){return (s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');}
+function nm(h,n){
+  if(!h||!n)return false;
+  const hN=nmNorm(h),nN=nmNorm(n);
+  if(!hN||!nN)return false;
+  if(hN===nN)return true;                           // exact normalized match
+  const hT=nmTokens(h),nT=nmTokens(n);
+  if(!hT.length||!nT.length){                       // nothing meaningful -> fall back to substring
+    return hN.includes(nN)||nN.includes(hN);
+  }
+  // Match if they share any meaningful token (location / brand-name word)
+  return hT.some(t=>nT.includes(t));
+}
 function pPri(p){return p==='high'?badge('High','pill-red'):p==='medium'?badge('Med','pill-gold'):badge('Low','pill-gray');}
 function pType(t){const m={Call:'pill-blue',Visit:'pill-teal',Email:'pill-gray',Training:'pill-purple','Follow-Up':'pill-orange'};return badge(t,m[t]||'pill-gray');}
 function pOut(o){return o==='Positive'?badge('✓ Positive','pill-green'):o==='Negative'?badge('✗ Negative','pill-red'):badge('Neutral','pill-gray');}
@@ -881,18 +903,32 @@ function rRecon(mc,c){
 function rSold(mc,c){
   const rc=c.rc;
   if(!rc){mc.innerHTML=`<div class="card" style="text-align:center;padding:60px;"><div style="font-size:40px;margin-bottom:12px">📊</div><div style="font-size:16px;font-weight:700;color:var(--txt);margin-bottom:6px">No Recap Data Loaded</div><div style="font-size:13px;color:var(--dim-m);margin-bottom:20px">Upload a GST Sales vs Objective Recap file to see district performance.</div><button class="btn" onclick="setTab('up')">Go to Upload Tab</button></div>`;return;}
-  const di=rc.di,sel=rc.ds.find(d=>nm(d.n,c.nm))||rc.ds[0];
+  const di=rc.di;
+  // Find this dealer's row in the recap (single source of truth for both KPIs and rank)
+  const selIdx=(()=>{
+    let p=rc.ds.findIndex(d=>nm(d.n,c.nm));
+    if(p<0){
+      // Try matching on any token from the dealer profile name
+      const toks=nmTokens(c.nm);
+      if(toks.length)p=rc.ds.findIndex(d=>{const dt=nmTokens(d.n);return dt.some(t=>toks.includes(t));});
+    }
+    return p;
+  })();
+  const sel=selIdx>=0?rc.ds[selIdx]:rc.ds[0];
+  const selMatched=selIdx>=0;
   const ms=c.moSold||Array(12).fill(0),mo=c.moObj||Array(12).fill(0);
   const yc=c.yoyCur||Array(12).fill(0),yp=c.yoyPrior||Array(12).fill(0);
   const dAvg=rc.ds.length>0?Math.round(di.t/rc.ds.length):0;
-  const distRank=rc.ds.length>0?(()=>{
-    const sorted=[...rc.ds].sort((a,b)=>b.p-a.p);
-    // Try full fuzzy match first
-    let pos=sorted.findIndex(d=>nm(d.n,c.nm));
-    // If not found, try matching first significant word of dealer name
-    if(pos<0){const fw=c.nm.toUpperCase().replace(/[^A-Z0-9 ]/g,'').split(' ').filter(w=>w.length>3&&!['TOYOTA','MOTOR','AUTO','CARS','GROUP','THE'].includes(w))[0];if(fw)pos=sorted.findIndex(d=>d.n.toUpperCase().includes(fw));}
+  // Rank: sort by raw attainment ratio (desc), then by units sold (desc) as tiebreak.
+  // Only rank dealers with a real objective so zero-objective rows don't dilute.
+  const distRank=(selMatched&&rc.ds.length>0)?(()=>{
+    const rankable=rc.ds.map((d,i)=>({...d,_i:i,_r:d.o>0?d.t/d.o:-1}))
+                        .filter(d=>d._r>=0)
+                        .sort((a,b)=>b._r-a._r||b.t-a.t);
+    const pos=rankable.findIndex(d=>d._i===selIdx);
     return pos>=0?pos+1:null;
   })():null;
+  const rankDenom=rc.ds.filter(d=>d.o>0).length;
   mc.innerHTML=`
   <div class="pg-hdr"><div class="pg-ttl">Sold vs Objective</div><div class="pg-sub">GST Recap · ${rc.dt}</div><div class="pg-rule"></div></div>
   <div class="kpi-row">
@@ -901,8 +937,9 @@ function rSold(mc,c){
     ${kpi('Variance',sel.t-sel.o,sel.t>=sel.o?'Above obj ✓':'Need: '+(sel.o-sel.t)+' more',sel.t>=sel.o?GN:RE)}
     ${kpi('District Avg',dAvg,'Total: '+di.t+' · Obj: '+di.o,BL)}
     ${kpi('District Total',di.t,di.p+'% attainment · '+rc.ds.length+' dealers',DM)}
-    ${distRank?kpi('District Rank','#'+distRank+' of '+rc.ds.length,'By % attainment',distRank===1?GN:distRank<=3?GD:distRank<=Math.ceil(rc.ds.length/2)?BL:RE):kpi('District Rank',' - ','Upload recap to rank',DM)}
+    ${distRank?kpi('District Rank','#'+distRank+' of '+rankDenom,'By % attainment',distRank===1?GN:distRank<=3?GD:distRank<=Math.ceil(rankDenom/2)?BL:RE):kpi('District Rank',' - ',selMatched?'No ranked dealers':'Dealer name not matched in recap',DM)}
   </div>
+  ${!selMatched&&rc.ds.length>0?`<div class="tip tip-blue" style="margin-bottom:12px;font-size:12px">⚠ "<strong>${c.nm}</strong>" was not matched to any dealer in the recap. Showing data for "<strong>${sel.n}</strong>" as a fallback. Verify the dealer name matches the recap file to get an accurate rank.</div>`:''}
 
   <div class="g2" style="margin-bottom:14px">
     <div class="card"><div class="card-title">Silver vs Gold Breakdown</div><div class="cw" style="height:230px"><canvas id="sdPie"></canvas></div></div>
@@ -1367,8 +1404,21 @@ function logCt(){
   if(!c.consultHistory)c.consultHistory=[];
   const entry={id:Date.now(),contact:(document.getElementById('hCt')?.value||'').trim(),date:document.getElementById('hDt')?.value||td(),type:document.getElementById('hTy')?.value||'Call',outcome:document.getElementById('hOu')?.value||'Neutral',notes};
   c.consultHistory.push(entry);
-  render();saveAll();
+  saveAll();
+  showToast('✓ Consultation saved for '+c.nm+' ('+entry.type+')',GN);
+  render();
   if(entry.type==='Visit'){setTimeout(()=>{const a=document.getElementById('emailArea');if(a){a.style.display='block';a.innerHTML=`<div class="tip tip-purple">✓ Visit logged! Click <strong>✉ Generate Follow-Up Email</strong> above to draft a follow-up email from your visit notes.</div>`;}},300);}
+}
+
+// Lightweight toast notifier used across save / upload actions
+function showToast(msg,color){
+  let t=document.getElementById('_toast');
+  if(!t){t=document.createElement('div');t.id='_toast';t.style.cssText='position:fixed;top:20px;right:20px;z-index:9999;padding:12px 18px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.18);color:#fff;opacity:0;transition:opacity .25s;max-width:380px;pointer-events:none';document.body.appendChild(t);}
+  t.style.background=color||'#0B6B3A';
+  t.textContent=msg;
+  t.style.opacity='1';
+  clearTimeout(window._toastT);
+  window._toastT=setTimeout(()=>{t.style.opacity='0';},3200);
 }
 
 // ═══ AI EMAIL ══════════════════════════════════════════════════
@@ -1546,14 +1596,14 @@ function removeDealer(id){if(D.length<=1){alert('Cannot remove the last dealer.'
 // Smart dealer resolution: if the file's dealer name doesn't match the
 // currently selected dealer, find an existing match or create a new entry.
 function resolveDealer(parsedName){
-  if(!parsedName||parsedName.length<3)return gc(); // fallback to current
+  if(!parsedName||parsedName.length<3){const g=gc();return g?{dealer:g,status:'current'}:null;}
   const cur=gc();
-  // Check if it matches the currently selected dealer
-  if(cur&&nm(cur.nm,parsedName))return cur;
-  // Check if any existing dealer matches
+  // Current dealer wins if it matches
+  if(cur&&nm(cur.nm,parsedName))return{dealer:cur,status:'matched'};
+  // Otherwise look for an existing dealer match
   const existing=D.find(d=>nm(d.nm,parsedName));
-  if(existing){ci=existing.id;buildSel();return existing;}
-  // No match found: create a new dealer entry
+  if(existing){ci=existing.id;buildSel();return{dealer:existing,status:'switched'};}
+  // No match: create a new dealer, but never overwrite any existing D entry
   const nd={id:Date.now(),nm:parsedName,dt:td(),
     fn:{nm:parsedName,pr:'',cl:'',tu:0,tg:0,tFI:0,cR:0,dGP:0,
       nu:0,ng:0,ou:0,og:0,tot:0,pyTCUV:0,newUnits:0,
@@ -1566,7 +1616,23 @@ function resolveDealer(parsedName){
   D.push(nd);
   ci=nd.id;
   buildSel();
-  return nd;
+  return{dealer:nd,status:'created'};
+}
+// Ensures a dealer object has every field it needs before we merge uploaded
+// data in. This is the safety net that guarantees uploads never wipe out
+// contacts, tasks, consultation history, MTD, monthly data, etc.
+function ensureDealerShape(c){
+  if(!c)return;
+  if(!c.fn)c.fn={};
+  if(!c.mtd)c.mtd={sold:0,obj:0,silver:0,gold:0};
+  if(!Array.isArray(c.moSold))c.moSold=Array(12).fill(0);
+  if(!Array.isArray(c.moObj))c.moObj=Array(12).fill(0);
+  if(!Array.isArray(c.yoyCur))c.yoyCur=Array(12).fill(0);
+  if(!Array.isArray(c.yoyPrior))c.yoyPrior=Array(12).fill(0);
+  if(!Array.isArray(c.contacts))c.contacts=[];
+  if(!Array.isArray(c.consultHistory))c.consultHistory=[];
+  if(!Array.isArray(c.tasks))c.tasks=[];
+  if(!Array.isArray(c.pipeline))c.pipeline=[];
 }
 function drF(e,slot){e.preventDefault();document.getElementById('d'+slot).classList.remove('over');if(e.dataTransfer.files.length)parseF(e.dataTransfer.files[0],slot);}
 function parseF(f,slot){
@@ -1663,8 +1729,10 @@ function pFin(wb,n){
   sv('uNU',nuVal);sv('uNG',ngVal);sv('uOU',ouVal);sv('uOG',ogVal);sv('uNW',newU);
   sv('gTG',gTG);sv('gCR',gCR);sv('gTF',gTF);sv('gTU',Math.round(gTU_u));
 
-  const cc=resolveDealer(dlrNm);
+  const rd=resolveDealer(dlrNm);
+  const cc=rd?.dealer;
   if(cc){
+    ensureDealerShape(cc);
     cc.nm=dlrNm||cc.nm; cc.fn.nm=dlrNm||cc.fn.nm; cc.fn.pr=period||cc.fn.pr;
     cc.fn.tu=tuVal; cc.fn.tg=tgVal; cc.fn.tFI=tFIVal; cc.fn.cR=crVal;
     cc.fn.dGP=dGPVal; cc.fn.nu=nuVal; cc.fn.ng=ngVal; cc.fn.ou=ouVal; cc.fn.og=ogVal;
@@ -1672,9 +1740,11 @@ function pFin(wb,n){
     cc.fn.gTG=gTG; cc.fn.dTG=gTG; cc.fn.gCR=gCR; cc.fn.dCR=gCR;
     cc.fn.gTF=gTF; cc.fn.dTF=gTF; cc.fn.gTU=Math.round(gTU_u);
     buildSel(); if(tb!=='up')render(); saveAll();
+    const verb=rd.status==='created'?'Created new dealer':rd.status==='switched'?'Switched to and updated':'Updated';
+    showToast('✓ '+verb+': '+cc.nm+' (Financial)',rd.status==='created'?'#1E4B8E':GN);
   }
   document.getElementById('d1').classList.add('done');
-  document.getElementById('m1').innerHTML=`<div class="ok">✓ ${dlrNm||'Dealer'} · ${period||'Period parsed'} · TCUV: ${Math.round(tuVal)} avg/mo · Recon: $${Math.round(crVal/Math.max(tuVal,1)).toLocaleString()}/unit · F&amp;I: $${Math.round(tFIVal/Math.max(tuVal,1)).toLocaleString()}/unit</div>`;
+  document.getElementById('m1').innerHTML=`<div class="ok">✓ ${dlrNm||'Dealer'} · ${period||'Period parsed'} · TCUV: ${Math.round(tuVal)} avg/mo · Recon: $${Math.round(crVal/Math.max(tuVal,1)).toLocaleString()}/unit · F&amp;I: $${Math.round(tFIVal/Math.max(tuVal,1)).toLocaleString()}/unit${rd&&rd.status==='created'?' · <span style="color:'+BL+';font-weight:700">New dealer created</span>':''}</div>`;
 }
 function pDept(wb,n){
   const msg=e=>document.getElementById('m2').innerHTML=`<div style="color:${RE};font-size:12px;margin-top:6px;font-weight:600">⚠ ${e}</div>`;
@@ -1734,8 +1804,10 @@ function pDept(wb,n){
   sv('uTU',tuVal);sv('uTG',tgVal);sv('uFI',tFIVal);sv('uCR',crTotal);sv('uDG',dGPVal);
   sv('uNU',nuVal);sv('uNG',ngVal);sv('gTG',gTG);sv('gCR',gCR);sv('gTF',gTF);sv('gTU',gTU);
 
-  const c=resolveDealer(dlrNm);
+  const rd=resolveDealer(dlrNm);
+  const c=rd?.dealer;
   if(c){
+    ensureDealerShape(c);
     c.nm=dlrNm||c.nm; c.fn.nm=dlrNm||c.fn.nm;
     c.fn.tu=tuVal; c.fn.tg=tgVal; c.fn.tFI=tFIVal; c.fn.cR=crTotal;
     c.fn.dGP=dGPVal; c.fn.nu=nuVal; c.fn.ng=ngVal; c.fn.tot=totVal;
@@ -1743,11 +1815,13 @@ function pDept(wb,n){
     c.fn.gTF=gTF; c.fn.dTF=gTF; c.fn.gTU=gTU;
     c.fn.gDeptGP=gDeptGP; c.fn.usedNewRatio=unRatio; c.fn.gstUsedNewRatio=gstUnRatio;
     buildSel(); if(tb!=='up')render(); saveAll();
+    const verb=rd.status==='created'?'Created new dealer':rd.status==='switched'?'Switched to and updated':'Updated';
+    showToast('✓ '+verb+': '+c.nm+' (Dept Report)',rd.status==='created'?'#1E4B8E':GN);
   }
   document.getElementById('d2').classList.add('done');
-  document.getElementById('m2').innerHTML=`<div class="ok">✓ ${dlrNm||'Dealer'}  -  TCUV: ${Math.round(tuVal)} avg/mo · Recon: $${Math.round(reconPU).toLocaleString()}/unit · F&amp;I: $${Math.round(fiPU).toLocaleString()}/unit · U:N: ${unRatio.toFixed(2)}</div>`;
+  document.getElementById('m2').innerHTML=`<div class="ok">✓ ${dlrNm||'Dealer'}  -  TCUV: ${Math.round(tuVal)} avg/mo · Recon: $${Math.round(reconPU).toLocaleString()}/unit · F&amp;I: $${Math.round(fiPU).toLocaleString()}/unit · U:N: ${unRatio.toFixed(2)}${rd&&rd.status==='created'?' · <span style="color:'+BL+';font-weight:700">New dealer created</span>':''}</div>`;
 }
-function pRecap(wb,n){const ws=wb.Sheets[wb.SheetNames[0]];const R=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});let cS=-1,cG=-1,cT=-1,cO=-1;for(let h=0;h<Math.min(5,R.length);h++){const hr=R[h];if(!hr)continue;for(let j=0;j<hr.length;j++){const v=(hr[j]||'').toString().toUpperCase().trim();if(v.includes('SILVER'))cS=j;if(v.includes('GOLD'))cG=j;}}if(cS>=0){if(cG<0)cG=cS+1;cT=cG+1;cO=cG+2;}let rcDate='Current';if(R[0]){const dm=(R[0][0]||'').toString().match(/(\d{2}\/\d{4})/);if(dm)rcDate=dm[1];}const ds=[];let dT=0,dO=0;for(let i=0;i<R.length;i++){const rw=R[i];if(!rw?.[0])continue;const lb=rw[0].toString().trim();if(!lb||lb.length<2)continue;if(lb.match(/^(DEALER|NAME|SILVER|GOLD|SOLD|OBJ)/i))continue;if(lb.match(/^district/i)){if(cT>=0)dT=n(rw[cT]);if(cO>=0)dO=n(rw[cO]);continue;}if(lb.match(/^(gst|group|national)/i))continue;let code='',dname=lb.toUpperCase();const cdm=lb.match(/^(\d+)\s*[-.]\s*(.+)/);if(cdm){code=cdm[1];dname=cdm[2].trim().toUpperCase();}const s=cS>=0?n(rw[cS]):0,g=cG>=0?n(rw[cG]):0,sold=cT>=0?n(rw[cT]):0,obj=cO>=0?n(rw[cO]):0;if(sold>0||obj>0)ds.push({c:code,n:dname,s,g,t:sold,o:obj,p:obj>0?Math.round(sold/obj*100):0});}if(ds.length>0){const cc=gc();if(cc){cc.rc={dt:rcDate,ds,di:{t:dT||ds.reduce((a,d)=>a+d.t,0),o:dO||ds.reduce((a,d)=>a+d.o,0),p:0},gs:{t:0,o:0,p:0}};cc.rc.di.p=cc.rc.di.o>0?Math.round(cc.rc.di.t/cc.rc.di.o*100):0;}buildSel();if(tb!=='up')render();saveAll();}
+function pRecap(wb,n){const ws=wb.Sheets[wb.SheetNames[0]];const R=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});let cS=-1,cG=-1,cT=-1,cO=-1;for(let h=0;h<Math.min(5,R.length);h++){const hr=R[h];if(!hr)continue;for(let j=0;j<hr.length;j++){const v=(hr[j]||'').toString().toUpperCase().trim();if(v.includes('SILVER'))cS=j;if(v.includes('GOLD'))cG=j;}}if(cS>=0){if(cG<0)cG=cS+1;cT=cG+1;cO=cG+2;}let rcDate='Current';if(R[0]){const dm=(R[0][0]||'').toString().match(/(\d{2}\/\d{4})/);if(dm)rcDate=dm[1];}const ds=[];let dT=0,dO=0;for(let i=0;i<R.length;i++){const rw=R[i];if(!rw?.[0])continue;const lb=rw[0].toString().trim();if(!lb||lb.length<2)continue;if(lb.match(/^(DEALER|NAME|SILVER|GOLD|SOLD|OBJ)/i))continue;if(lb.match(/^district/i)){if(cT>=0)dT=n(rw[cT]);if(cO>=0)dO=n(rw[cO]);continue;}if(lb.match(/^(gst|group|national)/i))continue;let code='',dname=lb.toUpperCase();const cdm=lb.match(/^(\d+)\s*[-.]\s*(.+)/);if(cdm){code=cdm[1];dname=cdm[2].trim().toUpperCase();}const s=cS>=0?n(rw[cS]):0,g=cG>=0?n(rw[cG]):0,sold=cT>=0?n(rw[cT]):0,obj=cO>=0?n(rw[cO]):0;if(sold>0||obj>0)ds.push({c:code,n:dname,s,g,t:sold,o:obj,p:obj>0?Math.round(sold/obj*100):0});}if(ds.length>0){const cc=gc();if(cc){ensureDealerShape(cc);cc.rc={dt:rcDate,ds,di:{t:dT||ds.reduce((a,d)=>a+d.t,0),o:dO||ds.reduce((a,d)=>a+d.o,0),p:0},gs:{t:0,o:0,p:0}};cc.rc.di.p=cc.rc.di.o>0?Math.round(cc.rc.di.t/cc.rc.di.o*100):0;showToast('✓ District recap loaded for '+cc.nm+' ('+ds.length+' dealers)',GN);}buildSel();if(tb!=='up')render();saveAll();}
   document.getElementById('d3').classList.add('done');
   document.getElementById('m3').innerHTML=`<div class="ok">✓ Parsed ${ds.length} dealers · District: ${dT} sold / ${dO} obj</div>`;}
 
