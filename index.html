@@ -233,7 +233,7 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
       <div class="t">Gulf States Toyota &nbsp;·&nbsp; TCUV Performance CRM</div>
       <div class="s">Certified Used Vehicle District Management System</div>
     </div>
-    <span class="hdr-badge">v9</span>
+    <span class="hdr-badge">v9 · build 14</span>
   </div>
   <div class="hdr-r">
     <button class="btn-hdr" onclick="window.print()">Print</button>
@@ -246,7 +246,7 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
 <div class="nav" id="navBar"></div>
 <div class="pg" id="mainContent"></div>
 
-<footer>&copy; 2026 Gulf States Toyota &nbsp;&middot;&nbsp; TCUV CRM Dashboard v9 &nbsp;&middot;&nbsp; Engineered by <strong style="color:var(--red)">Hussein Hylton</strong> &nbsp;&middot;&nbsp; All rights reserved</footer>
+<footer>&copy; 2026 Gulf States Toyota &nbsp;&middot;&nbsp; TCUV CRM Dashboard v9 (build 14) &nbsp;&middot;&nbsp; Engineered by <strong style="color:var(--red)">Hussein Hylton</strong> &nbsp;&middot;&nbsp; All rights reserved</footer>
 
 <script>
 // ═══ EXTERNAL LIBS ═══════════════════════════════════════════
@@ -657,9 +657,10 @@ function rOv(mc,c){
   const cyManualSet=(f.cyThisPeriod!=null&&f.cyThisPeriod!=='');
   const pyThisPeriod=pyManualSet?+f.pyThisPeriod:pyThisPeriodCalc;
   const cyThisPeriod=cyManualSet?+f.cyThisPeriod:cyThisPeriodCalc;
-  // Current Monthly Avg: derive from manual CY This Period when provided so
-  // Monthly Target, Current Monthly Avg, and YoY Change all stay consistent.
-  const cyMonthly=cyManualSet?(numMo>0?cyThisPeriod/numMo:cyThisPeriod):f.tu;
+  // Current Monthly Avg: always derived from CY This Period (whether manual or
+  // auto-calc) divided by numMo. This keeps Monthly Target, Current Monthly Avg,
+  // and YoY Change all telling a consistent story from a single source of truth.
+  const cyMonthly=(numMo>0)?cyThisPeriod/numMo:cyThisPeriod;
   const monthlyGap=monthlyTarget>0?Math.round(monthlyTarget-cyMonthly):0;
 
   const rcD=c.rc?.ds?.find(d=>nm(d.n,c.nm));
@@ -737,7 +738,7 @@ function rOv(mc,c){
       ${kpi('PY Total Sold',fN(pyFull),'Full year',BL)}
       ${kpi('Growth Goal (+'+growthPct+'%)',fN(growthGoal),'Annual target',GN)}
       ${kpi('Monthly Target',fN(monthlyTarget),'Units per month',monthlyTarget<=Math.round(cyMonthly)?GN:RE)}
-      ${kpi('Current Monthly Avg',fN(Math.round(cyMonthly)),(monthlyGap>0?'Need '+monthlyGap+' more/mo':monthlyGap===0?'On pace':'Exceeding by '+Math.abs(monthlyGap)+'/mo')+(cyManualSet?' · from CY Period ÷ '+numMo+' mo':''),monthlyGap<=0?GN:RE)}
+      ${kpi('Current Monthly Avg',fN(Math.round(cyMonthly)),(monthlyGap>0?'Need '+monthlyGap+' more/mo':monthlyGap===0?'On pace':'Exceeding by '+Math.abs(monthlyGap)+'/mo')+' · '+fN(Math.round(cyThisPeriod))+' ÷ '+numMo+' mo',monthlyGap<=0?GN:RE)}
     </div>
     <div class="g2" style="margin-bottom:14px">
       <div style="display:flex;align-items:center;gap:20px;padding:16px;background:var(--surface);border:1px solid var(--bdr);border-radius:10px">
