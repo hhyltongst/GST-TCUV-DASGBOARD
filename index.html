@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Gulf States Toyota TCUV CRM Dashboard v9
+  Gulf States Toyota TCUV CRM Dashboard v8
   Created by: Hussein Hylton
   Copyright (c) 2026 All Rights Reserved
 -->
@@ -8,9 +8,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>GST TCUV CRM v9</title>
+<title>GST TCUV CRM v8</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --red:#C8102E;--red-lt:rgba(200,16,46,.07);--red-dk:#a30e26;
@@ -226,22 +225,6 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
 </head>
 <body>
 
-<!-- LOGIN OVERLAY -->
-<div id="loginOverlay" style="position:fixed;inset:0;background:#0A0E17;z-index:9999;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif">
-  <div style="background:#fff;padding:40px;border-radius:14px;width:380px;max-width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3)">
-    <div style="text-align:center;margin-bottom:24px">
-      <div style="background:#C8102E;color:#fff;display:inline-block;padding:8px 18px;border-radius:8px;font-family:'Orbitron',sans-serif;font-weight:900;letter-spacing:4px;font-size:22px">GST</div>
-      <div style="margin-top:12px;font-weight:700;font-size:18px;color:#0A0E17">TCUV Dashboard</div>
-      <div style="font-size:12px;color:#5C6475;margin-top:4px" id="loginMode">Sign in to your account</div>
-    </div>
-    <input id="loginEmail" type="email" placeholder="Email" style="width:100%;padding:12px;border:1px solid #D4D8E1;border-radius:8px;font-size:14px;margin-bottom:10px;outline:none">
-    <input id="loginPass" type="password" placeholder="Password" style="width:100%;padding:12px;border:1px solid #D4D8E1;border-radius:8px;font-size:14px;margin-bottom:14px;outline:none">
-    <button onclick="doLogin()" id="loginBtn" style="width:100%;padding:12px;background:#C8102E;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:10px">Sign In</button>
-    <button onclick="toggleSignup()" style="width:100%;padding:10px;background:transparent;color:#3A4252;border:1px solid #D4D8E1;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer">Create new account</button>
-    <div id="loginErr" style="color:#C8102E;font-size:12px;margin-top:12px;text-align:center;min-height:16px"></div>
-  </div>
-</div>
-
 <div class="hdr">
   <div class="hdr-l">
     <div class="logo">GST</div>
@@ -250,21 +233,19 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
       <div class="t">Gulf States Toyota &nbsp;·&nbsp; TCUV Performance CRM</div>
       <div class="s">Certified Used Vehicle District Management System</div>
     </div>
-    <span class="hdr-badge">v9</span>
+    <span class="hdr-badge">v8</span>
   </div>
   <div class="hdr-r">
     <button class="btn-hdr" onclick="window.print()">⬡ Print</button>
     <div class="hdr-vr"></div>
     <select class="ds-sel" id="dealerSel" onchange="pickDealer(this.value)"></select>
-    <div class="hdr-vr"></div>
-    <button class="btn-hdr" onclick="doLogout()" title="Sign out">Sign Out</button>
   </div>
 </div>
 
 <div class="nav" id="navBar"></div>
 <div class="pg" id="mainContent"></div>
 
-<footer>&copy; 2026 Gulf States Toyota &nbsp;&middot;&nbsp; TCUV CRM Dashboard v9 &nbsp;&middot;&nbsp; Engineered by <strong style="color:var(--red)">Hussein Hylton</strong> &nbsp;&middot;&nbsp; All rights reserved</footer>
+<footer>&copy; 2026 Gulf States Toyota &nbsp;&middot;&nbsp; TCUV CRM Dashboard v8 &nbsp;&middot;&nbsp; Engineered by <strong style="color:var(--red)">Hussein Hylton</strong> &nbsp;&middot;&nbsp; All rights reserved</footer>
 
 <script>
 // ═══ EXTERNAL LIBS ═══════════════════════════════════════════
@@ -302,7 +283,7 @@ function dleft(){const n=new Date();return Math.max(1,new Date(n.getFullYear(),n
 let D=[{
   id:1,nm:'Community Toyota',dt:'2026-03-31',
   fn:{nm:'Community Toyota',pr:'Jan 2026 to Mar 2026',cl:'Class 9',
-    tu:16.5,tg:55285.5,nu:52,ng:139605,nFI:0,ou:0,og:0,oFI:0,tot:68.5,
+    tu:16.5,tg:55285.5,nu:52,ng:139605,ou:0,og:0,tot:68.5,
     cR:25734,dGP:317950,tFI:38248,rtCU:5.5,rtCGP:13402,
     gTG:1589,gCR:1104,gTU:24,gTF:2082,
     dTG:1589,dTF:2082,dCR:1104,gDeptGP:3343,pyTCUV:0,newUnits:94,usedNewRatio:0.7249,gstUsedNewRatio:0.898},
@@ -347,72 +328,6 @@ let D=[{
   ]
 }];
 let ci=1,tb='crm',charts={};
-
-// ═══ SUPABASE AUTH & STORAGE ══════════════════════════════════
-const SUPABASE_URL = 'https://djnjuqvamrippvskyzdi.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_yw3vXYWpK3giRGQgBtJfxQ_98aKdL-L';
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-let isSignupMode = false;
-
-function toggleSignup(){
-  isSignupMode = !isSignupMode;
-  document.getElementById('loginBtn').textContent = isSignupMode ? 'Create Account' : 'Sign In';
-  document.getElementById('loginMode').textContent = isSignupMode ? 'Create a new account' : 'Sign in to your account';
-  document.getElementById('loginErr').textContent = '';
-}
-
-async function doLogin(){
-  const email = document.getElementById('loginEmail').value.trim();
-  const pass = document.getElementById('loginPass').value;
-  const err = document.getElementById('loginErr');
-  err.textContent = '';
-  if(!email || !pass){ err.textContent = 'Email and password required'; return; }
-  const fn = isSignupMode ? sb.auth.signUp : sb.auth.signInWithPassword;
-  const { data, error } = await fn.call(sb.auth, { email, password: pass });
-  if(error){ err.textContent = error.message; return; }
-  document.getElementById('loginOverlay').style.display = 'none';
-  await loadFromSupabase();
-  if(typeof render === 'function') render();
-}
-
-async function doLogout(){
-  await sb.auth.signOut();
-  location.reload();
-}
-
-async function loadFromSupabase(){
-  try {
-    const { data, error } = await sb.from('dealers').select('*').order('id');
-    if(error){ console.error('Supabase load error:', error); return; }
-    if(data && data.length > 0){
-      D = data.map(r => ({ id: r.id, nm: r.name, ...r.data }));
-      ci = D[0].id;
-    }
-    if(typeof buildSel === 'function') buildSel();
-    if(typeof buildNav === 'function') buildNav();
-  } catch(e) { console.error(e); }
-}
-
-async function saveToSupabase(){
-  try {
-    for(const dealer of D){
-      const { id, nm, ...rest } = dealer;
-      await sb.from('dealers').upsert({ id, name: nm, data: rest, updated_at: new Date().toISOString() });
-    }
-  } catch(e) { console.error('Supabase save error:', e); }
-}
-
-// Auto-login check on page load
-(async () => {
-  try {
-    const { data: { session } } = await sb.auth.getSession();
-    if(session){
-      document.getElementById('loginOverlay').style.display = 'none';
-      await loadFromSupabase();
-      if(typeof render === 'function') render();
-    }
-  } catch(e) { console.error('Session check error:', e); }
-})();
 const TABS=[
   {id:'crm',l:'CRM Dashboard'},{id:'overview',l:'Overview'},{id:'fin',l:'Financial'},
   {id:'recon',l:'Recon'},{id:'sold',l:'Sold vs Obj'},{id:'inv',l:'Inventory'},
@@ -420,15 +335,15 @@ const TABS=[
 ];
 
 // ═══ PERSISTENCE ══════════════════════════════════════════════
-async function saveAll(){try{await saveToSupabase();}catch(e){console.error(e);}}
-async function loadAll(){/* replaced by loadFromSupabase, kept as no-op */}
+async function saveAll(){try{if(!window.storage)return;await window.storage.set('tcuv-v8-d',JSON.stringify(D));await window.storage.set('tcuv-v8-s',JSON.stringify({ci,tb}));}catch(e){}}
+async function loadAll(){try{if(!window.storage)return;const dd=await window.storage.get('tcuv-v8-d');if(dd?.value){const p=JSON.parse(dd.value);if(Array.isArray(p)&&p.length>0)D=p;}const ss=await window.storage.get('tcuv-v8-s');if(ss?.value){const p=JSON.parse(ss.value);if(p.ci)ci=p.ci;if(p.tb)tb=p.tb;}}catch(e){}}
 
 // ═══ INIT & ROUTING ═══════════════════════════════════════════
 async function init(){await loadAll();buildNav();buildSel();render();}
 function buildNav(){document.getElementById('navBar').innerHTML=TABS.map(t=>`<button class="${tb===t.id?'active':''}" onclick="setTab('${t.id}')">${t.l}</button>`).join('');}
 function buildSel(){document.getElementById('dealerSel').innerHTML=D.map(d=>`<option value="${d.id}"${d.id===ci?' selected':''}>${d.nm}</option>`).join('');}
 function setTab(id){tb=id;buildNav();render();saveAll();}
-function pickDealer(id){ci=parseInt(id);buildNav();render();saveAll();}
+function pickDealer(id){ci=parseInt(id);if(tb==='up')tb='crm';buildNav();render();saveAll();}
 function gc(){return D.find(d=>d.id===ci)||D[0];}
 function dc(){Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};}
 function mkChart(id,cfg){if(!CL)return;const el=document.getElementById(id);if(!el)return;if(charts[id])try{charts[id].destroy();}catch(e){}charts[id]=new Chart(el,cfg);}
@@ -509,24 +424,7 @@ function svgPctGauge(val,target,lbl,range){
   // large-arc-flag is always 0  -  the gauge is a semicircle (max 180°), never needs the long arc
   const arc=p>0&&p<1?`<path d="M${p0.x} ${p0.y} A${r} ${r} 0 0 1 ${p1.x} ${p1.y}" fill="none" stroke="${col}" stroke-width="12" stroke-linecap="round"/>`
     :p>=1?`<path d="M${p0.x} ${p0.y} A${r} ${r} 0 0 1 ${cx+r-0.01} ${cy}" fill="none" stroke="${col}" stroke-width="12" stroke-linecap="round"/>`:''
-  return`<svg viewBox="0 0 160 85" style="width:100%;max-width:220px"><path d="M${cx-r} ${cy} A${r} ${r} 0 0 1 ${cx+r} ${cy}" fill="none" stroke="${DK}" stroke-width="12" stroke-linecap="round"/>${arc}<circle cx="${pT.x}" cy="${pT.y}" r="5" fill="${BL}"/><text x="${cx}" y="${cy-5}" text-anchor="middle" fill="${col}" font-size="21" font-weight="900" font-family="Orbitron">${val}%</text><text x="${cx}" y="${cy+14}" text-anchor="middle" fill="${DM}" font-size="9" font-family="Inter">${lbl}</text></svg>`;}
-
-function svgRatioGauge(val,target){
-  // Ratio gauge: scale is 0 to 2.0, target at 1.0 (midpoint)
-  const maxV=2.0,r=52,cx=80,cy=70;
-  const p=Math.min(val/maxV,1);
-  const tP=Math.min(target/maxV,1);
-  const ang=Math.PI+p*Math.PI,x2=cx+r*Math.cos(ang),y2=cy+r*Math.sin(ang),lg=p>0.5?1:0;
-  const col=val>=target?GN:val>=target*0.8?GD:RE;
-  const arc=p>0?`<path d="M${cx-r} ${cy} A${r} ${r} 0 ${lg} 1 ${x2} ${y2}" fill="none" stroke="${col}" stroke-width="11" stroke-linecap="round"/>`:'';
-  const tAng=Math.PI+tP*Math.PI,tx=cx+r*Math.cos(tAng),ty=cy+r*Math.sin(tAng);
-  return`<svg viewBox="0 0 160 90" style="width:100%;max-width:180px">
-    <path d="M${cx-r} ${cy} A${r} ${r} 0 0 1 ${cx+r} ${cy}" fill="none" stroke="${DK}" stroke-width="11" stroke-linecap="round"/>
-    ${arc}
-    <circle cx="${tx}" cy="${ty}" r="5" fill="${BL}" opacity="0.8"/>
-    <text x="${cx}" y="${cy-4}" text-anchor="middle" fill="${col}" font-size="18" font-weight="800" font-family="Orbitron">${val.toFixed(2)}</text>
-    <text x="${cx}" y="${cy+13}" text-anchor="middle" fill="${DM}" font-size="9" font-family="Inter">Used / New Ratio</text>
-  </svg>`;}
+  return`<svg viewBox="0 0 160 92" style="width:100%;max-width:220px"><path d="M${cx-r} ${cy} A${r} ${r} 0 0 1 ${cx+r} ${cy}" fill="none" stroke="${DK}" stroke-width="12" stroke-linecap="round"/>${arc}<circle cx="${pT.x}" cy="${pT.y}" r="5" fill="${BL}"/><text x="${cx}" y="${cy-5}" text-anchor="middle" fill="${col}" font-size="21" font-weight="900" font-family="Orbitron">${val}%</text><text x="${cx}" y="${cy+14}" text-anchor="middle" fill="${DM}" font-size="9" font-family="Inter">${lbl}</text><text x="${cx}" y="${cy+26}" text-anchor="middle" fill="${BL}" font-size="9" font-family="Inter">Target: ${range}</text></svg>`;}
 
 // ═══════════════════════════════════════════════════════════════
 // CRM DASHBOARD
@@ -709,24 +607,15 @@ function rOv(mc,c){
   const periodTotal=Math.round(f.tu*numMo);  // TOTAL units this period
 
   // ── Prior Year: stored as same-period total (user enters total for the matching period)
-  const pyTotal=f.pyTCUV||0;                   // PY total for full year
-  const pyMonthly=pyTotal>0?pyTotal/12:0;       // PY monthly avg (full year)
-  // Current monthly avg = CY period total (user-entered) divided by number of months in the period
-  const cyMonthly=f.cyPeriod>0?f.cyPeriod/numMo:f.tu;
+  const pyTotal=f.pyTCUV||0;                   // PY total for same number of months
+  const pyMonthly=pyTotal>0?pyTotal/numMo:0;   // PY monthly avg
+  const cyMonthly=f.tu;                         // Current monthly avg (from report)
 
-  // ── Growth goal: full year, manual growth % (default 20%), stored per dealer
-  const growthPct=f.growthPct||20;  // manual input, default 20%
-  const goal=pyTotal>0?Math.round(pyTotal*(1+growthPct/100)):0;
-  const goalMonthly=goal>0?Math.round(goal/12):0;  // always annualized
-  // Use actual PY monthly data from yoyPrior if entered, otherwise distribute evenly
-  const yp=c.yoyPrior||Array(12).fill(0);
-  const hasYPData=yp.some(v=>v>0);
-  // Growth goal per month = PY actual month + growth% of that month
-  const moGoals=hasYPData
-    ?yp.map(v=>Math.round(v*(1+growthPct/100)))
-    :Array(12).fill(goalMonthly);
-  // PY monthly bars: actual PY data or flat average
-  const pyMoBars=hasYPData?yp.slice():Array(12).fill(Math.round(pyMonthly));
+  // ── Growth goal: based on TOTAL period, 10% above PY total
+  const goal=pyTotal>0?Math.round(pyTotal*1.10):0;
+  const goalMonthly=goal>0?Math.round(goal/numMo):0;
+  const szn=[0.85,0.88,0.97,1.05,1.10,1.12,1.10,1.08,1.02,0.98,0.92,0.87];
+  const sS=szn.reduce((a,b)=>a+b,0),moGoals=szn.map(w=>goal>0?Math.round(goal*w/sS):0);
 
   const rcD=c.rc?.ds?.find(d=>nm(d.n,c.nm));
   const ovN=rcD&&rcD.o>0?Math.max(0,rcD.o-rcD.t):0;
@@ -742,7 +631,7 @@ function rOv(mc,c){
     ${kpi('TCUV Avg Recon/Unit',f$(aR),'GST: '+f$(gR),aR<=gR?GN:RE)}
     ${ovN>0?kpi('Units to Target',fN(ovN),pace2+' units/day · '+dl+'d left',RE):kpi('Units to Target','On Track',rcD?'Obj met':'No recap',GN)}
   </div>
-  <div class="g3" style="margin-bottom:14px">
+  <div class="g4" style="margin-bottom:14px">
     <div class="card">
       <div class="card-title">MTD Volume vs Objective</div>
       <div class="g2" style="gap:8px;margin-bottom:10px">
@@ -754,41 +643,53 @@ function rOv(mc,c){
       <div class="cw" style="height:130px"><canvas id="ovMTD"></canvas></div>
     </div>
     <div class="card"><div class="card-title">Inventory Mix (Units &amp; %)</div><div class="cw" style="height:190px"><canvas id="ovMix"></canvas></div></div>
+    <div class="card">
+      <div class="card-title">Prior Year TCUV &nbsp;<span style="color:var(--red);font-size:10px">(Manual Entry)</span></div>
+      <label class="fl" style="margin-bottom:4px">Enter PY Total  -  Same ${numMo}-Month Period</label>
+      <input id="pyInput" type="number" class="fi" value="${pyTotal||''}" placeholder="e.g. ${Math.round(periodTotal*0.9)}" oninput="sPY()" style="font-size:18px;font-weight:700;color:${BL};margin-bottom:10px">
+      <div style="font-size:11px;color:var(--dim-m);margin-bottom:10px">Enter the total TCUV units sold during the same ${numMo}-month window last year for an accurate comparison.</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">This Period (${numMo}mo)</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:${RE}">${periodTotal}</div>
+          <div style="font-size:11px;color:var(--dim-m)">${cyMonthly.toFixed(1)} avg/mo</div>
+        </div>
+        ${pyTotal>0?`<div>
+          <div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">PY Same Period</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:${BL}">${pyTotal}</div>
+          <div style="font-size:11px;color:var(--dim-m)">${pyMonthly.toFixed(1)} avg/mo</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">YoY Change</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:${periodTotal>=pyTotal?GN:RE}">${periodTotal>=pyTotal?'+':''}${periodTotal-pyTotal}</div>
+          <div style="font-size:11px;color:${periodTotal>=pyTotal?GN:RE};font-weight:600">${periodTotal>=pyTotal?'+':''}${fP(periodTotal-pyTotal,pyTotal)}%</div>
+        </div>`:''}
+      </div>
+      ${!pyTotal?`<div class="tip tip-blue" style="margin-top:10px;font-size:12px">Enter prior year units to unlock YoY comparison &amp; growth goal</div>`:''}
+    </div>
     <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
       <div class="card-title">Used : New Ratio</div>
       <div style="margin-bottom:10px;width:100%">
-        <label class="fl" style="text-align:center;margin-bottom:6px">Enter Used / New Ratio <span style="color:var(--red)">(Manual)</span></label>
+        <label class="fl" style="text-align:center;margin-bottom:6px">Enter Used ÷ New Ratio <span style="color:var(--red)">(Manual)</span></label>
         <input id="unRatioInput" type="number" step="0.01" min="0" max="5" class="fi"
           value="${nuR||''}" placeholder="e.g. 0.72" oninput="sUNRatio()"
-          style="font-size:22px;font-weight:800;text-align:center;color:${nuR>=1.0?GN:RE}">
+          style="font-size:22px;font-weight:800;text-align:center;color:${nuR>=1.0?GN:nuR>=0.8?GD:RE}">
         <div style="font-size:11px;color:var(--dim-m);margin-top:5px">
-          Used units sold / New units sold &nbsp;·&nbsp; Goal: <strong>1.00</strong>
+          Used units sold ÷ New units sold &nbsp;·&nbsp; Goal: <strong>1.00</strong>
         </div>
       </div>
       ${nuR>0?`
-      <div style="width:100%;margin-bottom:12px">
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">
-          <span>0.00</span><span>Target: 1.00</span><span>2.00</span>
-        </div>
-        <div style="position:relative;width:100%;height:32px;background:${DK};border-radius:6px;overflow:hidden">
-          <div style="position:absolute;left:50%;top:0;bottom:0;width:2px;background:${BL};z-index:2"></div>
-          <div style="width:${Math.min(nuR/2*100,100)}%;height:100%;background:${nuR>=1.0?GN:RE};border-radius:6px 0 0 6px;transition:width .4s"></div>
-        </div>
-        <div style="position:relative;width:100%;margin-top:4px">
-          <div style="position:absolute;left:${Math.min(nuR/2*100,100)}%;transform:translateX(-50%);font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:${nuR>=1.0?GN:RE}">${nuR.toFixed(2)}</div>
-        </div>
-      </div>
-      <div style="display:flex;gap:16px;margin-top:20px;justify-content:center;flex-wrap:wrap">
+      ${svgGauge(nuR,2.0,'Used ÷ New',1.0)}
+      <div style="display:flex;gap:16px;margin-top:4px;justify-content:center;flex-wrap:wrap">
         <div><div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px">Dealer</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:${nuR>=1.0?GN:RE}">${nuR.toFixed(2)}</div></div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:${nuR>=1.0?GN:nuR>=0.8?GD:RE}">${nuR.toFixed(2)}</div></div>
         <div><div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px">Target</div>
           <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:${DM}">1.00</div></div>
         <div><div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px">Gap</div>
           <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:${nuR>=1.0?GN:RE}">${nuR>=1.0?'+':''}${(nuR-1.0).toFixed(2)}</div></div>
       </div>
-      ${gstNuR>0?`<div style="margin-top:6px;font-size:11px;color:var(--dim-m)">GST Avg: <strong>${gstNuR.toFixed(2)}</strong></div>`:''}
       <div style="margin-top:8px;font-size:12px;color:${nuR>=1.0?GN:RE};font-weight:600">
-        ${nuR>=1.0?'At or above 1:1 target':'Below target by '+((1.0-nuR)*100).toFixed(0)+'%  -  sell more used'}
+        ${nuR>=1.0?'✓ At or above 1:1 target':'⚠ '+((1.0-nuR)*100).toFixed(0)+'% below target  -  sell more used'}
       </div>`
       :`<div class="tip tip-blue" style="margin-top:8px;font-size:12px;width:100%">Enter ratio above  -  find it on your Departmental Report Line 56 "USED/NEW RATIO"</div>`}
     </div>
@@ -799,62 +700,16 @@ function rOv(mc,c){
     <div class="card"><div class="card-title">Recon/Unit  -  Dealer vs GST Benchmark</div><div class="cw" style="height:230px"><canvas id="ovRecon"></canvas></div></div>
   </div>
 
-  ${pyTotal>0?`<div class="card" style="margin-bottom:14px;border-left:4px solid ${GN}">
-    <div class="card-title">TCUV Growth Goal  -  +${growthPct}% Over Prior Year</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px;margin-bottom:14px">
-      <div style="padding:18px;background:${BL}08;border:1.5px solid ${BL}22;border-radius:10px;text-align:center">
-        <div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">PY Total Sold</div>
-        <div style="font-family:'Orbitron',sans-serif;font-size:32px;font-weight:900;color:${BL}">${fN(pyTotal)}</div>
-        <div style="font-size:11px;color:var(--dim-m);margin-top:4px">Full year</div>
-      </div>
-      <div style="padding:18px;background:${GN}08;border:1.5px solid ${GN}22;border-radius:10px;text-align:center">
-        <div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Growth Goal (+${growthPct}%)</div>
-        <div style="font-family:'Orbitron',sans-serif;font-size:32px;font-weight:900;color:${GN}">${fN(goal)}</div>
-        <div style="font-size:11px;color:var(--dim-m);margin-top:4px">Annual target</div>
-      </div>
-      <div style="padding:18px;background:${RE}08;border:1.5px solid ${RE}22;border-radius:10px;text-align:center">
-        <div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Monthly Target</div>
-        <div style="font-family:'Orbitron',sans-serif;font-size:32px;font-weight:900;color:${RE}">${fN(goalMonthly)}</div>
-        <div style="font-size:11px;color:var(--dim-m);margin-top:4px">Units per month</div>
-      </div>
-      <div style="padding:18px;background:${GD}08;border:1.5px solid ${GD}22;border-radius:10px;text-align:center">
-        <div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Current Monthly Avg</div>
-        <div style="font-family:'Orbitron',sans-serif;font-size:32px;font-weight:900;color:${cyMonthly>=goalMonthly?GN:RE}">${fN(Math.round(cyMonthly))}</div>
-        <div style="font-size:11px;color:var(--dim-m);margin-top:4px">${cyMonthly>=goalMonthly?'On pace':'Need '+(goalMonthly-Math.round(cyMonthly))+' more/mo'}</div>
-      </div>
+  ${pyTotal>0?`<div class="card" style="margin-bottom:14px">
+    <div class="card-title">TCUV Growth Goal  -  +10% vs Prior Year Same Period</div>
+    <div class="kpi-row" style="margin-bottom:14px">
+      ${kpi('PY Period Total',fN(pyTotal),numMo+'-month window',BL)}
+      ${kpi('PY Monthly Avg',fN(pyMonthly),'avg/mo',BL)}
+      ${kpi('This Period Total',fN(periodTotal),numMo+'-month period',periodTotal>=pyTotal?GN:RE)}
+      ${kpi('Growth Goal (+10%)',fN(goal),fN(goalMonthly)+' avg/mo target',GN)}
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-      <div style="padding:16px;background:${BL}08;border:1.5px solid ${BL}22;border-radius:10px;display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">PY This Period</div>
-          <input id="pyPeriodInput" type="number" class="fi" value="${f.pyPeriod||''}" placeholder="0" oninput="sPYPeriod()" style="font-size:22px;font-weight:800;color:${BL};text-align:center;max-width:120px">
-        </div>
-        <div style="font-size:28px;color:var(--dim-lt)">vs</div>
-        <div style="text-align:right">
-          <div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">CY This Period</div>
-          <input id="cyPeriodInput" type="number" class="fi" value="${f.cyPeriod||''}" placeholder="0" oninput="sCYPeriod()" style="font-size:22px;font-weight:800;color:${(f.cyPeriod||0)>=(f.pyPeriod||0)?GN:RE};text-align:center;max-width:120px">
-        </div>
-      </div>
-      ${(f.pyPeriod>0&&f.cyPeriod>0)?`<div style="padding:16px;background:${(f.cyPeriod>=f.pyPeriod)?'var(--green-lt)':'var(--red-lt)'};border:1.5px solid ${(f.cyPeriod>=f.pyPeriod)?'rgba(10,124,58,.25)':'rgba(200,16,46,.25)'};border-radius:10px;display:flex;flex-direction:column;justify-content:center;align-items:center">
-        <div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">YoY Change</div>
-        <div style="font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:${(f.cyPeriod>=f.pyPeriod)?GN:RE}">${(f.cyPeriod>=f.pyPeriod)?'+':''}${f.cyPeriod-f.pyPeriod}</div>
-        <div style="font-size:12px;color:${(f.cyPeriod>=f.pyPeriod)?GN:RE};font-weight:600;margin-top:2px">${f.pyPeriod>0?((f.cyPeriod>=f.pyPeriod)?'+':'')+Math.round((f.cyPeriod-f.pyPeriod)/f.pyPeriod*100)+'%':'N/A'}</div>
-      </div>`:`<div style="padding:16px;background:var(--surface);border:1px solid var(--bdr);border-radius:10px;display:flex;align-items:center;justify-content:center">
-        <div style="font-size:12px;color:var(--dim-m);text-align:center">Enter PY and CY period totals to see YoY comparison</div>
-      </div>`}
-    </div>
-    <div style="display:flex;gap:12px;align-items:end">
-      <div style="flex:1"><label class="fl">PY Full Year TCUV Units</label><input id="pyInput" type="number" class="fi" value="${pyTotal||''}" placeholder="e.g. 247" oninput="sPY()"></div>
-      <div style="flex:1"><label class="fl">Growth Goal %</label><input id="growthPctInput" type="number" step="1" min="0" max="200" class="fi" value="${growthPct}" placeholder="20" oninput="sGrowthPct()"></div>
-    </div>
-  </div>`:`<div class="card" style="margin-bottom:14px;border-left:4px solid ${BL}">
-    <div class="card-title">TCUV Growth Goal</div>
-    <div style="font-size:13px;color:var(--dim);margin-bottom:12px">Enter the prior year full year TCUV total to calculate your growth target.</div>
-    <div style="display:flex;gap:12px;align-items:end">
-      <div style="flex:1"><label class="fl">PY Full Year TCUV Units</label><input id="pyInput" type="number" class="fi" value="" placeholder="e.g. 247" oninput="sPY()"></div>
-      <div style="flex:1"><label class="fl">Growth Goal %</label><input id="growthPctInput" type="number" step="1" min="0" max="200" class="fi" value="${growthPct}" placeholder="20" oninput="sGrowthPct()"></div>
-    </div>
-  </div>`}
+    <div class="cw" style="height:220px"><canvas id="ovGoal"></canvas></div>
+  </div>`:''}
 
   <div class="card">
     <div class="card-title">Monthly Objective vs Sold  -  Enter Values Below</div>
@@ -869,17 +724,14 @@ function rOv(mc,c){
     if(inv.length)mkChart('ovMix',{type:'doughnut',data:{labels:inv.map(d=>d.l+' ('+Math.round(d.v/(invTotal||1)*100)+'%)'),datasets:[{data:inv.map(d=>d.v),backgroundColor:inv.map(d=>d.c),borderWidth:3,borderColor:'#fff',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:12},padding:10,usePointStyle:true}},tooltip:{callbacks:{label:ctx=>{const v=ctx.raw;const pct=Math.round(v/(invTotal||1)*100);return ctx.label.split(' (')[0]+': '+v+' units ('+pct+'%)';}}}}}});
     mkChart('ovGross',{type:'bar',data:{labels:['Front GP','Back GP','Total GP'],datasets:[{label:'Dealer',data:[aF,aB,aT],backgroundColor:[aF>=gF?GN+'cc':RE+'cc',aB>=gB?GN+'cc':RE+'cc',aT>=gT?GN+'cc':RE+'cc'],borderRadius:5,borderSkipped:false},{label:'GST Avg',data:[gF,gB,gT],backgroundColor:[DK+'cc',DK+'cc',DK+'cc'],borderRadius:5,borderSkipped:false}]},options:chOpts(v=>'$'+(v/1000).toFixed(0)+'k')});
     mkChart('ovRecon',{type:'bar',data:{labels:['Recon/Unit'],datasets:[{label:'Dealer',data:[aR],backgroundColor:[aR<=gR?GN+'cc':RE+'cc'],borderRadius:5,borderSkipped:false},{label:'GST Avg',data:[gR],backgroundColor:[DK],borderRadius:5,borderSkipped:false}]},options:chOpts(v=>'$'+v.toLocaleString())});
+    if(pyTotal>0)mkChart('ovGoal',{type:'bar',data:{labels:MO,datasets:[{label:'PY Monthly Avg',data:Array(12).fill(Math.round(pyMonthly)),backgroundColor:BL+'55',borderRadius:4},{label:'Growth Goal Monthly',data:moGoals,backgroundColor:GN+'88',borderRadius:4},{label:'Current Period Avg',data:Array(12).fill(Math.round(cyMonthly)),backgroundColor:RE+'cc',borderRadius:4}]},options:chOpts()});
     if(ms.some(v=>v>0)||mo.some(v=>v>0))mkChart('moChart',{type:'bar',data:{labels:MO,datasets:[{label:'Sold',data:ms.slice(),backgroundColor:RE+'cc',borderRadius:4},{label:'Objective',data:mo.slice(),backgroundColor:DK,borderRadius:4}]},options:chOpts()});
   },160);
 }
 function sMTD(){const c=gc();if(!c)return;c.mtd={sold:+document.getElementById('mtdS')?.value||0,obj:+document.getElementById('mtdO')?.value||0,silver:+document.getElementById('mtdSv')?.value||0,gold:+document.getElementById('mtdGd')?.value||0};saveAll();if(CL&&charts['ovMTD']){charts['ovMTD'].data.datasets[0].data=[c.mtd.sold,c.mtd.obj,c.mtd.silver,c.mtd.gold];charts['ovMTD'].update();}}
 function sPY(){const c=gc();if(!c)return;c.fn.pyTCUV=+document.getElementById('pyInput')?.value||0;saveAll();clearTimeout(window._pt);window._pt=setTimeout(()=>render(),700);}
-function sGrowthPct(){const c=gc();if(!c)return;c.fn.growthPct=+document.getElementById('growthPctInput')?.value||20;saveAll();clearTimeout(window._gpt);window._gpt=setTimeout(()=>render(),700);}
-function sPYPeriod(){const c=gc();if(!c)return;c.fn.pyPeriod=+document.getElementById('pyPeriodInput')?.value||0;saveAll();clearTimeout(window._pyp);window._pyp=setTimeout(()=>render(),700);}
-function sCYPeriod(){const c=gc();if(!c)return;c.fn.cyPeriod=+document.getElementById('cyPeriodInput')?.value||0;saveAll();clearTimeout(window._cyp);window._cyp=setTimeout(()=>render(),700);}
 function sMoData(){const c=gc();if(!c)return;c.moSold=MO.map((_,i)=>+document.getElementById('moS'+i)?.value||0);c.moObj=MO.map((_,i)=>+document.getElementById('moO'+i)?.value||0);saveAll();}
 function sUNRatio(){const c=gc();if(!c)return;const v=parseFloat(document.getElementById('unRatioInput')?.value)||0;c.fn.usedNewRatio=v;saveAll();clearTimeout(window._unT);window._unT=setTimeout(()=>render(),600);}
-function toggleNonTcuvGross(){const c=gc();if(!c)return;c._showNonTcuvGross=c._showNonTcuvGross===false?true:false;render();saveAll();}
 
 // ═══════════════════════════════════════════════════════════════
 // FINANCIAL
@@ -900,67 +752,19 @@ function rFin(mc,c){
   const gB=Math.round(f.dTF||f.gTF||0);
   const gR=Math.round(f.dCR||f.gCR||0);
   const gDept=Math.round(f.gDeptGP||0);      // GST dept GP/total used (L55 GST col)
-  // Non-TCUV metrics
-  const ncU=Math.round(f.nu||0),ncFront=Math.round(f.ng||0),ncBack=Math.round(f.nFI||0);
-  const ncFrontPU=ncU>0?Math.round(ncFront/ncU):0,ncBackPU=ncU>0?Math.round(ncBack/ncU):0;
-  const ncTotalGP=ncFront+ncBack,ncTotalPU=ncU>0?Math.round(ncTotalGP/ncU):0;
-  const otU=Math.round(f.ou||0),otFront=Math.round(f.og||0);
-  const otFrontPU=otU>0?Math.round(otFront/otU):0;
-  const otTotalGP=otFront,otTotalPU=otU>0?Math.round(otTotalGP/otU):0;
-  const nonTcuvUnits=ncU+otU;
-  const nonTcuvGP=ncTotalGP+otTotalGP;
-  const nonTcuvGPpu=nonTcuvUnits>0?Math.round(nonTcuvGP/nonTcuvUnits):0;
-  const showNonTcuv=c._showNonTcuvGross!==false;
   mc.innerHTML=`
-  <div class="pg-hdr"><div class="pg-ttl">Financial Performance</div><div class="pg-sub"><span style="font-weight:600;color:var(--txt)">${f.nm||c.nm}</span> &nbsp;·&nbsp; <span style="font-weight:600;color:var(--txt)">${f.pr||'No period'}</span></div><div class="pg-rule"></div></div>
+  <div class="pg-hdr"><div class="pg-ttl">Financial Performance</div><div class="pg-sub"><span style="font-weight:600;color:var(--txt)">${f.nm||c.nm}</span> &nbsp;·&nbsp; <span style="font-weight:600;color:var(--txt)">📅 ${f.pr||'No period'}</span></div><div class="pg-rule"></div></div>
   <div class="tip tip-blue" style="margin-bottom:14px">
     <strong>Denominator guide:</strong> TCUV metrics use <strong>${fN(f.tu)} TCUV units</strong> as denominator. 
-    Dept GP/Unit uses <strong>${fN(totU)} total used units</strong>  -  ${f$(f.dGP)} / ${fN(totU)} = <strong>${f$(deptGPpu)}/unit</strong>.
+    Dept GP/Unit uses <strong>${fN(totU)} total used units</strong>  -  ${f$(f.dGP)} ÷ ${fN(totU)} = <strong>${f$(deptGPpu)}/unit</strong>.
   </div>
   <div class="kpi-row">
     ${kpi('TCUV Avg Front/Unit',f$(aF),'GST: '+f$(gF),aF>=gF?GN:RE)}
     ${kpi('TCUV Avg Back/Unit',f$(aB),'GST: '+f$(gB),aB>=gB?GN:GD)}
     ${kpi('TCUV Avg Recon/Unit',f$(aR),'GST: '+f$(gR),aR<=gR?GN:RE)}
     ${kpi('TCUV Total GP/Unit',f$(aTcuv),'Front+F&I, GST: '+f$(gF+gB),aTcuv>=gF+gB?GN:GD)}
-    ${kpi('Dept GP / All Used',f$(deptGPpu),f$(f.dGP)+' / '+fN(totU)+' units',BL)}
+    ${kpi('Dept GP / All Used',f$(deptGPpu),f$(f.dGP)+' ÷ '+fN(totU)+' units',BL)}
   </div>
-  ${showNonTcuv&&nonTcuvUnits>0?`
-  <div class="card" style="margin-bottom:14px;border-left:4px solid ${OR};position:relative" id="nonTcuvCard">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <div class="card-title" style="margin:0">Non-TCUV Used Car Gross Breakdown</div>
-      <button class="btn btn-sm btn-ghost" onclick="toggleNonTcuvGross()" title="Hide this section">Hide</button>
-    </div>
-    <div class="g2" style="gap:14px;margin-bottom:14px">
-      <div style="padding:16px;background:${GD}08;border:1.5px solid ${GD}22;border-radius:10px">
-        <div style="font-size:12px;font-weight:700;color:${GD};text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Non-CPO Toyota Used (${fN(ncU)} units)</div>
-        <div class="kpi-row" style="margin-bottom:0">
-          ${kpi('Units',fN(ncU),Math.round(ncU/(totU||1)*100)+'% of total used',GD)}
-          ${kpi('Front GP/Unit',ncU>0?f$(ncFrontPU):'N/A',ncU>0?f$(ncFront)+' total':'No data',ncFrontPU>0?BL:DM)}
-          ${kpi('Back GP/Unit',ncU>0?f$(ncBackPU):'N/A',ncU>0?f$(ncBack)+' total':'No data',ncBackPU>0?BL:DM)}
-          ${kpi('Total GP/Unit',ncU>0?f$(ncTotalPU):'N/A',ncU>0?f$(ncTotalGP)+' total':'No data',ncTotalPU>0?GN:DM)}
-        </div>
-      </div>
-      <div style="padding:16px;background:${OR}08;border:1.5px solid ${OR}22;border-radius:10px">
-        <div style="font-size:12px;font-weight:700;color:${OR};text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Non-Toyota Used (${fN(otU)} units)</div>
-        <div class="kpi-row" style="margin-bottom:0">
-          ${kpi('Units',fN(otU),Math.round(otU/(totU||1)*100)+'% of total used',OR)}
-          ${kpi('Front GP/Unit',otU>0?f$(otFrontPU):'N/A',otU>0?f$(otFront)+' total':'No data',otFrontPU>0?BL:DM)}
-          ${kpi('Total GP/Unit',otU>0?f$(otTotalPU):'N/A',otU>0?f$(otTotalGP)+' total':'No data',otTotalPU>0?GN:DM)}
-        </div>
-      </div>
-    </div>
-    <div style="padding:14px;background:var(--surface);border:1px solid var(--bdr);border-radius:8px">
-      <div style="font-size:12px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Combined Non-TCUV Summary</div>
-      <div style="display:flex;gap:24px;flex-wrap:wrap">
-        <div><span style="font-size:11px;color:var(--dim-m)">Total Units:</span> <strong>${fN(nonTcuvUnits)}</strong></div>
-        <div><span style="font-size:11px;color:var(--dim-m)">Combined Front GP:</span> <strong>${f$(ncFront+otFront)}</strong></div>
-        <div><span style="font-size:11px;color:var(--dim-m)">Combined Back GP:</span> <strong>${f$(ncBack)}</strong></div>
-        <div><span style="font-size:11px;color:var(--dim-m)">Combined Total GP:</span> <strong>${f$(nonTcuvGP)}</strong></div>
-        <div><span style="font-size:11px;color:var(--dim-m)">Avg GP/Unit:</span> <strong>${f$(nonTcuvGPpu)}</strong></div>
-      </div>
-    </div>
-  </div>`:''}
-  ${!showNonTcuv&&nonTcuvUnits>0?`<div style="margin-bottom:14px;text-align:right"><button class="btn btn-sm btn-ghost" onclick="toggleNonTcuvGross()">Show Non-TCUV Gross Breakdown</button></div>`:''}
   <div class="g2">
     <div class="card">
       <div class="card-title">TCUV Per-Unit  -  Dealer vs GST Benchmark</div>
@@ -984,19 +788,10 @@ function rFin(mc,c){
           <tr><td>Total Used Units (all categories)</td><td class="r" style="font-weight:700">${fN(totU)}</td><td class="r" style="color:var(--dim-m)"> - </td></tr>
           <tr><td>Dept Total GP</td><td class="r" style="font-weight:700">${f$(f.dGP)}</td><td class="r" style="color:var(--dim-m)"> - </td></tr>
           <tr><td>Dept GP / total used unit</td><td class="r" style="font-weight:700;color:${BL}">${f$(deptGPpu)}</td><td class="r" style="color:var(--dim-m)">${gDept>0?'GST: '+f$(gDept):' - '}</td></tr>
-          <tr><td colspan="3" style="background:${GD}08;font-size:11px;font-weight:700;color:${GD};padding:8px 10px;letter-spacing:.8px">NON-CPO TOYOTA USED  -  ${fN(ncU)} units</td></tr>
-          <tr><td>Non-CPO Toyota Units</td><td class="r" style="font-weight:700">${fN(ncU)}</td><td class="r" style="color:var(--dim-m)">${Math.round(ncU/(totU||1)*100)}% of total</td></tr>
-          <tr><td>Non-CPO Toyota Front GP (total)</td><td class="r" style="font-weight:700">${f$(ncFront)}</td><td class="r"> - </td></tr>
-          ${ncU>0?`<tr><td>Non-CPO Toyota Front GP / unit</td><td class="r" style="font-weight:700">${f$(ncFrontPU)}</td><td class="r"> - </td></tr>`:''}
-          <tr><td>Non-CPO Toyota Back/F&amp;I (total)</td><td class="r" style="font-weight:700">${f$(ncBack)}</td><td class="r"> - </td></tr>
-          ${ncU>0?`<tr><td>Non-CPO Toyota Back/F&amp;I / unit</td><td class="r" style="font-weight:700">${f$(ncBackPU)}</td><td class="r"> - </td></tr>`:''}
-          ${ncU>0?`<tr><td>Non-CPO Toyota Total GP / unit</td><td class="r" style="font-weight:700;color:${GD}">${f$(ncTotalPU)}</td><td class="r"> - </td></tr>`:''}
-          <tr><td colspan="3" style="background:${OR}08;font-size:11px;font-weight:700;color:${OR};padding:8px 10px;letter-spacing:.8px">NON-TOYOTA USED  -  ${fN(otU)} units</td></tr>
-          <tr><td>Non-Toyota Used Units</td><td class="r" style="font-weight:700">${fN(otU)}</td><td class="r" style="color:var(--dim-m)">${Math.round(otU/(totU||1)*100)}% of total</td></tr>
-          <tr><td>Non-Toyota Front GP (total)</td><td class="r" style="font-weight:700">${f$(otFront)}</td><td class="r"> - </td></tr>
-          ${otU>0?`<tr><td>Non-Toyota Front GP / unit</td><td class="r" style="font-weight:700">${f$(otFrontPU)}</td><td class="r"> - </td></tr>`:''}
-          ${otU>0?`<tr><td>Non-Toyota Total GP / unit</td><td class="r" style="font-weight:700;color:${OR}">${f$(otTotalPU)}</td><td class="r"> - </td></tr>`:''}
-          ${nonTcuvUnits>0?`<tr style="background:var(--bg)"><td style="font-weight:800">Combined Non-TCUV Total GP</td><td class="r" style="font-weight:800">${f$(nonTcuvGP)}</td><td class="r" style="font-weight:700">${f$(nonTcuvGPpu)}/unit</td></tr>`:''}
+          <tr><td colspan="3" style="background:var(--bg);font-size:11px;font-weight:700;color:var(--dim-m);padding:8px 10px;letter-spacing:.8px">NON-CERTIFIED USED</td></tr>
+          <tr><td>Non-Cert Units</td><td class="r" style="font-weight:700">${fN(f.nu||0)}</td><td class="r"> - </td></tr>
+          <tr><td>Non-Cert Front GP (total)</td><td class="r" style="font-weight:700">${f$(f.ng||0)}</td><td class="r"> - </td></tr>
+          ${f.nu>0?`<tr><td>Non-Cert Avg Front / unit</td><td class="r" style="font-weight:700">${f$(Math.round(f.ng/f.nu))}</td><td class="r"> - </td></tr>`:''}
         </tbody>
       </table>
     </div>
@@ -1064,7 +859,7 @@ function rSold(mc,c){
   const yc=c.yoyCur||Array(12).fill(0),yp=c.yoyPrior||Array(12).fill(0);
   const dAvg=rc.ds.length>0?Math.round(di.t/rc.ds.length):0;
   const distRank=rc.ds.length>0?(()=>{
-    const sorted=[...rc.ds].sort((a,b)=>b.t-a.t);
+    const sorted=[...rc.ds].sort((a,b)=>b.p-a.p);
     // Try full fuzzy match first
     let pos=sorted.findIndex(d=>nm(d.n,c.nm));
     // If not found, try matching first significant word of dealer name
@@ -1079,12 +874,12 @@ function rSold(mc,c){
     ${kpi('Variance',sel.t-sel.o,sel.t>=sel.o?'Above obj ✓':'Need: '+(sel.o-sel.t)+' more',sel.t>=sel.o?GN:RE)}
     ${kpi('District Avg',dAvg,'Total: '+di.t+' · Obj: '+di.o,BL)}
     ${kpi('District Total',di.t,di.p+'% attainment · '+rc.ds.length+' dealers',DM)}
-    ${distRank?kpi('District Rank','#'+distRank+' of '+rc.ds.length,'By units sold',distRank===1?GN:distRank<=3?GD:distRank<=Math.ceil(rc.ds.length/2)?BL:RE):kpi('District Rank',' - ','Upload recap to rank',DM)}
+    ${distRank?kpi('District Rank','#'+distRank+' of '+rc.ds.length,'By % attainment',distRank===1?GN:distRank<=3?GD:distRank<=Math.ceil(rc.ds.length/2)?BL:RE):kpi('District Rank',' - ','Upload recap to rank',DM)}
   </div>
 
   <div class="g2" style="margin-bottom:14px">
     <div class="card"><div class="card-title">Silver vs Gold Breakdown</div><div class="cw" style="height:230px"><canvas id="sdPie"></canvas></div></div>
-    <div class="card"><div class="card-title">District TCUV Performance  -  All Dealers (Ranked by Units Sold)</div><div class="cw" style="height:${Math.max(280,rc.ds.length*36)}px"><canvas id="sdDist"></canvas></div></div>
+    <div class="card"><div class="card-title">District Attainment Rankings</div><div class="cw" style="height:${Math.max(230,rc.ds.length*32)}px"><canvas id="sdDist"></canvas></div></div>
   </div>
 
   <div class="card" style="margin-bottom:14px">
@@ -1113,27 +908,7 @@ function rSold(mc,c){
   setTimeout(()=>{
     const co=chOpts();
     mkChart('sdPie',{type:'doughnut',data:{labels:['Silver','Gold'],datasets:[{data:[sel.s||0,sel.g||0],backgroundColor:['#9CA3AF',GD],borderWidth:3,borderColor:'#fff',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:12},padding:10,usePointStyle:true}}}}});
-    // District chart: sort by units sold, show dealer names, highlight current dealer
-    const distSorted=[...rc.ds].sort((a,b)=>b.t-a.t);
-    const distLabels=distSorted.map(d=>d.n.length>18?d.n.slice(0,18)+'...':d.n);
-    const distSold=distSorted.map(d=>d.t);
-    const distObj=distSorted.map(d=>d.o);
-    const distColors=distSorted.map(d=>nm(d.n,c.nm)?RE+'cc':'#C8D0DC');
-    mkChart('sdDist',{type:'bar',data:{
-      labels:distLabels,
-      datasets:[
-        {label:'Sold',data:distSold,backgroundColor:distColors,borderRadius:3},
-        {label:'Objective',data:distObj,backgroundColor:'#E8EDF5',borderRadius:3}
-      ]},options:{
-        responsive:true,
-        maintainAspectRatio:false,
-        indexAxis:'y',
-        plugins:{legend:{labels:{font:{size:11,family:"'Inter',sans-serif"},padding:10,usePointStyle:true}}},
-        scales:{
-          x:{ticks:{font:{size:11}},grid:{color:'rgba(0,0,0,.04)'},border:{display:false}},
-          y:{ticks:{font:{size:11},autoSkip:false},grid:{display:false},border:{display:false}}
-        }
-      }});
+    mkChart('sdDist',{type:'bar',data:{labels:rc.ds.map(d=>d.n.length>16?d.n.slice(0,16)+'…':d.n),datasets:[{label:'Sold',data:rc.ds.map(d=>d.t),backgroundColor:rc.ds.map(d=>nm(d.n,c.nm)?RE+'cc':'#C8D0DC'),borderRadius:3},{label:'Objective',data:rc.ds.map(d=>d.o),backgroundColor:'#E8EDF5',borderRadius:3}]},options:{...co,indexAxis:'y',plugins:{legend:{labels:{font:{size:11}}}}}});
     if(ms.some(v=>v>0)||mo.some(v=>v>0))mkChart('moChart',{type:'bar',data:{labels:MO,datasets:[{label:'Sold',data:ms.slice(),backgroundColor:RE+'cc',borderRadius:4},{label:'Objective',data:mo.slice(),backgroundColor:DK,borderRadius:4}]},options:co});
     if(yc.some(v=>v>0)||yp.some(v=>v>0))mkChart('yoyChart',{type:'bar',data:{labels:MO,datasets:[{label:'Current Year',data:yc.slice(),backgroundColor:RE+'cc',borderRadius:4},{label:'Prior Year',data:yp.slice(),backgroundColor:BL+'77',borderRadius:4}]},options:co});
   },160);
@@ -1152,13 +927,15 @@ function rInv(mc,c){
   const nc=inv?inv.u-inv.c:0;
   const ntU=inv?inv.t:0;
   const ntPct=inv&&inv.a>0?Math.round(inv.t/inv.a*100):0;
-  // Cert units needed to hit 50% Cert of Toyota goal
-  const certGoalPct=50;
-  const toyotaUnits=inv?inv.u:0;
-  const certUnits=inv?inv.c:0;
-  const certNeeded=toyotaUnits>0?Math.max(0,Math.ceil(toyotaUnits*(certGoalPct/100))-certUnits):0;
-  const currentCofT=toyotaUnits>0?Math.round(certUnits/toyotaUnits*100):0;
+  // Units needed to hit current month objective
+  const rcD=c.rc?.ds?.find(d=>nm(d.n,c.nm));
+  const mtdSold=c.mtd?.sold||0;
+  const mtdObj=c.mtd?.obj||(rcD?.o||0);
+  const unitsNeeded=Math.max(0,mtdObj-mtdSold);
   const dl2=dleft();
+  const paceNeeded=unitsNeeded>0?(unitsNeeded/dl2).toFixed(1):0;
+  const certInv=inv?inv.c:0;
+  const invToObjRatio=mtdObj>0&&certInv>0?(certInv/mtdObj).toFixed(1):'N/A';
   const tips=[
     {pct:'30-40%',desc:'of total used inventory should be Toyota Certified. Ensures certified stock to hit objectives without over-exposing reconditioning spend.',color:RE},
     {pct:'50-60%',desc:'of Toyota-brand used should carry certification. Non-certified Toyota units are missed margin. Certified commands $1,000 to $1,500 higher front GP.',color:GD},
@@ -1169,22 +946,23 @@ function rInv(mc,c){
   <div class="pg-hdr"><div class="pg-ttl">Inventory Analysis</div><div class="pg-sub">TCUV certification mix, inventory depth, and objective alignment</div><div class="pg-rule"></div></div>
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-    <div style="background:${certNeeded>0?'var(--red-lt)':'var(--green-lt)'};border:1.5px solid ${certNeeded>0?'rgba(200,16,46,.25)':'rgba(10,124,58,.25)'};border-radius:var(--rl);padding:22px 26px;box-shadow:var(--sh)">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:${certNeeded>0?RE:GN};margin-bottom:10px">Cert Units Needed to Hit 50% of Toyota</div>
+    <div style="background:${unitsNeeded>0?'var(--red-lt)':'var(--green-lt)'};border:1.5px solid ${unitsNeeded>0?'rgba(200,16,46,.25)':'rgba(10,124,58,.25)'};border-radius:var(--rl);padding:22px 26px;box-shadow:var(--sh)">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:${unitsNeeded>0?RE:GN};margin-bottom:10px">Units Needed to Hit Current Month Objective</div>
       <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
-        <div style="font-family:'Orbitron',sans-serif;font-size:48px;font-weight:900;color:${certNeeded>0?RE:GN};line-height:1">${certNeeded>0?fN(certNeeded):'0'}</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:48px;font-weight:900;color:${unitsNeeded>0?RE:GN};line-height:1">${unitsNeeded>0?fN(unitsNeeded):'0'}</div>
         <div>
-          <div style="font-size:13px;color:${certNeeded>0?RE:GN};font-weight:600">${certNeeded>0?'Certify '+fN(certNeeded)+' more Toyota units to reach 50%':'50% cert of Toyota goal met'}</div>
-          <div style="font-size:12px;color:var(--dim-m);margin-top:4px">Currently: <strong>${fN(certUnits)}</strong> certified of <strong>${fN(toyotaUnits)}</strong> Toyota = <strong>${currentCofT}%</strong> | Target: <strong>50%</strong> (${Math.ceil(toyotaUnits*0.50)} units)</div>
+          <div style="font-size:13px;color:${unitsNeeded>0?RE:GN};font-weight:600">${unitsNeeded>0?paceNeeded+' units/day needed with '+dl2+' days left':rcD?'Objective met or on track':'Set MTD data on Overview tab'}</div>
+          <div style="font-size:12px;color:var(--dim-m);margin-top:4px">MTD Sold: <strong>${fN(mtdSold)}</strong> | Objective: <strong>${fN(mtdObj)}</strong>${rcD?' | Recap Obj: '+rcD.o:''}</div>
         </div>
       </div>
-      ${certNeeded>0&&inv?`<div style="margin-top:12px;padding:10px 14px;background:rgba(255,255,255,.6);border-radius:8px;font-size:12px;color:var(--dim)">
-        <strong style="color:var(--txt)">Action:</strong> You have <strong>${fN(nc)}</strong> non-certified Toyota units on the lot.
-        ${nc>=certNeeded?'Sufficient non-cert Toyota inventory available to certify and reach the 50% target.':'You may need to source additional Toyota units and certify them to close the gap.'}
+      ${unitsNeeded>0&&certInv>0?`<div style="margin-top:12px;padding:10px 14px;background:rgba(255,255,255,.6);border-radius:8px;font-size:12px;color:var(--dim)">
+        <strong style="color:var(--txt)">Inventory Check:</strong> You have <strong>${fN(certInv)}</strong> certified units in stock.
+        ${certInv>=unitsNeeded?'Sufficient certified inventory to meet the remaining objective if turn rate holds.':'You may need to certify additional units or accelerate sourcing to cover the gap.'}
+        Inventory-to-remaining-objective ratio: <strong>${invToObjRatio}x</strong>
       </div>`:''}
     </div>
     <div style="background:#fff;border:1px solid var(--bdr);border-radius:var(--rl);padding:22px 26px;box-shadow:var(--sh)">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--dim-m);margin-bottom:10px">Certification Progress vs 50% Goal</div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--dim-m);margin-bottom:10px">Inventory Depth vs Objective</div>
       <div class="cw" style="height:160px"><canvas id="invObjChart"></canvas></div>
     </div>
   </div>
@@ -1210,66 +988,15 @@ function rInv(mc,c){
   <div class="card" style="margin-bottom:14px">
     <div class="card-title">Certification Mix vs Industry Standards</div>
     <div class="g3" style="margin-bottom:16px;text-align:center">
-      <div>${svgPctGauge(cPct,30,'CERT % OF TOTAL','30-40%')}<div style="font-size:12px;font-weight:700;color:${cPct>=30?GN:cPct>=22?GD:RE};margin-top:4px">Target: 30-40%</div></div>
-      <div>${svgPctGauge(cOfT,50,'CERT % OF TOYOTA','50-60%')}<div style="font-size:12px;font-weight:700;color:${cOfT>=50?GN:cOfT>=38?GD:RE};margin-top:4px">Target: 50-60%</div></div>
-      <div>${svgPctGauge(tPct,60,'TOYOTA % OF TOTAL','60-70%')}<div style="font-size:12px;font-weight:700;color:${tPct>=60?GN:tPct>=45?GD:RE};margin-top:4px">Target: 60-70%</div></div>
+      <div>${svgPctGauge(cPct,33,'CERT % OF TOTAL','30-40%')}<div style="font-size:12px;font-weight:700;color:${BL};margin-top:4px">Target: 30-40%</div></div>
+      <div>${svgPctGauge(cOfT,55,'CERT % OF TOYOTA','50-60%')}<div style="font-size:12px;font-weight:700;color:${BL};margin-top:4px">Target: 50-60%</div></div>
+      <div>${svgPctGauge(tPct,65,'TOYOTA % OF TOTAL','60-70%')}<div style="font-size:12px;font-weight:700;color:${BL};margin-top:4px">Target: 60-70%</div></div>
     </div>
     <div class="g3">
-      <div class="${cPct>=30?'st-on':cPct>=22?'st-close':'st-low'}">${cPct>=30?'ON TARGET':cPct>=22?'CLOSE':'BELOW TARGET'}<div style="font-size:11px;margin-top:3px;font-weight:400;opacity:.8">Cert % of Total: ${cPct}% (Target: 30-40%)</div></div>
-      <div class="${cOfT>=50?'st-on':cOfT>=38?'st-close':'st-low'}">${cOfT>=50?'ON TARGET':cOfT>=38?'CLOSE':'BELOW TARGET'}<div style="font-size:11px;margin-top:3px;font-weight:400;opacity:.8">Cert % of Toyota: ${cOfT}% (Target: 50-60%)</div></div>
-      <div class="${tPct>=60?'st-on':tPct>=45?'st-close':'st-low'}">${tPct>=60?'ON TARGET':tPct>=45?'CLOSE':'BELOW TARGET'}<div style="font-size:11px;margin-top:3px;font-weight:400;opacity:.8">Toyota % of Total: ${tPct}% (Target: 60-70%)</div></div>
+      <div class="${cPct>=33?'st-on':cPct>=25?'st-close':'st-low'}">${cPct>=33?'ON TARGET':cPct>=25?'CLOSE':'BELOW TARGET'}<div style="font-size:11px;margin-top:3px;font-weight:400;opacity:.8">Cert % of Total: ${cPct}% (Target: 30-40%)</div></div>
+      <div class="${cOfT>=55?'st-on':cOfT>=41?'st-close':'st-low'}">${cOfT>=55?'ON TARGET':cOfT>=41?'CLOSE':'BELOW TARGET'}<div style="font-size:11px;margin-top:3px;font-weight:400;opacity:.8">Cert % of Toyota: ${cOfT}% (Target: 50-60%)</div></div>
+      <div class="${tPct>=65?'st-on':tPct>=49?'st-close':'st-low'}">${tPct>=65?'ON TARGET':tPct>=49?'CLOSE':'BELOW TARGET'}<div style="font-size:11px;margin-top:3px;font-weight:400;opacity:.8">Toyota % of Total: ${tPct}% (Target: 60-70%)</div></div>
     </div>
-  </div>
-  <div class="card" style="margin-bottom:14px">
-    <div class="card-title">Units Needed to Hit Certification Industry Standards</div>
-    <div style="font-size:12px;color:var(--dim-m);margin-bottom:14px">Based on current inventory of <strong>${fN(inv.a)}</strong> total used units, <strong>${fN(inv.u)}</strong> Toyota, and <strong>${fN(inv.c)}</strong> certified.</div>
-    <table>
-      <thead><tr><th>Standard</th><th class="c">Current</th><th class="c">Target (Low)</th><th class="c">Target (High)</th><th class="c">Units to Low</th><th class="c">Units to High</th><th class="c">Status</th></tr></thead>
-      <tbody>
-        ${(()=>{
-          // Cert % of Total: need cert/total >= 30-40%
-          const needCertLow=Math.max(0,Math.ceil(inv.a*0.30)-inv.c);
-          const needCertHigh=Math.max(0,Math.ceil(inv.a*0.40)-inv.c);
-          // Cert % of Toyota: need cert/toyota >= 50-60%
-          const needCofTLow=Math.max(0,Math.ceil(inv.u*0.50)-inv.c);
-          const needCofTHigh=Math.max(0,Math.ceil(inv.u*0.60)-inv.c);
-          // Toyota % of Total: need toyota/total >= 60-70% (need more Toyota, not cert)
-          const needToyLow=Math.max(0,Math.ceil(inv.a*0.60)-inv.u);
-          const needToyHigh=Math.max(0,Math.ceil(inv.a*0.70)-inv.u);
-          return `
-            <tr>
-              <td style="font-weight:700">Cert % of Total Used</td>
-              <td class="c" style="font-weight:700;color:${cPct>=30?GN:RE}">${cPct}%</td>
-              <td class="c">30% (${Math.ceil(inv.a*0.30)} units)</td>
-              <td class="c">40% (${Math.ceil(inv.a*0.40)} units)</td>
-              <td class="c" style="font-weight:700;color:${needCertLow===0?GN:RE}">${needCertLow===0?'Met':'+'+needCertLow+' certs'}</td>
-              <td class="c" style="font-weight:700;color:${needCertHigh===0?GN:GD}">${needCertHigh===0?'Met':'+'+needCertHigh+' certs'}</td>
-              <td class="c">${cPct>=30?badge('On Target','pill-green'):badge('Action Needed','pill-red')}</td>
-            </tr>
-            <tr>
-              <td style="font-weight:700">Cert % of Toyota Brand</td>
-              <td class="c" style="font-weight:700;color:${cOfT>=50?GN:RE}">${cOfT}%</td>
-              <td class="c">50% (${Math.ceil(inv.u*0.50)} units)</td>
-              <td class="c">60% (${Math.ceil(inv.u*0.60)} units)</td>
-              <td class="c" style="font-weight:700;color:${needCofTLow===0?GN:RE}">${needCofTLow===0?'Met':'+'+needCofTLow+' certs'}</td>
-              <td class="c" style="font-weight:700;color:${needCofTHigh===0?GN:GD}">${needCofTHigh===0?'Met':'+'+needCofTHigh+' certs'}</td>
-              <td class="c">${cOfT>=50?badge('On Target','pill-green'):badge('Action Needed','pill-red')}</td>
-            </tr>
-            <tr>
-              <td style="font-weight:700">Toyota % of Total Used</td>
-              <td class="c" style="font-weight:700;color:${tPct>=60?GN:RE}">${tPct}%</td>
-              <td class="c">60% (${Math.ceil(inv.a*0.60)} units)</td>
-              <td class="c">70% (${Math.ceil(inv.a*0.70)} units)</td>
-              <td class="c" style="font-weight:700;color:${needToyLow===0?GN:RE}">${needToyLow===0?'Met':'+'+needToyLow+' Toyota'}</td>
-              <td class="c" style="font-weight:700;color:${needToyHigh===0?GN:GD}">${needToyHigh===0?'Met':'+'+needToyHigh+' Toyota'}</td>
-              <td class="c">${tPct>=60?badge('On Target','pill-green'):badge('Action Needed','pill-red')}</td>
-            </tr>`;
-        })()}
-      </tbody>
-    </table>
-    ${cPct<30||cOfT<50?`<div class="tip tip-red" style="margin-top:12px">
-      <strong>Priority Action:</strong> ${cPct<30?'Certify at least <strong>'+Math.max(0,Math.ceil(inv.a*0.30)-inv.c)+'</strong> additional units to reach the 30% cert-of-total floor. ':''}${cOfT<50?'Of the <strong>'+fN(nc)+'</strong> non-certified Toyota units on the lot, target certifying at least <strong>'+Math.max(0,Math.ceil(inv.u*0.50)-inv.c)+'</strong> to reach the 50% cert-of-Toyota floor.':''}
-    </div>`:''}
   </div>
   <div class="card" style="margin-bottom:14px">
     <div class="card-title">Inventory Composition Breakdown</div>
@@ -1295,7 +1022,7 @@ function rInv(mc,c){
     </div>
   </div>`;
   setTimeout(()=>{
-    mkChart('invObjChart',{type:'bar',data:{labels:['Certified Now','Need to Certify','50% Target'],datasets:[{data:[certUnits,certNeeded,Math.ceil(toyotaUnits*0.50)],backgroundColor:[GN+'cc',RE+'cc',BL+'cc'],borderRadius:5,borderSkipped:false}]},options:{...chOpts(),plugins:{legend:{display:false}}}});
+    mkChart('invObjChart',{type:'bar',data:{labels:['MTD Sold','Remaining Need','Certified Inv'],datasets:[{data:[mtdSold,unitsNeeded,certInv],backgroundColor:[GN+'cc',RE+'cc',BL+'cc'],borderRadius:5,borderSkipped:false}]},options:{...chOpts(),plugins:{legend:{display:false}}}});
     if(inv){
       const pieData=[{l:'TCUV Certified',v:inv.c,c:RE},{l:'Non-Cert Toyota',v:nc,c:GD},{l:'Non-Toyota Used',v:ntU,c:OR}].filter(d=>d.v>0);
       const pieTotal=pieData.reduce((a,d)=>a+d.v,0);
@@ -1512,7 +1239,7 @@ Provide a strategic analysis with these sections. Use plain text, no markdown he
 Rules: Be specific with numbers. Reference their actual data. No generic advice. Every suggestion must be backed by data from the numbers above. Professional tone. Under 500 words.`;
 
   try{
-    const resp=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5-20250929',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
     const data=await resp.json();
     if(data.error)throw new Error(data.error.message);
     const txt=(data.content?.[0]?.text||'').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
@@ -1527,7 +1254,7 @@ Rules: Be specific with numbers. Reference their actual data. No generic advice.
         </div>
         <div style="padding:18px;background:#fff;font-size:13px;color:var(--dim);line-height:1.75" id="perfAnalysisText">${txt}</div>
       </div>`;
-  }catch(e){const isLocal=window.location.protocol==="file:"||!window.location.hostname;area.innerHTML=isLocal?`<div class="tip tip-gold"><strong>AI features require Claude.ai:</strong> Strategic analysis and email generation use the Claude API, which is only available when running inside claude.ai. Open this dashboard through Claude to use AI features.</div>`:`<div class="tip tip-red">Error: ${e.message}. Check connection and try again.</div>`;}
+  }catch(e){area.innerHTML=`<div class="tip tip-red">Error: ${e.message}. Check connection and try again.</div>`;}
   if(btn){btn.disabled=false;btn.textContent='Generate Strategic Analysis';}
 }
 
@@ -1728,7 +1455,7 @@ TCUV District Sales Consultant | Gulf States Toyota
 
 Rules: under 350 words. Professional but warm. Reference specific numbers/details from notes and performance data. Include concrete improvement recommendations with target numbers. No generic filler.`;
   try{
-    const resp=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5-20250929',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
     const data=await resp.json();
     if(data.error)throw new Error(data.error.message);
     const txt=data.content?.[0]?.text||'Error generating email.';
@@ -1750,7 +1477,7 @@ Rules: under 350 words. Professional but warm. Reference specific numbers/detail
           <div><label class="fl">Email Body</label><textarea id="eB_${uid}" class="email-area">${body.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea></div>
         </div>
       </div>`;
-  }catch(e){const isLocal=window.location.protocol==="file:"||!window.location.hostname;area.innerHTML=isLocal?`<div class="tip tip-gold"><strong>AI features require Claude.ai:</strong> Strategic analysis and email generation use the Claude API, which is only available when running inside claude.ai. Open this dashboard through Claude to use AI features.</div>`:`<div class="tip tip-red">Error: ${e.message}. Check connection and try again.</div>`;}
+  }catch(e){area.innerHTML=`<div class="tip tip-red">Error: ${e.message}. Check connection and try again.</div>`;}
 }
 function copyEmail(uid){
   const subj=document.getElementById('eS_'+uid)?.value||'';
@@ -1777,11 +1504,11 @@ function rUp(mc){
       <input type="file" accept=".xlsx,.xls" style="display:none" id="f2" onchange="parseF(this.files[0],2)"><div id="m2"></div>
     </div>
     <div class="dp" id="d3" tabindex="0" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="drF(event,3)" onclick="document.getElementById('f3').click()">
-      <span class="dp-ico">🏆</span><h3>TCUV Sales Report</h3><p>GST District TCUV Sales (.xlsx)</p>
+      <span class="dp-ico">🏆</span><h3>Sales vs Objective Recap</h3><p>GST Recap (.xlsx) or screenshot</p>
       <input type="file" accept=".xlsx,.xls,.png,.jpg,.jpeg" style="display:none" id="f3" onchange="parseF(this.files[0],3)"><div id="m3"></div>
     </div>
   </div>
-  <div class="tip tip-blue" style="margin-bottom:16px">${window._xlsxReady||window.XLSX?'✓ File parser ready  -  drag & drop your GST reports below.':'⏳ Loading file parser… ensure you have internet access, then re-open this tab.'}</div>
+  <div class="tip tip-blue" style="margin-bottom:16px">${window._xlsxReady||window.XLSX?'✓ File parser ready. Upload files for any dealer. If the dealer name in the file does not match the currently selected dealer, a new dealer entry will be created automatically.':'⏳ Loading file parser. Ensure you have internet access, then re-open this tab.'}</div>
   <div class="card" style="margin-bottom:14px">
     <div class="card-title">Add Dealer Manually</div>
     <div class="g4" style="margin-bottom:12px">
@@ -1794,12 +1521,9 @@ function rUp(mc){
     <div class="g5" style="margin-bottom:12px">
       ${[['Units','uTU'],['Front GP','uTG'],['F&amp;I','uFI'],['Recon Cost','uCR'],['Dept GP','uDG']].map(([l,id])=>`<div><label class="fl">${l}</label><input id="${id}" type="number" class="fi"></div>`).join('')}
     </div>
-    <div style="font-size:11px;font-weight:700;color:var(--dim-m);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Non-Cert Toyota &amp; Non-Toyota Used</div>
-    <div class="g4" style="margin-bottom:6px">
-      ${[['NC Toyota Units','uNU'],['NC Front GP','uNG'],['NC Back/F&I','uNFI'],['NC Other Units','uOU']].map(([l,id])=>`<div><label class="fl">${l}</label><input id="${id}" type="number" class="fi"></div>`).join('')}
-    </div>
-    <div class="g4" style="margin-bottom:12px">
-      ${[['Other Front GP','uOG'],['Prior Year TCUV','uPT'],['',''],['','']].map(([l,id])=>l?`<div><label class="fl">${l}</label><input id="${id}" type="number" class="fi"></div>`:`<div></div>`).join('')}
+    <div style="font-size:11px;font-weight:700;color:var(--dim-m);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Non-Cert &amp; Other Used</div>
+    <div class="g5" style="margin-bottom:12px">
+      ${[['NC Units','uNU'],['NC GP','uNG'],['Other Units','uOU'],['Other GP','uOG'],['Prior Year TCUV','uPT']].map(([l,id])=>`<div><label class="fl">${l}</label><input id="${id}" type="number" class="fi"></div>`).join('')}
     </div>
     <div style="font-size:11px;font-weight:700;color:var(--dim-m);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">GST Benchmarks</div>
     <div class="g4" style="margin-bottom:16px">
@@ -1831,7 +1555,7 @@ function addDealer(){
   const nd={id:Date.now(),nm:nm2,dt:td(),
     fn:{nm:nm2,pr:document.getElementById('uP')?.value||'',cl:document.getElementById('uCL')?.value||'',
       tu:nv('uTU'),tg:nv('uTG'),tFI:nv('uFI'),cR:nv('uCR'),dGP:nv('uDG'),
-      nu:nv('uNU'),ng:nv('uNG'),nFI:nv('uNFI'),ou:nv('uOU'),og:nv('uOG'),oFI:nv('uOFI'),
+      nu:nv('uNU'),ng:nv('uNG'),ou:nv('uOU'),og:nv('uOG'),
       tot:nv('uTU')+nv('uNU')+nv('uOU'),pyTCUV:nv('uPT'),newUnits:nv('uNW'),
       gTG:nv('gTG'),gCR:nv('gCR'),gTF:nv('gTF'),gTU:nv('gTU'),gDeptGP:nv('gDG'),
       dTG:nv('gTG'),dTF:nv('gTF'),dCR:nv('gCR')},
@@ -1844,6 +1568,31 @@ function addDealer(){
 function removeDealer(id){if(D.length<=1){alert('Cannot remove the last dealer.');return;}if(!confirm('Remove this dealer and ALL their data? This cannot be undone.'))return;D=D.filter(d=>d.id!==id);if(ci===id)ci=D[0].id;buildNav();buildSel();render();saveAll();}
 
 // ═══ FILE PARSING ══════════════════════════════════════════════
+// Smart dealer resolution: if the file's dealer name doesn't match the
+// currently selected dealer, find an existing match or create a new entry.
+function resolveDealer(parsedName){
+  if(!parsedName||parsedName.length<3)return gc(); // fallback to current
+  const cur=gc();
+  // Check if it matches the currently selected dealer
+  if(cur&&nm(cur.nm,parsedName))return cur;
+  // Check if any existing dealer matches
+  const existing=D.find(d=>nm(d.nm,parsedName));
+  if(existing){ci=existing.id;buildSel();return existing;}
+  // No match found: create a new dealer entry
+  const nd={id:Date.now(),nm:parsedName,dt:td(),
+    fn:{nm:parsedName,pr:'',cl:'',tu:0,tg:0,tFI:0,cR:0,dGP:0,
+      nu:0,ng:0,ou:0,og:0,tot:0,pyTCUV:0,newUnits:0,
+      gTG:0,gCR:0,gTF:0,gTU:0,gDeptGP:0,
+      dTG:0,dTF:0,dCR:0,usedNewRatio:0,gstUsedNewRatio:0},
+    mtd:{sold:0,obj:0,silver:0,gold:0},
+    moSold:Array(12).fill(0),moObj:Array(12).fill(0),
+    yoyCur:Array(12).fill(0),yoyPrior:Array(12).fill(0),
+    rc:null,inventory:null,contacts:[],consultHistory:[],tasks:[],pipeline:[]};
+  D.push(nd);
+  ci=nd.id;
+  buildSel();
+  return nd;
+}
 function drF(e,slot){e.preventDefault();document.getElementById('d'+slot).classList.remove('over');if(e.dataTransfer.files.length)parseF(e.dataTransfer.files[0],slot);}
 function parseF(f,slot){
   if(!f)return;
@@ -1912,9 +1661,6 @@ function pFin(wb,n){
   const rNew   = byLabel('TOTAL NEW VEHICLE DEPARTMENT')||bl(40);
   const rNC    = byLabel('TOT TOYOTA NON-CERT USED')||bl(53);
   const rOther = byLabel('TOTAL USED VEHICLE - OTHER AFTER RECON')||bl(62);
-  // Non-cert and Other F&I rows
-  const rNCFI  = byLabel('NON-CERT','F&I')||byLabel('NON-CERTIFIED','F&I')||bl(69);
-  const rOtherFI = byLabel('OTHER','F&I')||byLabel('USED VEHICLE - OTHER','F&I')||bl(72);
 
   if(!rTCUV){msg('Cannot find TCUV row in Pg6. File may be unsupported format.');return;}
 
@@ -1930,8 +1676,6 @@ function pFin(wb,n){
   const ngVal  = n(rNC?.[3]);
   const ouVal  = n(rOther?.[1]);
   const ogVal  = n(rOther?.[3]);
-  const nFIVal = n(rNCFI?.[3]);
-  const oFIVal = n(rOtherFI?.[3]);
 
   // GST benchmarks
   const gTU_u  = n(rTCUV?.[8])||1;
@@ -1941,15 +1685,14 @@ function pFin(wb,n){
 
   const sv=(id,v)=>{const el=document.getElementById(id);if(el)el.value=Math.round(v)||0;};
   sv('uTU',tuVal);sv('uTG',tgVal);sv('uFI',tFIVal);sv('uCR',crVal);sv('uDG',dGPVal);
-  sv('uNU',nuVal);sv('uNG',ngVal);sv('uNFI',nFIVal);sv('uOU',ouVal);sv('uOG',ogVal);sv('uOFI',oFIVal);sv('uNW',newU);
+  sv('uNU',nuVal);sv('uNG',ngVal);sv('uOU',ouVal);sv('uOG',ogVal);sv('uNW',newU);
   sv('gTG',gTG);sv('gCR',gCR);sv('gTF',gTF);sv('gTU',Math.round(gTU_u));
 
-  const cc=gc();
+  const cc=resolveDealer(dlrNm);
   if(cc){
     cc.nm=dlrNm||cc.nm; cc.fn.nm=dlrNm||cc.fn.nm; cc.fn.pr=period||cc.fn.pr;
     cc.fn.tu=tuVal; cc.fn.tg=tgVal; cc.fn.tFI=tFIVal; cc.fn.cR=crVal;
-    cc.fn.dGP=dGPVal; cc.fn.nu=nuVal; cc.fn.ng=ngVal; cc.fn.nFI=nFIVal;
-    cc.fn.ou=ouVal; cc.fn.og=ogVal; cc.fn.oFI=oFIVal;
+    cc.fn.dGP=dGPVal; cc.fn.nu=nuVal; cc.fn.ng=ngVal; cc.fn.ou=ouVal; cc.fn.og=ogVal;
     cc.fn.newUnits=newU; cc.fn.tot=totUsed;
     cc.fn.gTG=gTG; cc.fn.dTG=gTG; cc.fn.gCR=gCR; cc.fn.dCR=gCR;
     cc.fn.gTF=gTF; cc.fn.dTF=gTF; cc.fn.gTU=Math.round(gTU_u);
@@ -1985,14 +1728,7 @@ function pDept(wb,n){
   const l11 = bl(11) || byLbl('CERT RECON');
   const l12 = bl(12) || byLbl('NON-CERT UNITS');
   const l13 = bl(13) || byLbl('NON-CERT','TOTAL G/P');
-  const l14 = bl(14) || byLbl('NON-CERT','GP PUVR');
   const l42 = bl(42) || byLbl('F&I','PUVR');
-  // Non-cert F&I line and Other F&I line
-  const l43 = bl(43) || byLbl('NON-CERT','F&I');
-  const l44 = bl(44) || byLbl('OTHER','F&I');
-  // Other used lines
-  const l31 = bl(31) || byLbl('OTHER USED','UNITS');
-  const l32 = bl(32) || byLbl('OTHER USED','G/P');
   const l53 = bl(53) || byLbl('TOTAL USED VEH DEPT UNITS');
   const l54 = bl(54) || byLbl("G/P'");
   const l55 = bl(55) || byLbl('G/P PUVRL');
@@ -2000,20 +1736,12 @@ function pDept(wb,n){
 
   const tuVal   = n(l1?.[2]);
   const tgVal   = n(l2?.[2]);
+  // Recon: col[2] is PUVR/L (per unit), multiply by units to get total
   const reconPU = n(l11?.[2]);
   const crTotal = reconPU * Math.max(tuVal,1);
   const nuVal   = n(l12?.[2]);
   const ngVal   = n(l13?.[2]);
-  // Non-cert F&I: try line 43, or compute from PUVR * units
-  const ncFIPU  = n(l43?.[2]);
-  const nFIVal  = ncFIPU * Math.max(nuVal,1);
-  // Other used units and GP
-  const ouVal   = n(l31?.[2]);
-  const ogVal   = n(l32?.[2]);
-  // Other F&I
-  const otFIPU  = n(l44?.[2]);
-  const oFIVal  = otFIPU * Math.max(ouVal,1);
-  // Certified F&I
+  // F&I: col[2] is PUVR/L, multiply by units
   const fiPU    = n(l42?.[2]);
   const tFIVal  = fiPU * Math.max(tuVal,1);
   const totVal  = n(l53?.[2]);
@@ -2029,15 +1757,13 @@ function pDept(wb,n){
 
   const sv=(id,v)=>{const el=document.getElementById(id);if(el)el.value=Math.round(v)||0;};
   sv('uTU',tuVal);sv('uTG',tgVal);sv('uFI',tFIVal);sv('uCR',crTotal);sv('uDG',dGPVal);
-  sv('uNU',nuVal);sv('uNG',ngVal);sv('uNFI',nFIVal);sv('uOU',ouVal);sv('uOG',ogVal);sv('uOFI',oFIVal);
-  sv('gTG',gTG);sv('gCR',gCR);sv('gTF',gTF);sv('gTU',gTU);
+  sv('uNU',nuVal);sv('uNG',ngVal);sv('gTG',gTG);sv('gCR',gCR);sv('gTF',gTF);sv('gTU',gTU);
 
-  const c=gc();
+  const c=resolveDealer(dlrNm);
   if(c){
     c.nm=dlrNm||c.nm; c.fn.nm=dlrNm||c.fn.nm;
     c.fn.tu=tuVal; c.fn.tg=tgVal; c.fn.tFI=tFIVal; c.fn.cR=crTotal;
-    c.fn.dGP=dGPVal; c.fn.nu=nuVal; c.fn.ng=ngVal; c.fn.nFI=nFIVal;
-    c.fn.ou=ouVal; c.fn.og=ogVal; c.fn.oFI=oFIVal; c.fn.tot=totVal;
+    c.fn.dGP=dGPVal; c.fn.nu=nuVal; c.fn.ng=ngVal; c.fn.tot=totVal;
     c.fn.gTG=gTG; c.fn.dTG=gTG; c.fn.gCR=gCR; c.fn.dCR=gCR;
     c.fn.gTF=gTF; c.fn.dTF=gTF; c.fn.gTU=gTU;
     c.fn.gDeptGP=gDeptGP; c.fn.usedNewRatio=unRatio; c.fn.gstUsedNewRatio=gstUnRatio;
@@ -2046,105 +1772,9 @@ function pDept(wb,n){
   document.getElementById('d2').classList.add('done');
   document.getElementById('m2').innerHTML=`<div class="ok">✓ ${dlrNm||'Dealer'}  -  TCUV: ${Math.round(tuVal)} avg/mo · Recon: $${Math.round(reconPU).toLocaleString()}/unit · F&amp;I: $${Math.round(fiPU).toLocaleString()}/unit · U:N: ${unRatio.toFixed(2)}</div>`;
 }
-function pRecap(wb,n){
-  const ws=wb.Sheets[wb.SheetNames[0]];
-  const R=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});
-  const msg=e=>document.getElementById('m3').innerHTML=`<div style="color:${RE};font-size:12px;margin-top:6px;font-weight:600">${e}</div>`;
-
-  // Find column positions from header rows
-  let cS=-1,cG=-1,cT=-1,cO=-1;
-  // Scan rows 0-5 for headers
-  for(let h=0;h<Math.min(6,R.length);h++){
-    const hr=R[h];if(!hr)continue;
-    for(let j=0;j<hr.length;j++){
-      const v=(hr[j]||'').toString().toUpperCase().trim();
-      // TCUV Silver: "MTD SILVER" or "SILVER YTD" or "SILVER"
-      if(v.includes('SILVER')&&cS<0)cS=j;
-      // TCUV Gold: "MTD GOLD" or "GOLD YTD" or "GOLD"
-      if(v.match(/\bGOLD\b/)&&cG<0)cG=j;
-      // TCUV Total: "MTD TOTAL" or "TOTAL YTD" but ONLY near Silver/Gold columns
-      if(v.match(/\b(MTD\s*)?TOTAL\b/)&&cT<0&&(cS>=0?Math.abs(j-cS)<=3:j>15))cT=j;
-    }
-  }
-  // Infer missing from found columns
-  if(cS>=0&&cG<0)cG=cS+1;
-  if(cG>=0&&cT<0)cT=cG+1;
-  if(cT>=0&&cS<0){cG=cT-1;cS=cT-2;}
-
-  // TCUV Obj: look for "Obj" column AFTER the TCUV Total column (not the New Vehicle Obj)
-  if(cT>=0){
-    for(let h=0;h<Math.min(6,R.length);h++){
-      const hr=R[h];if(!hr)continue;
-      for(let j=cT+1;j<hr.length;j++){
-        const v=(hr[j]||'').toString().toUpperCase().trim();
-        if(v==='OBJ'&&cO<0)cO=j;
-      }
-    }
-  }
-  // If no TCUV Obj found after Total, skip it (will show 0 for obj)
-
-  // Parse date from row 0
-  let rcDate='Current';
-  for(let h=0;h<Math.min(3,R.length);h++){
-    for(let j=0;j<(R[h]||[]).length;j++){
-      const dm=(R[h]?.[j]||'').toString().match(/(\d{2}\/\d{4})/);
-      if(dm){rcDate=dm[1];break;}
-    }
-    if(rcDate!=='Current')break;
-  }
-
-  // Find header row (contains "GSTRECAP" or "Dealer" in col 0)
-  let startRow=1;
-  for(let h=0;h<Math.min(6,R.length);h++){
-    const v=(R[h]?.[0]||'').toString().toUpperCase().trim();
-    if(v.includes('GSTRECAP')||v.includes('DEALER')){startRow=h+1;break;}
-  }
-
-  // Parse dealer rows
-  const ds=[];let dT=0,dO=0;
-  for(let i=startRow;i<R.length;i++){
-    const rw=R[i];if(!rw)continue;
-    const lb=(rw[0]||'').toString().trim();
-    if(!lb||lb.length<4)continue;
-    // Skip non-dealer rows
-    if(lb.match(/^(DEALER|GSTRECAP|HEADER|NEW VEHICLE|SALES)/i))continue;
-    // District/region totals
-    if(lb.match(/^district/i)){
-      if(cT>=0)dT=n(rw[cT]);
-      if(cO>=0)dO=n(rw[cO]);
-      continue;
-    }
-    if(lb.match(/^(gst|group|national|area|region|tms)/i))continue;
-    // Parse dealer: "42073-GROUP 1 TOYOTA SOUTHWEST HOUSTON"
-    let code='',dname=lb.toUpperCase();
-    const cdm=lb.match(/^(\d{4,6})\s*[-]\s*(.+)/);
-    if(cdm){code=cdm[1];dname=cdm[2].trim();}
-    // Get TCUV values
-    const s=cS>=0?n(rw[cS]):0;
-    const g=cG>=0?n(rw[cG]):0;
-    const sold=cT>=0?n(rw[cT]):s+g;
-    const obj=cO>=0?n(rw[cO]):0;
-    if(sold>0||obj>0)ds.push({c:code,n:dname,s,g,t:sold,o:obj,p:obj>0?Math.round(sold/obj*100):0});
-  }
-
-  if(ds.length===0){
-    msg('No dealer data found. Silver='+cS+' Gold='+cG+' Total='+cT+' Obj='+cO+' startRow='+startRow);
-    return;
-  }
-
-  const cc=gc();
-  if(cc){
-    cc.rc={dt:rcDate,ds,
-      di:{t:dT||ds.reduce((a,d)=>a+d.t,0),o:dO||ds.reduce((a,d)=>a+d.o,0),p:0},
-      gs:{t:0,o:0,p:0}};
-    cc.rc.di.p=cc.rc.di.o>0?Math.round(cc.rc.di.t/cc.rc.di.o*100):0;
-    const matched=cc.rc.ds.find(d=>nm(d.n,cc.nm));
-    if(matched){cc.mtd={sold:matched.t,obj:matched.o,silver:matched.s,gold:matched.g};}
-  }
-  buildSel();if(tb!=='up')render();saveAll();
+function pRecap(wb,n){const ws=wb.Sheets[wb.SheetNames[0]];const R=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});let cS=-1,cG=-1,cT=-1,cO=-1;for(let h=0;h<Math.min(5,R.length);h++){const hr=R[h];if(!hr)continue;for(let j=0;j<hr.length;j++){const v=(hr[j]||'').toString().toUpperCase().trim();if(v.includes('SILVER'))cS=j;if(v.includes('GOLD'))cG=j;}}if(cS>=0){if(cG<0)cG=cS+1;cT=cG+1;cO=cG+2;}let rcDate='Current';if(R[0]){const dm=(R[0][0]||'').toString().match(/(\d{2}\/\d{4})/);if(dm)rcDate=dm[1];}const ds=[];let dT=0,dO=0;for(let i=0;i<R.length;i++){const rw=R[i];if(!rw?.[0])continue;const lb=rw[0].toString().trim();if(!lb||lb.length<2)continue;if(lb.match(/^(DEALER|NAME|SILVER|GOLD|SOLD|OBJ)/i))continue;if(lb.match(/^district/i)){if(cT>=0)dT=n(rw[cT]);if(cO>=0)dO=n(rw[cO]);continue;}if(lb.match(/^(gst|group|national)/i))continue;let code='',dname=lb.toUpperCase();const cdm=lb.match(/^(\d+)\s*[-.]\s*(.+)/);if(cdm){code=cdm[1];dname=cdm[2].trim().toUpperCase();}const s=cS>=0?n(rw[cS]):0,g=cG>=0?n(rw[cG]):0,sold=cT>=0?n(rw[cT]):0,obj=cO>=0?n(rw[cO]):0;if(sold>0||obj>0)ds.push({c:code,n:dname,s,g,t:sold,o:obj,p:obj>0?Math.round(sold/obj*100):0});}if(ds.length>0){const cc=gc();if(cc){cc.rc={dt:rcDate,ds,di:{t:dT||ds.reduce((a,d)=>a+d.t,0),o:dO||ds.reduce((a,d)=>a+d.o,0),p:0},gs:{t:0,o:0,p:0}};cc.rc.di.p=cc.rc.di.o>0?Math.round(cc.rc.di.t/cc.rc.di.o*100):0;}buildSel();if(tb!=='up')render();saveAll();}
   document.getElementById('d3').classList.add('done');
-  document.getElementById('m3').innerHTML=`<div class="ok">Parsed ${ds.length} dealers | District: ${dT} sold / ${dO} obj | Silver=${cS} Gold=${cG} Total=${cT} TCUVObj=${cO}</div>`;
-}
+  document.getElementById('m3').innerHTML=`<div class="ok">✓ Parsed ${ds.length} dealers · District: ${dT} sold / ${dO} obj</div>`;}
 
 // ═══ BOOT ══════════════════════════════════════════════════════
 init();
