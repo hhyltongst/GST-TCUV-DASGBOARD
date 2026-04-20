@@ -237,6 +237,7 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
   </div>
   <div class="hdr-r">
     <button class="btn-hdr" onclick="window.print()">⬡ Print</button>
+    <button class="btn-hdr" style="background:#FEE2E2;color:#991B1B;border-color:#FCA5A5" onclick="resetAll()" title="Wipe all dealers and all data. Cannot be undone.">⚠ Reset All</button>
     <div class="hdr-vr"></div>
     <select class="ds-sel" id="dealerSel" onchange="pickDealer(this.value)"></select>
   </div>
@@ -337,6 +338,23 @@ const TABS=[
 // ═══ PERSISTENCE ══════════════════════════════════════════════
 async function saveAll(){try{if(!window.storage)return;await window.storage.set('tcuv-v8-d',JSON.stringify(D));await window.storage.set('tcuv-v8-s',JSON.stringify({ci,tb}));}catch(e){}}
 async function loadAll(){try{if(!window.storage)return;const dd=await window.storage.get('tcuv-v8-d');if(dd?.value){const p=JSON.parse(dd.value);if(Array.isArray(p)&&p.length>0)D=p;}const ss=await window.storage.get('tcuv-v8-s');if(ss?.value){const p=JSON.parse(ss.value);if(p.ci)ci=p.ci;if(p.tb)tb=p.tb;}}catch(e){}}
+
+async function resetAll(){
+  const count=D.length;
+  if(count===0){alert('No data to reset.');return;}
+  const first=confirm('⚠ FULL RESET\n\nThis will permanently delete:\n• All '+count+' dealer(s)\n• All financial data, inventory, contacts, consultations, snapshots, tasks, and pipeline items\n\nThis CANNOT be undone.\n\nContinue to the final confirmation?');
+  if(!first)return;
+  const typed=prompt('To confirm, type DELETE in all caps and click OK:');
+  if(typed!=='DELETE'){alert('Reset cancelled. You must type DELETE exactly to confirm.');return;}
+  try{
+    if(window.storage){
+      await window.storage.delete('tcuv-v8-d');
+      await window.storage.delete('tcuv-v8-s');
+    }
+  }catch(e){}
+  alert('All data has been deleted. The page will now reload.');
+  location.reload();
+}
 
 // ═══ INIT & ROUTING ═══════════════════════════════════════════
 async function init(){await loadAll();buildNav();buildSel();render();}
