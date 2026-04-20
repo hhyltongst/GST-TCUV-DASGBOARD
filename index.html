@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Gulf States Toyota TCUV CRM Dashboard v8
+  Gulf States Toyota TCUV CRM Dashboard v9
   Created by: Hussein Hylton
   Copyright (c) 2026 All Rights Reserved
 -->
@@ -8,7 +8,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>GST TCUV CRM v8</title>
+<title>GST TCUV CRM v9</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -236,8 +236,8 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
     <span class="hdr-badge">v9</span>
   </div>
   <div class="hdr-r">
-    <button class="btn-hdr" onclick="window.print()">⬡ Print</button>
-    <button class="btn-hdr" style="background:#FEE2E2;color:#991B1B;border-color:#FCA5A5" onclick="resetAll()" title="Wipe all dealers and all data. Cannot be undone.">⚠ Reset All</button>
+    <button class="btn-hdr" onclick="window.print()">Print</button>
+    <button class="btn-hdr" style="color:#ff6b6b;border-color:rgba(255,107,107,.4)" onclick="clearAllData()">Clear Data</button>
     <div class="hdr-vr"></div>
     <select class="ds-sel" id="dealerSel" onchange="pickDealer(this.value)"></select>
   </div>
@@ -246,7 +246,7 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
 <div class="nav" id="navBar"></div>
 <div class="pg" id="mainContent"></div>
 
-<footer>&copy; 2026 Gulf States Toyota &nbsp;&middot;&nbsp; TCUV CRM Dashboard v8 &nbsp;&middot;&nbsp; Engineered by <strong style="color:var(--red)">Hussein Hylton</strong> &nbsp;&middot;&nbsp; All rights reserved</footer>
+<footer>&copy; 2026 Gulf States Toyota &nbsp;&middot;&nbsp; TCUV CRM Dashboard v9 &nbsp;&middot;&nbsp; Engineered by <strong style="color:var(--red)">Hussein Hylton</strong> &nbsp;&middot;&nbsp; All rights reserved</footer>
 
 <script>
 // ═══ EXTERNAL LIBS ═══════════════════════════════════════════
@@ -336,24 +336,22 @@ const TABS=[
 ];
 
 // ═══ PERSISTENCE ══════════════════════════════════════════════
-async function saveAll(){try{if(!window.storage)return;await window.storage.set('tcuv-v8-d',JSON.stringify(D));await window.storage.set('tcuv-v8-s',JSON.stringify({ci,tb}));}catch(e){}}
-async function loadAll(){try{if(!window.storage)return;const dd=await window.storage.get('tcuv-v8-d');if(dd?.value){const p=JSON.parse(dd.value);if(Array.isArray(p)&&p.length>0)D=p;}const ss=await window.storage.get('tcuv-v8-s');if(ss?.value){const p=JSON.parse(ss.value);if(p.ci)ci=p.ci;if(p.tb)tb=p.tb;}}catch(e){}}
-
-async function resetAll(){
-  const count=D.length;
-  if(count===0){alert('No data to reset.');return;}
-  const first=confirm('⚠ FULL RESET\n\nThis will permanently delete:\n• All '+count+' dealer(s)\n• All financial data, inventory, contacts, consultations, snapshots, tasks, and pipeline items\n\nThis CANNOT be undone.\n\nContinue to the final confirmation?');
-  if(!first)return;
-  const typed=prompt('To confirm, type DELETE in all caps and click OK:');
-  if(typed!=='DELETE'){alert('Reset cancelled. You must type DELETE exactly to confirm.');return;}
-  try{
-    if(window.storage){
-      await window.storage.delete('tcuv-v8-d');
-      await window.storage.delete('tcuv-v8-s');
-    }
-  }catch(e){}
-  alert('All data has been deleted. The page will now reload.');
-  location.reload();
+async function saveAll(){try{if(!window.storage)return;await window.storage.set('tcuv-v9-d',JSON.stringify(D));await window.storage.set('tcuv-v9-s',JSON.stringify({ci,tb}));}catch(e){}}
+async function loadAll(){try{if(!window.storage)return;const dd=await window.storage.get('tcuv-v9-d');if(dd?.value){const p=JSON.parse(dd.value);if(Array.isArray(p)&&p.length>0)D=p;}const ss=await window.storage.get('tcuv-v9-s');if(ss?.value){const p=JSON.parse(ss.value);if(p.ci)ci=p.ci;if(p.tb)tb=p.tb;}}catch(e){}}
+async function clearAllData(){
+  if(!confirm('This will permanently erase ALL dealer data, contacts, tasks, consultation history, and pipeline items for every dealer in the system. This cannot be undone.\n\nAre you sure you want to clear all data?'))return;
+  try{if(window.storage){await window.storage.delete('tcuv-v9-d');await window.storage.delete('tcuv-v9-s');await window.storage.delete('tcuv-v8-d');await window.storage.delete('tcuv-v8-s');}}catch(e){}
+  D=[{id:1,nm:'New Dealer',dt:td(),
+    fn:{nm:'New Dealer',pr:'',cl:'',tu:0,tg:0,nu:0,ng:0,ou:0,og:0,tot:0,
+      cR:0,dGP:0,tFI:0,rtCU:0,rtCGP:0,
+      gTG:0,gCR:0,gTU:0,gTF:0,
+      dTG:0,dTF:0,dCR:0,gDeptGP:0,pyTCUV:0,newUnits:0,usedNewRatio:0,gstUsedNewRatio:0},
+    mtd:{sold:0,obj:0,silver:0,gold:0},
+    moSold:Array(12).fill(0),moObj:Array(12).fill(0),
+    yoyCur:Array(12).fill(0),yoyPrior:Array(12).fill(0),
+    rc:null,inventory:null,contacts:[],consultHistory:[],tasks:[],pipeline:[]}];
+  ci=1;tb='up';
+  buildNav();buildSel();render();saveAll();
 }
 
 // ═══ INIT & ROUTING ═══════════════════════════════════════════
@@ -617,23 +615,22 @@ function rOv(mc,c){
   const nuR=f.usedNewRatio||0;
   const gstNuR=f.gstUsedNewRatio||0;
 
-  // ── Period math: tu is a MONTHLY AVERAGE. Compute how many months in the period.
+  // ── Period math
   const pr=f.pr||'';
   const moMap={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
   const pmatch=pr.toLowerCase().match(/(\w{3})\w*\s+\d{4}.*?(?:to|-|-)\s*(\w{3})\w*\s+\d{4}/);
   const numMo=pmatch?(moMap[pmatch[2]]||1)-(moMap[pmatch[1]]||1)+1:1;
-  const periodTotal=Math.round(f.tu*numMo);  // TOTAL units this period
+  const periodTotal=Math.round(f.tu*numMo);
 
-  // ── Prior Year: stored as same-period total (user enters total for the matching period)
-  const pyTotal=f.pyTCUV||0;                   // PY total for same number of months
-  const pyMonthly=pyTotal>0?pyTotal/numMo:0;   // PY monthly avg
-  const cyMonthly=f.tu;                         // Current monthly avg (from report)
-
-  // ── Growth goal: based on TOTAL period, 10% above PY total
-  const goal=pyTotal>0?Math.round(pyTotal*1.10):0;
-  const goalMonthly=goal>0?Math.round(goal/numMo):0;
-  const szn=[0.85,0.88,0.97,1.05,1.10,1.12,1.10,1.08,1.02,0.98,0.92,0.87];
-  const sS=szn.reduce((a,b)=>a+b,0),moGoals=szn.map(w=>goal>0?Math.round(goal*w/sS):0);
+  // ── Growth Goal: PY FULL YEAR + user-configurable growth %
+  const pyFull=f.pyTCUV||0;
+  const growthPct=f.growthGoalPct||20;
+  const growthGoal=pyFull>0?Math.round(pyFull*(1+growthPct/100)):0;
+  const monthlyTarget=growthGoal>0?Math.round(growthGoal/12):0;
+  const cyMonthly=f.tu;
+  const monthlyGap=monthlyTarget>0?monthlyTarget-Math.round(cyMonthly):0;
+  // PY same period comparison
+  const pyThisPeriod=pyFull>0?Math.round(pyFull/12*numMo):0;
 
   const rcD=c.rc?.ds?.find(d=>nm(d.n,c.nm));
   const ovN=rcD&&rcD.o>0?Math.max(0,rcD.o-rcD.t):0;
@@ -661,44 +658,27 @@ function rOv(mc,c){
       <div class="cw" style="height:130px"><canvas id="ovMTD"></canvas></div>
     </div>
     <div class="card"><div class="card-title">Inventory Mix (Units &amp; %)</div><div class="cw" style="height:190px"><canvas id="ovMix"></canvas></div></div>
-    <div class="card">
-      <div class="card-title">Prior Year TCUV &nbsp;<span style="color:var(--red);font-size:10px">(Manual Entry)</span></div>
-      <label class="fl" style="margin-bottom:4px">Enter PY Total  -  Same ${numMo}-Month Period</label>
-      <input id="pyInput" type="number" class="fi" value="${pyTotal||''}" placeholder="e.g. ${Math.round(periodTotal*0.9)}" oninput="sPY()" style="font-size:18px;font-weight:700;color:${BL};margin-bottom:10px">
-      <div style="font-size:11px;color:var(--dim-m);margin-bottom:10px">Enter the total TCUV units sold during the same ${numMo}-month window last year for an accurate comparison.</div>
-      <div style="display:flex;gap:14px;flex-wrap:wrap">
-        <div>
-          <div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">This Period (${numMo}mo)</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:${RE}">${periodTotal}</div>
-          <div style="font-size:11px;color:var(--dim-m)">${cyMonthly.toFixed(1)} avg/mo</div>
-        </div>
-        ${pyTotal>0?`<div>
-          <div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">PY Same Period</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:${BL}">${pyTotal}</div>
-          <div style="font-size:11px;color:var(--dim-m)">${pyMonthly.toFixed(1)} avg/mo</div>
-        </div>
-        <div>
-          <div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">YoY Change</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:${periodTotal>=pyTotal?GN:RE}">${periodTotal>=pyTotal?'+':''}${periodTotal-pyTotal}</div>
-          <div style="font-size:11px;color:${periodTotal>=pyTotal?GN:RE};font-weight:600">${periodTotal>=pyTotal?'+':''}${fP(periodTotal-pyTotal,pyTotal)}%</div>
-        </div>`:''}
-      </div>
-      ${!pyTotal?`<div class="tip tip-blue" style="margin-top:10px;font-size:12px">Enter prior year units to unlock YoY comparison &amp; growth goal</div>`:''}
-    </div>
     <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
       <div class="card-title">Used : New Ratio</div>
       <div style="margin-bottom:10px;width:100%">
-        <label class="fl" style="text-align:center;margin-bottom:6px">Enter Used ÷ New Ratio <span style="color:var(--red)">(Manual)</span></label>
+        <label class="fl" style="text-align:center;margin-bottom:6px">Enter Used / New Ratio <span style="color:var(--red)">(Manual)</span></label>
         <input id="unRatioInput" type="number" step="0.01" min="0" max="5" class="fi"
           value="${nuR||''}" placeholder="e.g. 0.72" oninput="sUNRatio()"
           style="font-size:22px;font-weight:800;text-align:center;color:${nuR>=1.0?GN:nuR>=0.8?GD:RE}">
         <div style="font-size:11px;color:var(--dim-m);margin-top:5px">
-          Used units sold ÷ New units sold &nbsp;·&nbsp; Goal: <strong>1.00</strong>
+          Used units sold / New units sold &nbsp;·&nbsp; Goal: <strong>1.00</strong>
         </div>
       </div>
       ${nuR>0?`
-      ${svgGauge(nuR,2.0,'Used ÷ New',1.0)}
-      <div style="display:flex;gap:16px;margin-top:4px;justify-content:center;flex-wrap:wrap">
+      <div style="width:100%;position:relative;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--dim-m);font-weight:600;margin-bottom:4px"><span>0.00</span><span>TARGET: 1.00</span><span>2.00</span></div>
+        <div style="width:100%;height:24px;background:${DK};border-radius:6px;overflow:hidden;position:relative">
+          <div style="width:${Math.min(nuR/2*100,100)}%;height:100%;background:${nuR>=1.0?GN:RE};border-radius:6px;transition:width .4s"></div>
+          <div style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:${BL};transform:translateX(-50%)"></div>
+        </div>
+      </div>
+      <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:${nuR>=1.0?GN:RE};margin-bottom:6px">${nuR.toFixed(2)}</div>
+      <div style="display:flex;gap:16px;margin-top:2px;justify-content:center;flex-wrap:wrap">
         <div><div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px">Dealer</div>
           <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:${nuR>=1.0?GN:nuR>=0.8?GD:RE}">${nuR.toFixed(2)}</div></div>
         <div><div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px">Target</div>
@@ -706,31 +686,61 @@ function rOv(mc,c){
         <div><div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px">Gap</div>
           <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:${nuR>=1.0?GN:RE}">${nuR>=1.0?'+':''}${(nuR-1.0).toFixed(2)}</div></div>
       </div>
-      <div style="margin-top:8px;font-size:12px;color:${nuR>=1.0?GN:RE};font-weight:600">
-        ${nuR>=1.0?'✓ At or above 1:1 target':'⚠ '+((1.0-nuR)*100).toFixed(0)+'% below target  -  sell more used'}
+      <div style="font-size:11px;color:var(--dim-m);margin-top:4px">GST Avg: ${gstNuR>0?gstNuR.toFixed(2):'0.90'}</div>
+      <div style="margin-top:4px;font-size:12px;color:${nuR>=1.0?GN:RE};font-weight:600">
+        ${nuR>=1.0?'At or above 1:1 target':((1.0-nuR)*100).toFixed(0)+'% below target - sell more used'}
       </div>`
-      :`<div class="tip tip-blue" style="margin-top:8px;font-size:12px;width:100%">Enter ratio above  -  find it on your Departmental Report Line 56 "USED/NEW RATIO"</div>`}
+      :`<div class="tip tip-blue" style="margin-top:8px;font-size:12px;width:100%">Enter ratio above - find it on your Departmental Report Line 56 "USED/NEW RATIO"</div>`}
     </div>
   </div>
 
   <div class="g2" style="margin-bottom:14px">
-    <div class="card"><div class="card-title">Avg Gross/Unit  -  Dealer vs GST Benchmark</div><div class="cw" style="height:230px"><canvas id="ovGross"></canvas></div></div>
-    <div class="card"><div class="card-title">Recon/Unit  -  Dealer vs GST Benchmark</div><div class="cw" style="height:230px"><canvas id="ovRecon"></canvas></div></div>
+    <div class="card"><div class="card-title">Avg Gross/Unit - Dealer vs GST Benchmark</div><div class="cw" style="height:230px"><canvas id="ovGross"></canvas></div></div>
+    <div class="card"><div class="card-title">Recon/Unit - Dealer vs GST Benchmark</div><div class="cw" style="height:230px"><canvas id="ovRecon"></canvas></div></div>
   </div>
 
-  ${pyTotal>0?`<div class="card" style="margin-bottom:14px">
-    <div class="card-title">TCUV Growth Goal  -  +10% vs Prior Year Same Period</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-title">TCUV Growth Goal${pyFull>0?' - +'+growthPct+'% Over Prior Year':''}</div>
+    ${pyFull>0?`
     <div class="kpi-row" style="margin-bottom:14px">
-      ${kpi('PY Period Total',fN(pyTotal),numMo+'-month window',BL)}
-      ${kpi('PY Monthly Avg',fN(pyMonthly),'avg/mo',BL)}
-      ${kpi('This Period Total',fN(periodTotal),numMo+'-month period',periodTotal>=pyTotal?GN:RE)}
-      ${kpi('Growth Goal (+10%)',fN(goal),fN(goalMonthly)+' avg/mo target',GN)}
+      ${kpi('PY Total Sold',fN(pyFull),'Full year',BL)}
+      ${kpi('Growth Goal (+'+growthPct+'%)',fN(growthGoal),'Annual target',GN)}
+      ${kpi('Monthly Target',fN(monthlyTarget),'Units per month',monthlyTarget<=Math.round(cyMonthly)?GN:RE)}
+      ${kpi('Current Monthly Avg',fN(Math.round(cyMonthly)),monthlyGap>0?'Need '+monthlyGap+' more/mo':monthlyGap===0?'On pace':'Exceeding by '+Math.abs(monthlyGap)+'/mo',monthlyGap<=0?GN:RE)}
     </div>
-    <div class="cw" style="height:220px"><canvas id="ovGoal"></canvas></div>
-  </div>`:''}
+    <div class="g2" style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:20px;padding:16px;background:var(--surface);border:1px solid var(--bdr);border-radius:10px">
+        <div style="text-align:center;padding:12px 20px;background:#fff;border:1.5px solid var(--bdr);border-radius:10px">
+          <div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">PY This Period</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:30px;font-weight:900;color:${BL}">${fN(pyThisPeriod)}</div>
+        </div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;color:var(--dim-lt)">VS</div>
+        <div style="text-align:center;padding:12px 20px;background:#fff;border:1.5px solid var(--bdr);border-radius:10px">
+          <div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">CY This Period</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:30px;font-weight:900;color:${RE}">${fN(periodTotal)}</div>
+        </div>
+      </div>
+      <div style="padding:16px;background:${periodTotal>=pyThisPeriod?'var(--green-lt)':'var(--red-lt)'};border:1.5px solid ${periodTotal>=pyThisPeriod?'rgba(10,124,58,.25)':'rgba(200,16,46,.25)'};border-radius:10px;text-align:center;display:flex;flex-direction:column;justify-content:center">
+        <div style="font-size:10px;color:var(--dim-m);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">YoY Change</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:36px;font-weight:900;color:${periodTotal>=pyThisPeriod?GN:RE};line-height:1">${periodTotal>=pyThisPeriod?'+':''}${periodTotal-pyThisPeriod}</div>
+        <div style="font-size:14px;color:${periodTotal>=pyThisPeriod?GN:RE};font-weight:700;margin-top:4px">${pyThisPeriod>0?(periodTotal>=pyThisPeriod?'+':'')+fP(periodTotal-pyThisPeriod,pyThisPeriod)+'%':'N/A'}</div>
+      </div>
+    </div>`:''}
+    <div style="font-size:13px;color:var(--dim);margin-bottom:10px;line-height:1.6">Enter the prior year full year TCUV total to calculate your growth target.</div>
+    <div class="g2" style="gap:14px">
+      <div>
+        <label class="fl">PY Full Year TCUV Units</label>
+        <input id="pyInput" type="number" class="fi" value="${pyFull||''}" placeholder="e.g. 247" oninput="sPY()" style="font-size:18px;font-weight:700;color:${BL}">
+      </div>
+      <div>
+        <label class="fl">Growth Goal %</label>
+        <input id="growthPctInput" type="number" class="fi" value="${growthPct}" placeholder="20" oninput="sGrowthPct()" style="font-size:18px;font-weight:700;color:${GN}">
+      </div>
+    </div>
+  </div>
 
   <div class="card">
-    <div class="card-title">Monthly Objective vs Sold  -  Enter Values Below</div>
+    <div class="card-title">Monthly Objective vs Sold - Enter Values Below</div>
     <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:5px;margin-bottom:12px">
       ${MO.map((m,i)=>`<div><div class="fl" style="text-align:center;font-size:10px;letter-spacing:0">${m}</div><input type="number" class="fi fi-sm" id="moS${i}" value="${ms[i]||''}" placeholder="S" oninput="sMoData()"><input type="number" class="fi fi-sm" style="margin-top:3px;color:var(--blue)" id="moO${i}" value="${mo[i]||''}" placeholder="O" oninput="sMoData()"></div>`).join('')}
     </div>
@@ -742,12 +752,12 @@ function rOv(mc,c){
     if(inv.length)mkChart('ovMix',{type:'doughnut',data:{labels:inv.map(d=>d.l+' ('+Math.round(d.v/(invTotal||1)*100)+'%)'),datasets:[{data:inv.map(d=>d.v),backgroundColor:inv.map(d=>d.c),borderWidth:3,borderColor:'#fff',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:12},padding:10,usePointStyle:true}},tooltip:{callbacks:{label:ctx=>{const v=ctx.raw;const pct=Math.round(v/(invTotal||1)*100);return ctx.label.split(' (')[0]+': '+v+' units ('+pct+'%)';}}}}}});
     mkChart('ovGross',{type:'bar',data:{labels:['Front GP','Back GP','Total GP'],datasets:[{label:'Dealer',data:[aF,aB,aT],backgroundColor:[aF>=gF?GN+'cc':RE+'cc',aB>=gB?GN+'cc':RE+'cc',aT>=gT?GN+'cc':RE+'cc'],borderRadius:5,borderSkipped:false},{label:'GST Avg',data:[gF,gB,gT],backgroundColor:[DK+'cc',DK+'cc',DK+'cc'],borderRadius:5,borderSkipped:false}]},options:chOpts(v=>'$'+(v/1000).toFixed(0)+'k')});
     mkChart('ovRecon',{type:'bar',data:{labels:['Recon/Unit'],datasets:[{label:'Dealer',data:[aR],backgroundColor:[aR<=gR?GN+'cc':RE+'cc'],borderRadius:5,borderSkipped:false},{label:'GST Avg',data:[gR],backgroundColor:[DK],borderRadius:5,borderSkipped:false}]},options:chOpts(v=>'$'+v.toLocaleString())});
-    if(pyTotal>0)mkChart('ovGoal',{type:'bar',data:{labels:MO,datasets:[{label:'PY Monthly Avg',data:Array(12).fill(Math.round(pyMonthly)),backgroundColor:BL+'55',borderRadius:4},{label:'Growth Goal Monthly',data:moGoals,backgroundColor:GN+'88',borderRadius:4},{label:'Current Period Avg',data:Array(12).fill(Math.round(cyMonthly)),backgroundColor:RE+'cc',borderRadius:4}]},options:chOpts()});
     if(ms.some(v=>v>0)||mo.some(v=>v>0))mkChart('moChart',{type:'bar',data:{labels:MO,datasets:[{label:'Sold',data:ms.slice(),backgroundColor:RE+'cc',borderRadius:4},{label:'Objective',data:mo.slice(),backgroundColor:DK,borderRadius:4}]},options:chOpts()});
   },160);
 }
 function sMTD(){const c=gc();if(!c)return;c.mtd={sold:+document.getElementById('mtdS')?.value||0,obj:+document.getElementById('mtdO')?.value||0,silver:+document.getElementById('mtdSv')?.value||0,gold:+document.getElementById('mtdGd')?.value||0};saveAll();if(CL&&charts['ovMTD']){charts['ovMTD'].data.datasets[0].data=[c.mtd.sold,c.mtd.obj,c.mtd.silver,c.mtd.gold];charts['ovMTD'].update();}}
 function sPY(){const c=gc();if(!c)return;c.fn.pyTCUV=+document.getElementById('pyInput')?.value||0;saveAll();clearTimeout(window._pt);window._pt=setTimeout(()=>render(),700);}
+function sGrowthPct(){const c=gc();if(!c)return;c.fn.growthGoalPct=+document.getElementById('growthPctInput')?.value||20;saveAll();clearTimeout(window._gpt);window._gpt=setTimeout(()=>render(),700);}
 function sMoData(){const c=gc();if(!c)return;c.moSold=MO.map((_,i)=>+document.getElementById('moS'+i)?.value||0);c.moObj=MO.map((_,i)=>+document.getElementById('moO'+i)?.value||0);saveAll();}
 function sUNRatio(){const c=gc();if(!c)return;const v=parseFloat(document.getElementById('unRatioInput')?.value)||0;c.fn.usedNewRatio=v;saveAll();clearTimeout(window._unT);window._unT=setTimeout(()=>render(),600);}
 
@@ -840,8 +850,7 @@ function rRecon(mc,c){
     ${kpi('Dealer Recon/Unit',f$(cR),'Current period avg',cR<=gC?GN:RE)}
     ${kpi('GST Avg Recon/Unit',f$(gC),'District benchmark',BL)}
     ${kpi('Variance',f$(vari),cR<=gC?'Below GST avg ✓':'Above GST avg  -  action needed',cR<=gC?GN:RE)}
-    ${kpi('Total Recon Cost',f$(f.cR||0),fN(f.tu)+' units × '+f$(cR)+'/unit',GD)}
-    ${f.rtCU>0?kpi('Rental Used Units',fN(f.rtCU),'GP: '+f$(f.rtCGP||0),TE):''}
+    ${kpi('Total Recon Cost',f$(f.cR||0),fN(f.tu)+' units x '+f$(cR)+'/unit',GD)}
   </div>
   <div class="g2">
     <div class="card"><div class="card-title">Recon/Unit  -  Dealer vs GST</div><div class="cw" style="height:260px"><canvas id="rcBar"></canvas></div></div>
@@ -877,8 +886,10 @@ function rSold(mc,c){
   const yc=c.yoyCur||Array(12).fill(0),yp=c.yoyPrior||Array(12).fill(0);
   const dAvg=rc.ds.length>0?Math.round(di.t/rc.ds.length):0;
   const distRank=rc.ds.length>0?(()=>{
-    const sorted=[...rc.ds].sort((a,b)=>b.t-a.t);
+    const sorted=[...rc.ds].sort((a,b)=>b.p-a.p);
+    // Try full fuzzy match first
     let pos=sorted.findIndex(d=>nm(d.n,c.nm));
+    // If not found, try matching first significant word of dealer name
     if(pos<0){const fw=c.nm.toUpperCase().replace(/[^A-Z0-9 ]/g,'').split(' ').filter(w=>w.length>3&&!['TOYOTA','MOTOR','AUTO','CARS','GROUP','THE'].includes(w))[0];if(fw)pos=sorted.findIndex(d=>d.n.toUpperCase().includes(fw));}
     return pos>=0?pos+1:null;
   })():null;
@@ -890,7 +901,7 @@ function rSold(mc,c){
     ${kpi('Variance',sel.t-sel.o,sel.t>=sel.o?'Above obj ✓':'Need: '+(sel.o-sel.t)+' more',sel.t>=sel.o?GN:RE)}
     ${kpi('District Avg',dAvg,'Total: '+di.t+' · Obj: '+di.o,BL)}
     ${kpi('District Total',di.t,di.p+'% attainment · '+rc.ds.length+' dealers',DM)}
-    ${distRank?kpi('District Rank','#'+distRank+' of '+rc.ds.length,'By units sold',distRank===1?GN:distRank<=3?GD:distRank<=Math.ceil(rc.ds.length/2)?BL:RE):kpi('District Rank',' - ','Upload recap to rank',DM)}
+    ${distRank?kpi('District Rank','#'+distRank+' of '+rc.ds.length,'By % attainment',distRank===1?GN:distRank<=3?GD:distRank<=Math.ceil(rc.ds.length/2)?BL:RE):kpi('District Rank',' - ','Upload recap to rank',DM)}
   </div>
 
   <div class="g2" style="margin-bottom:14px">
@@ -924,8 +935,7 @@ function rSold(mc,c){
   setTimeout(()=>{
     const co=chOpts();
     mkChart('sdPie',{type:'doughnut',data:{labels:['Silver','Gold'],datasets:[{data:[sel.s||0,sel.g||0],backgroundColor:['#9CA3AF',GD],borderWidth:3,borderColor:'#fff',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:12},padding:10,usePointStyle:true}}}}});
-    const rankedDs=[...rc.ds].sort((a,b)=>b.t-a.t);
-    mkChart('sdDist',{type:'bar',data:{labels:rankedDs.map(d=>d.n.length>22?d.n.slice(0,22)+'…':d.n),datasets:[{label:'Sold',data:rankedDs.map(d=>d.t),backgroundColor:rankedDs.map(d=>nm(d.n,c.nm)?RE+'cc':'#C8D0DC'),borderRadius:3},{label:'Objective',data:rankedDs.map(d=>d.o),backgroundColor:'#E8EDF5',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{position:'top',labels:{font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.x}}},scales:{x:{beginAtZero:true,grid:{color:'#EEF1F5'},ticks:{font:{size:11}}},y:{grid:{display:false},ticks:{font:{size:11},autoSkip:false}}}}});
+    mkChart('sdDist',{type:'bar',data:{labels:rc.ds.map(d=>d.n.length>16?d.n.slice(0,16)+'…':d.n),datasets:[{label:'Sold',data:rc.ds.map(d=>d.t),backgroundColor:rc.ds.map(d=>nm(d.n,c.nm)?RE+'cc':'#C8D0DC'),borderRadius:3},{label:'Objective',data:rc.ds.map(d=>d.o),backgroundColor:'#E8EDF5',borderRadius:3}]},options:{...co,indexAxis:'y',plugins:{legend:{labels:{font:{size:11}}}}}});
     if(ms.some(v=>v>0)||mo.some(v=>v>0))mkChart('moChart',{type:'bar',data:{labels:MO,datasets:[{label:'Sold',data:ms.slice(),backgroundColor:RE+'cc',borderRadius:4},{label:'Objective',data:mo.slice(),backgroundColor:DK,borderRadius:4}]},options:co});
     if(yc.some(v=>v>0)||yp.some(v=>v>0))mkChart('yoyChart',{type:'bar',data:{labels:MO,datasets:[{label:'Current Year',data:yc.slice(),backgroundColor:RE+'cc',borderRadius:4},{label:'Prior Year',data:yp.slice(),backgroundColor:BL+'77',borderRadius:4}]},options:co});
   },160);
@@ -938,21 +948,12 @@ function sYoY(){const c=gc();if(!c)return;c.yoyCur=MO.map((_,i)=>+document.getEl
 // ═══════════════════════════════════════════════════════════════
 function rInv(mc,c){
   const inv=c.inventory;
-  const cPct=inv&&inv.a>0?Math.round(inv.c/inv.a*100):0;
-  const tPct=inv&&inv.a>0?Math.round(inv.u/inv.a*100):0;
-  const cOfT=inv&&inv.u>0?Math.round(inv.c/inv.u*100):0;
-  const nc=inv?inv.u-inv.c:0;
-  const ntU=inv?inv.t:0;
-  const ntPct=inv&&inv.a>0?Math.round(inv.t/inv.a*100):0;
-  // Units needed to hit current month objective
-  const rcD=c.rc?.ds?.find(d=>nm(d.n,c.nm));
-  const mtdSold=c.mtd?.sold||0;
-  const mtdObj=c.mtd?.obj||(rcD?.o||0);
-  const unitsNeeded=Math.max(0,mtdObj-mtdSold);
-  const dl2=dleft();
-  const paceNeeded=unitsNeeded>0?(unitsNeeded/dl2).toFixed(1):0;
-  const certInv=inv?inv.c:0;
-  const invToObjRatio=mtdObj>0&&certInv>0?(certInv/mtdObj).toFixed(1):'N/A';
+  const toyU=inv?inv.u:0;
+  const certU=inv?inv.c:0;
+  const cOfT=toyU>0?Math.round(certU/toyU*100):0;
+  const certTarget=50; // 50% of Toyota should be certified
+  const needToCert=toyU>0?Math.max(0,Math.ceil(toyU*certTarget/100)-certU):0;
+  const certGoalMet=cOfT>=certTarget;
   const tips=[
     {pct:'30-40%',desc:'of total used inventory should be Toyota Certified. Ensures certified stock to hit objectives without over-exposing reconditioning spend.',color:RE},
     {pct:'50-60%',desc:'of Toyota-brand used should carry certification. Non-certified Toyota units are missed margin. Certified commands $1,000 to $1,500 higher front GP.',color:GD},
@@ -962,25 +963,22 @@ function rInv(mc,c){
   mc.innerHTML=`
   <div class="pg-hdr"><div class="pg-ttl">Inventory Analysis</div><div class="pg-sub">TCUV certification mix, inventory depth, and objective alignment</div><div class="pg-rule"></div></div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-    <div style="background:${unitsNeeded>0?'var(--red-lt)':'var(--green-lt)'};border:1.5px solid ${unitsNeeded>0?'rgba(200,16,46,.25)':'rgba(10,124,58,.25)'};border-radius:var(--rl);padding:22px 26px;box-shadow:var(--sh)">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:${unitsNeeded>0?RE:GN};margin-bottom:10px">Units Needed to Hit Current Month Objective</div>
-      <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
-        <div style="font-family:'Orbitron',sans-serif;font-size:48px;font-weight:900;color:${unitsNeeded>0?RE:GN};line-height:1">${unitsNeeded>0?fN(unitsNeeded):'0'}</div>
+  <div class="g2" style="margin-bottom:14px">
+    <div class="card">
+      <div class="card-title" style="color:${certGoalMet?GN:RE}">Cert Units Needed to Hit ${certTarget}% of Toyota</div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px">
+        <div style="width:42px;height:42px;border-radius:8px;background:${certGoalMet?GN:RE};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3">${certGoalMet?'<polyline points="20 6 9 17 4 12"/>':'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'}</svg>
+        </div>
         <div>
-          <div style="font-size:13px;color:${unitsNeeded>0?RE:GN};font-weight:600">${unitsNeeded>0?paceNeeded+' units/day needed with '+dl2+' days left':rcD?'Objective met or on track':'Set MTD data on Overview tab'}</div>
-          <div style="font-size:12px;color:var(--dim-m);margin-top:4px">MTD Sold: <strong>${fN(mtdSold)}</strong> | Objective: <strong>${fN(mtdObj)}</strong>${rcD?' | Recap Obj: '+rcD.o:''}</div>
+          <div style="font-size:15px;font-weight:700;color:${certGoalMet?GN:RE}">${certGoalMet?certTarget+'% cert of Toyota goal met':'Need '+needToCert+' more certifications'}</div>
+          <div style="font-size:13px;color:var(--dim-m);margin-top:2px">Currently: <strong>${fN(certU)}</strong> certified of <strong>${fN(toyU)}</strong> Toyota = <strong>${cOfT}%</strong> | Target: <strong>${certTarget}%</strong> (${Math.ceil(toyU*certTarget/100)} units)</div>
         </div>
       </div>
-      ${unitsNeeded>0&&certInv>0?`<div style="margin-top:12px;padding:10px 14px;background:rgba(255,255,255,.6);border-radius:8px;font-size:12px;color:var(--dim)">
-        <strong style="color:var(--txt)">Inventory Check:</strong> You have <strong>${fN(certInv)}</strong> certified units in stock.
-        ${certInv>=unitsNeeded?'Sufficient certified inventory to meet the remaining objective if turn rate holds.':'You may need to certify additional units or accelerate sourcing to cover the gap.'}
-        Inventory-to-remaining-objective ratio: <strong>${invToObjRatio}x</strong>
-      </div>`:''}
     </div>
-    <div style="background:#fff;border:1px solid var(--bdr);border-radius:var(--rl);padding:22px 26px;box-shadow:var(--sh)">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--dim-m);margin-bottom:10px">Inventory Depth vs Objective</div>
-      <div class="cw" style="height:160px"><canvas id="invObjChart"></canvas></div>
+    <div class="card">
+      <div class="card-title">Certification Progress vs ${certTarget}% Goal</div>
+      <div class="cw" style="height:160px"><canvas id="invCertChart"></canvas></div>
     </div>
   </div>
 
@@ -995,43 +993,7 @@ function rInv(mc,c){
     </div>
     <div style="font-size:12px;color:var(--dim-m);margin-top:8px">Used Toyota = total Toyota used count. Certified = the TCUV-certified portion. Non-Toyota = all other makes on the lot.</div>
   </div>
-  ${inv?`
-  <div class="kpi-row">
-    ${kpi('Certified (TCUV)',fN(inv.c),cPct+'% of total used',BL)}
-    ${kpi('Non-Cert Toyota',fN(nc),Math.round(nc/(inv.a||1)*100)+'% of total',RE)}
-    ${kpi('Non-Toyota Used',fN(ntU),ntPct+'% of total used',OR)}
-    ${kpi('Total Used',fN(inv.a),inv.u+' Toyota + '+inv.t+' Non-Toyota',GD)}
-  </div>
-  <div class="card" style="margin-bottom:14px">
-    <div class="card-title">Certification Mix vs Industry Standards</div>
-    <div class="g3" style="margin-bottom:16px;text-align:center">
-      <div>${svgPctGauge(cPct,33,'CERT % OF TOTAL','30-40%')}<div style="font-size:12px;font-weight:700;color:${BL};margin-top:4px">Target: 30-40%</div></div>
-      <div>${svgPctGauge(cOfT,55,'CERT % OF TOYOTA','50-60%')}<div style="font-size:12px;font-weight:700;color:${BL};margin-top:4px">Target: 50-60%</div></div>
-      <div>${svgPctGauge(tPct,65,'TOYOTA % OF TOTAL','60-70%')}<div style="font-size:12px;font-weight:700;color:${BL};margin-top:4px">Target: 60-70%</div></div>
-    </div>
-    <div class="g3">
-      <div class="${cPct>=33?'st-on':cPct>=25?'st-close':'st-low'}">${cPct>=33?'ON TARGET':cPct>=25?'CLOSE':'BELOW TARGET'}<div style="font-size:11px;margin-top:3px;font-weight:400;opacity:.8">Cert % of Total: ${cPct}% (Target: 30-40%)</div></div>
-      <div class="${cOfT>=55?'st-on':cOfT>=41?'st-close':'st-low'}">${cOfT>=55?'ON TARGET':cOfT>=41?'CLOSE':'BELOW TARGET'}<div style="font-size:11px;margin-top:3px;font-weight:400;opacity:.8">Cert % of Toyota: ${cOfT}% (Target: 50-60%)</div></div>
-      <div class="${tPct>=65?'st-on':tPct>=49?'st-close':'st-low'}">${tPct>=65?'ON TARGET':tPct>=49?'CLOSE':'BELOW TARGET'}<div style="font-size:11px;margin-top:3px;font-weight:400;opacity:.8">Toyota % of Total: ${tPct}% (Target: 60-70%)</div></div>
-    </div>
-  </div>
-  <div class="card" style="margin-bottom:14px">
-    <div class="card-title">Inventory Composition Breakdown</div>
-    <div class="g2">
-      <div class="cw" style="height:240px"><canvas id="invPieChart"></canvas></div>
-      <div>
-        <table>
-          <thead><tr><th>Category</th><th class="r">Units</th><th class="r">% of Total</th></tr></thead>
-          <tbody>
-            <tr><td style="font-weight:700;color:${RE}">TCUV Certified</td><td class="r" style="font-weight:700">${fN(inv.c)}</td><td class="r">${cPct}%</td></tr>
-            <tr><td style="font-weight:700;color:${GD}">Non-Cert Toyota</td><td class="r" style="font-weight:700">${fN(nc)}</td><td class="r">${Math.round(nc/(inv.a||1)*100)}%</td></tr>
-            <tr><td style="font-weight:700;color:${OR}">Non-Toyota Used</td><td class="r" style="font-weight:700">${fN(ntU)}</td><td class="r">${ntPct}%</td></tr>
-            <tr style="background:var(--bg)"><td style="font-weight:800">Total Used Inventory</td><td class="r" style="font-weight:800">${fN(inv.a)}</td><td class="r" style="font-weight:800">100%</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>`:``}
+
   <div class="card">
     <div class="card-title">TCUV Inventory Best Practices</div>
     <div class="g2">
@@ -1039,12 +1001,8 @@ function rInv(mc,c){
     </div>
   </div>`;
   setTimeout(()=>{
-    mkChart('invObjChart',{type:'bar',data:{labels:['MTD Sold','Remaining Need','Certified Inv'],datasets:[{data:[mtdSold,unitsNeeded,certInv],backgroundColor:[GN+'cc',RE+'cc',BL+'cc'],borderRadius:5,borderSkipped:false}]},options:{...chOpts(),plugins:{legend:{display:false}}}});
-    if(inv){
-      const pieData=[{l:'TCUV Certified',v:inv.c,c:RE},{l:'Non-Cert Toyota',v:nc,c:GD},{l:'Non-Toyota Used',v:ntU,c:OR}].filter(d=>d.v>0);
-      const pieTotal=pieData.reduce((a,d)=>a+d.v,0);
-      if(pieData.length)mkChart('invPieChart',{type:'doughnut',data:{labels:pieData.map(d=>d.l+' ('+Math.round(d.v/(pieTotal||1)*100)+'%)'),datasets:[{data:pieData.map(d=>d.v),backgroundColor:pieData.map(d=>d.c),borderWidth:3,borderColor:'#fff',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:12},padding:10,usePointStyle:true}}}}});
-    }
+    const certGoalUnits=Math.ceil(toyU*certTarget/100);
+    mkChart('invCertChart',{type:'bar',data:{labels:['Certified Now','Need to Certify',certTarget+'% Target'],datasets:[{data:[certU,needToCert,certGoalUnits],backgroundColor:[GN+'cc',RE+'cc',BL+'44'],borderRadius:5,borderSkipped:false}]},options:{...chOpts(),plugins:{legend:{display:false}}}});
   },160);
 }
 function sInv(){const c=gc();if(!c)return;const u=parseInt(document.getElementById('iU').value)||0,cv=parseInt(document.getElementById('iC').value)||0,t=parseInt(document.getElementById('iT').value)||0;if(cv>u){alert('Certified count cannot exceed Used Toyota count.');return;}c.inventory={n:c.nm,u,c:cv,t,a:u+t};render();saveAll();}
@@ -1288,7 +1246,7 @@ function copyPerfAnalysis(){
 // CONTACTS & CONSULTATIONS
 // ═══════════════════════════════════════════════════════════════
 function rContacts(mc,c){
-  const contacts=c.contacts||[],history=c.consultHistory||[],snapshots=c.snapshots||[];
+  const contacts=c.contacts||[],history=c.consultHistory||[];
   mc.innerHTML=`
   ${sHdr('Contacts & Consultations','Manage dealer contacts and log visits')}
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
@@ -1362,7 +1320,6 @@ function rContacts(mc,c){
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button class="btn btn-sm btn-blue" onclick="logCt()">Log Consultation</button>
           <button class="btn btn-sm btn-purple" onclick="genEmail()">✉ Generate Follow-Up Email</button>
-          <button class="btn btn-sm" style="background:var(--green);color:#fff;border-color:var(--green)" onclick="saveSnap()">📸 Save Full Snapshot</button>
         </div>
         <div id="emailArea" style="display:none;margin-top:14px"></div>
       </div>
@@ -1384,33 +1341,6 @@ function rContacts(mc,c){
             </div>
             <div class="hist-note" style="margin-top:5px">${h.notes}</div>
             <div id="hEA_${h.id}" style="display:none;margin-top:12px"></div>
-          </div>`).join('')}
-      </div>
-
-      <div class="card" style="margin-top:14px">
-        <div class="card-title">Saved Consultation Snapshots (${snapshots.length})</div>
-        <div style="font-size:12px;color:var(--dim-m);margin-bottom:10px">Full data snapshots (financials, inventory, rankings, MTD) saved per consultation.</div>
-        ${snapshots.length===0?`<div style="font-size:13px;color:var(--dim-m);padding:10px 0">No snapshots saved yet. Click <strong>📸 Save Full Snapshot</strong> after logging a consultation to capture a full picture of the dealership at that moment.</div>`:''}
-        ${[...snapshots].reverse().map(s=>`
-          <div class="hist-item">
-            <div class="hist-top">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                <span class="hist-name" style="color:var(--green)">Consultation #${s.num}</span>
-                <span style="font-size:11px;color:var(--dim-m);background:#F3F4F6;padding:2px 8px;border-radius:10px">${s.label||'Snapshot'}</span>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-                <span style="font-size:12px;color:var(--dim-m)">${s.date}</span>
-                <button class="btn btn-sm" style="font-size:11px;padding:4px 10px;background:#F3F4F6" onclick="viewSnap('${s.id}')">View</button>
-                <button class="btn btn-sm" style="font-size:11px;padding:4px 10px;background:#FEE2E2;color:var(--red);border-color:#FCA5A5" onclick="delSnap('${s.id}')">Delete</button>
-              </div>
-            </div>
-            <div style="margin-top:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;font-size:12px">
-              <div><span style="color:var(--dim-m)">TCUV Sold:</span> <strong>${s.mtd?.sold||0}</strong></div>
-              <div><span style="color:var(--dim-m)">TCUV Obj:</span> <strong>${s.mtd?.obj||0}</strong></div>
-              <div><span style="color:var(--dim-m)">Cert %:</span> <strong>${s.certPct||0}%</strong></div>
-              <div><span style="color:var(--dim-m)">District Rank:</span> <strong>${s.rank||'-'}</strong></div>
-            </div>
-            ${s.notes?`<div class="hist-note" style="margin-top:8px;font-style:italic;color:var(--dim)">${s.notes}</div>`:''}
           </div>`).join('')}
       </div>
     </div>
@@ -1439,78 +1369,6 @@ function logCt(){
   c.consultHistory.push(entry);
   render();saveAll();
   if(entry.type==='Visit'){setTimeout(()=>{const a=document.getElementById('emailArea');if(a){a.style.display='block';a.innerHTML=`<div class="tip tip-purple">✓ Visit logged! Click <strong>✉ Generate Follow-Up Email</strong> above to draft a follow-up email from your visit notes.</div>`;}},300);}
-}
-
-function saveSnap(){
-  const c=gc();if(!c)return;
-  const notes=(document.getElementById('hNo')?.value||'').trim();
-  const contact=(document.getElementById('hCt')?.value||'').trim();
-  const date=document.getElementById('hDt')?.value||td();
-  if(!c.snapshots)c.snapshots=[];
-  const num=c.snapshots.length+1;
-  // Calculate cert % and rank for snapshot preview
-  const certPct=c.fn&&c.fn.tot>0?Math.round(c.fn.tu/c.fn.tot*100):0;
-  let rank='-';
-  if(c.rc&&c.rc.ds&&c.rc.ds.length>0){
-    const sorted=[...c.rc.ds].sort((a,b)=>b.t-a.t);
-    const pos=sorted.findIndex(d=>nm(d.n,c.nm));
-    if(pos>=0)rank='#'+(pos+1)+' of '+sorted.length;
-  }
-  const label=contact?'with '+contact:(c.snapshots.length===0?'Initial baseline':'Follow-up');
-  const snap={
-    id:Date.now(),num,date,label,notes,contact,certPct,rank,
-    mtd:c.mtd?{...c.mtd}:null,
-    fn:c.fn?JSON.parse(JSON.stringify(c.fn)):null,
-    inventory:c.inventory?{...c.inventory}:null,
-    moSold:c.moSold?[...c.moSold]:[],
-    moObj:c.moObj?[...c.moObj]:[],
-    yoyCur:c.yoyCur?[...c.yoyCur]:[],
-    yoyPrior:c.yoyPrior?[...c.yoyPrior]:[],
-    rc:c.rc?JSON.parse(JSON.stringify(c.rc)):null
-  };
-  c.snapshots.push(snap);
-  saveAll();
-  alert('Consultation #'+num+' snapshot saved for '+c.nm+' on '+date+'.');
-  render();
-}
-
-function delSnap(id){
-  const c=gc();if(!c||!c.snapshots)return;
-  if(!confirm('Delete this consultation snapshot? This cannot be undone.'))return;
-  c.snapshots=c.snapshots.filter(s=>s.id!=id);
-  // Renumber remaining snapshots so they stay sequential
-  c.snapshots.forEach((s,i)=>s.num=i+1);
-  render();saveAll();
-}
-
-function viewSnap(id){
-  const c=gc();if(!c||!c.snapshots)return;
-  const s=c.snapshots.find(x=>x.id==id);if(!s)return;
-  const win=window.open('','_blank');if(!win){alert('Please allow popups to view the snapshot.');return;}
-  const fn=s.fn||{},mtd=s.mtd||{},inv=s.inventory||{};
-  const rows=[
-    ['Date',s.date],
-    ['Consultation #',s.num],
-    ['Label',s.label||'-'],
-    ['Contact',s.contact||'-'],
-    ['TCUV Sold (MTD)',mtd.sold||0],
-    ['TCUV Obj (MTD)',mtd.obj||0],
-    ['Silver',mtd.silver||0],
-    ['Gold',mtd.gold||0],
-    ['Cert %',s.certPct+'%'],
-    ['District Rank',s.rank],
-    ['TCUV Units',fn.tu||0],
-    ['TCUV Front GP','$'+(fn.tg||0).toLocaleString()],
-    ['TCUV F&I','$'+(fn.tFI||0).toLocaleString()],
-    ['Recon Cost','$'+(fn.cR||0).toLocaleString()],
-    ['Dept GP','$'+(fn.dGP||0).toLocaleString()],
-    ['Non-Cert Units',fn.nu||0],
-    ['Non-Toyota Used Units',fn.ou||0],
-    ['Used:New Ratio',fn.usedNewRatio||'-'],
-    ['Inventory Total',inv.a||0]
-  ];
-  win.document.write(`<!DOCTYPE html><html><head><title>Consultation #${s.num} - ${c.nm}</title><style>body{font-family:system-ui,sans-serif;padding:30px;max-width:720px;margin:0 auto;color:#111}h1{color:#111;border-bottom:3px solid #D32F2F;padding-bottom:10px}h2{color:#555;font-size:16px;margin-top:24px}table{width:100%;border-collapse:collapse;margin:10px 0}td{padding:8px 12px;border-bottom:1px solid #eee}td:first-child{color:#666;width:40%}td:last-child{font-weight:600}.notes{background:#F9FAFB;border-left:3px solid #3B82F6;padding:12px 16px;margin:16px 0;border-radius:4px;white-space:pre-wrap}.btn{background:#D32F2F;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-weight:600;margin-top:20px}@media print{.btn{display:none}}</style></head><body><h1>Consultation #${s.num} Snapshot</h1><p><strong>${c.nm}</strong> - ${s.date}</p><h2>Summary</h2><table>${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>${s.notes?`<h2>Notes</h2><div class="notes">${s.notes}</div>`:''}<button class="btn" onclick="window.print()">Print / Save as PDF</button></body></html>`);
-  win.document.close();
 }
 
 // ═══ AI EMAIL ══════════════════════════════════════════════════
@@ -1669,14 +1527,7 @@ function addDealer(){
   const nv=id=>parseFloat(document.getElementById(id)?.value)||0;
   const nm2=(document.getElementById('uN')?.value||'').trim();
   if(!nm2){const m=document.getElementById('upMsg');if(m){m.textContent='⚠ Dealer name required.';m.style.color=RE;}return;}
-  // Guarantee unique ID even on rapid clicks
-  let nid=Date.now(); while(D.some(d=>d.id===nid)){nid++;}
-  // Guard: if a dealer with the same name already exists, switch to it instead of duplicating
-  const dup=D.find(d=>d.nm&&d.nm.toUpperCase().trim()===nm2.toUpperCase().trim());
-  if(dup){ci=dup.id;tb='crm';buildNav();buildSel();render();
-    const m=document.getElementById('upMsg');if(m){m.textContent='A dealer with that name already exists. Switched to it instead.';m.style.color=GD;}
-    return;}
-  const nd={id:nid,nm:nm2,dt:td(),
+  const nd={id:Date.now(),nm:nm2,dt:td(),
     fn:{nm:nm2,pr:document.getElementById('uP')?.value||'',cl:document.getElementById('uCL')?.value||'',
       tu:nv('uTU'),tg:nv('uTG'),tFI:nv('uFI'),cR:nv('uCR'),dGP:nv('uDG'),
       nu:nv('uNU'),ng:nv('uNG'),ou:nv('uOU'),og:nv('uOG'),
@@ -1686,11 +1537,8 @@ function addDealer(){
     mtd:{sold:0,obj:0,silver:0,gold:0},
     moSold:Array(12).fill(0),moObj:Array(12).fill(0),
     yoyCur:Array(12).fill(0),yoyPrior:Array(12).fill(0),
-    inventory:null,contacts:[],consultHistory:[],snapshots:[],tasks:[],pipeline:[]};
-  D.push(nd);ci=nd.id;
-  // Clear ALL upload form fields so the next dealer starts with a blank slate
-  ['uN','uP','uCL','uTU','uTG','uFI','uCR','uDG','uNU','uNG','uOU','uOG','uPT','uNW','gTG','gCR','gTF','gTU','gDG'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  tb='crm';buildNav();buildSel();render();saveAll();
+    inventory:null,contacts:[],consultHistory:[],tasks:[],pipeline:[]};
+  D.push(nd);ci=nd.id;tb='crm';buildNav();buildSel();render();saveAll();
 }
 function removeDealer(id){if(D.length<=1){alert('Cannot remove the last dealer.');return;}if(!confirm('Remove this dealer and ALL their data? This cannot be undone.'))return;D=D.filter(d=>d.id!==id);if(ci===id)ci=D[0].id;buildNav();buildSel();render();saveAll();}
 
@@ -1714,7 +1562,7 @@ function resolveDealer(parsedName){
     mtd:{sold:0,obj:0,silver:0,gold:0},
     moSold:Array(12).fill(0),moObj:Array(12).fill(0),
     yoyCur:Array(12).fill(0),yoyPrior:Array(12).fill(0),
-    rc:null,inventory:null,contacts:[],consultHistory:[],snapshots:[],tasks:[],pipeline:[]};
+    rc:null,inventory:null,contacts:[],consultHistory:[],tasks:[],pipeline:[]};
   D.push(nd);
   ci=nd.id;
   buildSel();
@@ -1815,9 +1663,9 @@ function pFin(wb,n){
   sv('uNU',nuVal);sv('uNG',ngVal);sv('uOU',ouVal);sv('uOG',ogVal);sv('uNW',newU);
   sv('gTG',gTG);sv('gCR',gCR);sv('gTF',gTF);sv('gTU',Math.round(gTU_u));
 
-  const cc=gc();
+  const cc=resolveDealer(dlrNm);
   if(cc){
-    cc.fn.pr=period||cc.fn.pr;
+    cc.nm=dlrNm||cc.nm; cc.fn.nm=dlrNm||cc.fn.nm; cc.fn.pr=period||cc.fn.pr;
     cc.fn.tu=tuVal; cc.fn.tg=tgVal; cc.fn.tFI=tFIVal; cc.fn.cR=crVal;
     cc.fn.dGP=dGPVal; cc.fn.nu=nuVal; cc.fn.ng=ngVal; cc.fn.ou=ouVal; cc.fn.og=ogVal;
     cc.fn.newUnits=newU; cc.fn.tot=totUsed;
@@ -1886,8 +1734,9 @@ function pDept(wb,n){
   sv('uTU',tuVal);sv('uTG',tgVal);sv('uFI',tFIVal);sv('uCR',crTotal);sv('uDG',dGPVal);
   sv('uNU',nuVal);sv('uNG',ngVal);sv('gTG',gTG);sv('gCR',gCR);sv('gTF',gTF);sv('gTU',gTU);
 
-  const c=gc();
+  const c=resolveDealer(dlrNm);
   if(c){
+    c.nm=dlrNm||c.nm; c.fn.nm=dlrNm||c.fn.nm;
     c.fn.tu=tuVal; c.fn.tg=tgVal; c.fn.tFI=tFIVal; c.fn.cR=crTotal;
     c.fn.dGP=dGPVal; c.fn.nu=nuVal; c.fn.ng=ngVal; c.fn.tot=totVal;
     c.fn.gTG=gTG; c.fn.dTG=gTG; c.fn.gCR=gCR; c.fn.dCR=gCR;
