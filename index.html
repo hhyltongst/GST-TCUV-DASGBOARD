@@ -233,7 +233,7 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
       <div class="t">Gulf States Toyota &nbsp;·&nbsp; TCUV Performance CRM</div>
       <div class="s">Certified Used Vehicle District Management System</div>
     </div>
-    <span class="hdr-badge">v8</span>
+    <span class="hdr-badge">v9</span>
   </div>
   <div class="hdr-r">
     <button class="btn-hdr" onclick="window.print()">⬡ Print</button>
@@ -859,10 +859,8 @@ function rSold(mc,c){
   const yc=c.yoyCur||Array(12).fill(0),yp=c.yoyPrior||Array(12).fill(0);
   const dAvg=rc.ds.length>0?Math.round(di.t/rc.ds.length):0;
   const distRank=rc.ds.length>0?(()=>{
-    const sorted=[...rc.ds].sort((a,b)=>b.p-a.p);
-    // Try full fuzzy match first
+    const sorted=[...rc.ds].sort((a,b)=>b.t-a.t);
     let pos=sorted.findIndex(d=>nm(d.n,c.nm));
-    // If not found, try matching first significant word of dealer name
     if(pos<0){const fw=c.nm.toUpperCase().replace(/[^A-Z0-9 ]/g,'').split(' ').filter(w=>w.length>3&&!['TOYOTA','MOTOR','AUTO','CARS','GROUP','THE'].includes(w))[0];if(fw)pos=sorted.findIndex(d=>d.n.toUpperCase().includes(fw));}
     return pos>=0?pos+1:null;
   })():null;
@@ -874,7 +872,7 @@ function rSold(mc,c){
     ${kpi('Variance',sel.t-sel.o,sel.t>=sel.o?'Above obj ✓':'Need: '+(sel.o-sel.t)+' more',sel.t>=sel.o?GN:RE)}
     ${kpi('District Avg',dAvg,'Total: '+di.t+' · Obj: '+di.o,BL)}
     ${kpi('District Total',di.t,di.p+'% attainment · '+rc.ds.length+' dealers',DM)}
-    ${distRank?kpi('District Rank','#'+distRank+' of '+rc.ds.length,'By % attainment',distRank===1?GN:distRank<=3?GD:distRank<=Math.ceil(rc.ds.length/2)?BL:RE):kpi('District Rank',' - ','Upload recap to rank',DM)}
+    ${distRank?kpi('District Rank','#'+distRank+' of '+rc.ds.length,'By units sold',distRank===1?GN:distRank<=3?GD:distRank<=Math.ceil(rc.ds.length/2)?BL:RE):kpi('District Rank',' - ','Upload recap to rank',DM)}
   </div>
 
   <div class="g2" style="margin-bottom:14px">
@@ -908,7 +906,8 @@ function rSold(mc,c){
   setTimeout(()=>{
     const co=chOpts();
     mkChart('sdPie',{type:'doughnut',data:{labels:['Silver','Gold'],datasets:[{data:[sel.s||0,sel.g||0],backgroundColor:['#9CA3AF',GD],borderWidth:3,borderColor:'#fff',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:12},padding:10,usePointStyle:true}}}}});
-    mkChart('sdDist',{type:'bar',data:{labels:rc.ds.map(d=>d.n.length>16?d.n.slice(0,16)+'…':d.n),datasets:[{label:'Sold',data:rc.ds.map(d=>d.t),backgroundColor:rc.ds.map(d=>nm(d.n,c.nm)?RE+'cc':'#C8D0DC'),borderRadius:3},{label:'Objective',data:rc.ds.map(d=>d.o),backgroundColor:'#E8EDF5',borderRadius:3}]},options:{...co,indexAxis:'y',plugins:{legend:{labels:{font:{size:11}}}}}});
+    const rankedDs=[...rc.ds].sort((a,b)=>b.t-a.t);
+    mkChart('sdDist',{type:'bar',data:{labels:rankedDs.map(d=>d.n.length>22?d.n.slice(0,22)+'…':d.n),datasets:[{label:'Sold',data:rankedDs.map(d=>d.t),backgroundColor:rankedDs.map(d=>nm(d.n,c.nm)?RE+'cc':'#C8D0DC'),borderRadius:3},{label:'Objective',data:rankedDs.map(d=>d.o),backgroundColor:'#E8EDF5',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{position:'top',labels:{font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.x}}},scales:{x:{beginAtZero:true,grid:{color:'#EEF1F5'},ticks:{font:{size:11}}},y:{grid:{display:false},ticks:{font:{size:11},autoSkip:false}}}}});
     if(ms.some(v=>v>0)||mo.some(v=>v>0))mkChart('moChart',{type:'bar',data:{labels:MO,datasets:[{label:'Sold',data:ms.slice(),backgroundColor:RE+'cc',borderRadius:4},{label:'Objective',data:mo.slice(),backgroundColor:DK,borderRadius:4}]},options:co});
     if(yc.some(v=>v>0)||yp.some(v=>v>0))mkChart('yoyChart',{type:'bar',data:{labels:MO,datasets:[{label:'Current Year',data:yc.slice(),backgroundColor:RE+'cc',borderRadius:4},{label:'Prior Year',data:yp.slice(),backgroundColor:BL+'77',borderRadius:4}]},options:co});
   },160);
@@ -1271,7 +1270,7 @@ function copyPerfAnalysis(){
 // CONTACTS & CONSULTATIONS
 // ═══════════════════════════════════════════════════════════════
 function rContacts(mc,c){
-  const contacts=c.contacts||[],history=c.consultHistory||[];
+  const contacts=c.contacts||[],history=c.consultHistory||[],snapshots=c.snapshots||[];
   mc.innerHTML=`
   ${sHdr('Contacts & Consultations','Manage dealer contacts and log visits')}
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
@@ -1345,6 +1344,7 @@ function rContacts(mc,c){
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button class="btn btn-sm btn-blue" onclick="logCt()">Log Consultation</button>
           <button class="btn btn-sm btn-purple" onclick="genEmail()">✉ Generate Follow-Up Email</button>
+          <button class="btn btn-sm" style="background:var(--green);color:#fff;border-color:var(--green)" onclick="saveSnap()">📸 Save Full Snapshot</button>
         </div>
         <div id="emailArea" style="display:none;margin-top:14px"></div>
       </div>
@@ -1366,6 +1366,33 @@ function rContacts(mc,c){
             </div>
             <div class="hist-note" style="margin-top:5px">${h.notes}</div>
             <div id="hEA_${h.id}" style="display:none;margin-top:12px"></div>
+          </div>`).join('')}
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-title">Saved Consultation Snapshots (${snapshots.length})</div>
+        <div style="font-size:12px;color:var(--dim-m);margin-bottom:10px">Full data snapshots (financials, inventory, rankings, MTD) saved per consultation.</div>
+        ${snapshots.length===0?`<div style="font-size:13px;color:var(--dim-m);padding:10px 0">No snapshots saved yet. Click <strong>📸 Save Full Snapshot</strong> after logging a consultation to capture a full picture of the dealership at that moment.</div>`:''}
+        ${[...snapshots].reverse().map(s=>`
+          <div class="hist-item">
+            <div class="hist-top">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <span class="hist-name" style="color:var(--green)">Consultation #${s.num}</span>
+                <span style="font-size:11px;color:var(--dim-m);background:#F3F4F6;padding:2px 8px;border-radius:10px">${s.label||'Snapshot'}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+                <span style="font-size:12px;color:var(--dim-m)">${s.date}</span>
+                <button class="btn btn-sm" style="font-size:11px;padding:4px 10px;background:#F3F4F6" onclick="viewSnap('${s.id}')">View</button>
+                <button class="btn btn-sm" style="font-size:11px;padding:4px 10px;background:#FEE2E2;color:var(--red);border-color:#FCA5A5" onclick="delSnap('${s.id}')">Delete</button>
+              </div>
+            </div>
+            <div style="margin-top:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;font-size:12px">
+              <div><span style="color:var(--dim-m)">TCUV Sold:</span> <strong>${s.mtd?.sold||0}</strong></div>
+              <div><span style="color:var(--dim-m)">TCUV Obj:</span> <strong>${s.mtd?.obj||0}</strong></div>
+              <div><span style="color:var(--dim-m)">Cert %:</span> <strong>${s.certPct||0}%</strong></div>
+              <div><span style="color:var(--dim-m)">District Rank:</span> <strong>${s.rank||'-'}</strong></div>
+            </div>
+            ${s.notes?`<div class="hist-note" style="margin-top:8px;font-style:italic;color:var(--dim)">${s.notes}</div>`:''}
           </div>`).join('')}
       </div>
     </div>
@@ -1394,6 +1421,78 @@ function logCt(){
   c.consultHistory.push(entry);
   render();saveAll();
   if(entry.type==='Visit'){setTimeout(()=>{const a=document.getElementById('emailArea');if(a){a.style.display='block';a.innerHTML=`<div class="tip tip-purple">✓ Visit logged! Click <strong>✉ Generate Follow-Up Email</strong> above to draft a follow-up email from your visit notes.</div>`;}},300);}
+}
+
+function saveSnap(){
+  const c=gc();if(!c)return;
+  const notes=(document.getElementById('hNo')?.value||'').trim();
+  const contact=(document.getElementById('hCt')?.value||'').trim();
+  const date=document.getElementById('hDt')?.value||td();
+  if(!c.snapshots)c.snapshots=[];
+  const num=c.snapshots.length+1;
+  // Calculate cert % and rank for snapshot preview
+  const certPct=c.fn&&c.fn.tot>0?Math.round(c.fn.tu/c.fn.tot*100):0;
+  let rank='-';
+  if(c.rc&&c.rc.ds&&c.rc.ds.length>0){
+    const sorted=[...c.rc.ds].sort((a,b)=>b.t-a.t);
+    const pos=sorted.findIndex(d=>nm(d.n,c.nm));
+    if(pos>=0)rank='#'+(pos+1)+' of '+sorted.length;
+  }
+  const label=contact?'with '+contact:(c.snapshots.length===0?'Initial baseline':'Follow-up');
+  const snap={
+    id:Date.now(),num,date,label,notes,contact,certPct,rank,
+    mtd:c.mtd?{...c.mtd}:null,
+    fn:c.fn?JSON.parse(JSON.stringify(c.fn)):null,
+    inventory:c.inventory?{...c.inventory}:null,
+    moSold:c.moSold?[...c.moSold]:[],
+    moObj:c.moObj?[...c.moObj]:[],
+    yoyCur:c.yoyCur?[...c.yoyCur]:[],
+    yoyPrior:c.yoyPrior?[...c.yoyPrior]:[],
+    rc:c.rc?JSON.parse(JSON.stringify(c.rc)):null
+  };
+  c.snapshots.push(snap);
+  saveAll();
+  alert('Consultation #'+num+' snapshot saved for '+c.nm+' on '+date+'.');
+  render();
+}
+
+function delSnap(id){
+  const c=gc();if(!c||!c.snapshots)return;
+  if(!confirm('Delete this consultation snapshot? This cannot be undone.'))return;
+  c.snapshots=c.snapshots.filter(s=>s.id!=id);
+  // Renumber remaining snapshots so they stay sequential
+  c.snapshots.forEach((s,i)=>s.num=i+1);
+  render();saveAll();
+}
+
+function viewSnap(id){
+  const c=gc();if(!c||!c.snapshots)return;
+  const s=c.snapshots.find(x=>x.id==id);if(!s)return;
+  const win=window.open('','_blank');if(!win){alert('Please allow popups to view the snapshot.');return;}
+  const fn=s.fn||{},mtd=s.mtd||{},inv=s.inventory||{};
+  const rows=[
+    ['Date',s.date],
+    ['Consultation #',s.num],
+    ['Label',s.label||'-'],
+    ['Contact',s.contact||'-'],
+    ['TCUV Sold (MTD)',mtd.sold||0],
+    ['TCUV Obj (MTD)',mtd.obj||0],
+    ['Silver',mtd.silver||0],
+    ['Gold',mtd.gold||0],
+    ['Cert %',s.certPct+'%'],
+    ['District Rank',s.rank],
+    ['TCUV Units',fn.tu||0],
+    ['TCUV Front GP','$'+(fn.tg||0).toLocaleString()],
+    ['TCUV F&I','$'+(fn.tFI||0).toLocaleString()],
+    ['Recon Cost','$'+(fn.cR||0).toLocaleString()],
+    ['Dept GP','$'+(fn.dGP||0).toLocaleString()],
+    ['Non-Cert Units',fn.nu||0],
+    ['Non-Toyota Used Units',fn.ou||0],
+    ['Used:New Ratio',fn.usedNewRatio||'-'],
+    ['Inventory Total',inv.a||0]
+  ];
+  win.document.write(`<!DOCTYPE html><html><head><title>Consultation #${s.num} - ${c.nm}</title><style>body{font-family:system-ui,sans-serif;padding:30px;max-width:720px;margin:0 auto;color:#111}h1{color:#111;border-bottom:3px solid #D32F2F;padding-bottom:10px}h2{color:#555;font-size:16px;margin-top:24px}table{width:100%;border-collapse:collapse;margin:10px 0}td{padding:8px 12px;border-bottom:1px solid #eee}td:first-child{color:#666;width:40%}td:last-child{font-weight:600}.notes{background:#F9FAFB;border-left:3px solid #3B82F6;padding:12px 16px;margin:16px 0;border-radius:4px;white-space:pre-wrap}.btn{background:#D32F2F;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-weight:600;margin-top:20px}@media print{.btn{display:none}}</style></head><body><h1>Consultation #${s.num} Snapshot</h1><p><strong>${c.nm}</strong> - ${s.date}</p><h2>Summary</h2><table>${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>${s.notes?`<h2>Notes</h2><div class="notes">${s.notes}</div>`:''}<button class="btn" onclick="window.print()">Print / Save as PDF</button></body></html>`);
+  win.document.close();
 }
 
 // ═══ AI EMAIL ══════════════════════════════════════════════════
@@ -1552,7 +1651,14 @@ function addDealer(){
   const nv=id=>parseFloat(document.getElementById(id)?.value)||0;
   const nm2=(document.getElementById('uN')?.value||'').trim();
   if(!nm2){const m=document.getElementById('upMsg');if(m){m.textContent='⚠ Dealer name required.';m.style.color=RE;}return;}
-  const nd={id:Date.now(),nm:nm2,dt:td(),
+  // Guarantee unique ID even on rapid clicks
+  let nid=Date.now(); while(D.some(d=>d.id===nid)){nid++;}
+  // Guard: if a dealer with the same name already exists, switch to it instead of duplicating
+  const dup=D.find(d=>d.nm&&d.nm.toUpperCase().trim()===nm2.toUpperCase().trim());
+  if(dup){ci=dup.id;tb='crm';buildNav();buildSel();render();
+    const m=document.getElementById('upMsg');if(m){m.textContent='A dealer with that name already exists. Switched to it instead.';m.style.color=GD;}
+    return;}
+  const nd={id:nid,nm:nm2,dt:td(),
     fn:{nm:nm2,pr:document.getElementById('uP')?.value||'',cl:document.getElementById('uCL')?.value||'',
       tu:nv('uTU'),tg:nv('uTG'),tFI:nv('uFI'),cR:nv('uCR'),dGP:nv('uDG'),
       nu:nv('uNU'),ng:nv('uNG'),ou:nv('uOU'),og:nv('uOG'),
@@ -1562,8 +1668,11 @@ function addDealer(){
     mtd:{sold:0,obj:0,silver:0,gold:0},
     moSold:Array(12).fill(0),moObj:Array(12).fill(0),
     yoyCur:Array(12).fill(0),yoyPrior:Array(12).fill(0),
-    inventory:null,contacts:[],consultHistory:[],tasks:[],pipeline:[]};
-  D.push(nd);ci=nd.id;tb='crm';buildNav();buildSel();render();saveAll();
+    inventory:null,contacts:[],consultHistory:[],snapshots:[],tasks:[],pipeline:[]};
+  D.push(nd);ci=nd.id;
+  // Clear ALL upload form fields so the next dealer starts with a blank slate
+  ['uN','uP','uCL','uTU','uTG','uFI','uCR','uDG','uNU','uNG','uOU','uOG','uPT','uNW','gTG','gCR','gTF','gTU','gDG'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  tb='crm';buildNav();buildSel();render();saveAll();
 }
 function removeDealer(id){if(D.length<=1){alert('Cannot remove the last dealer.');return;}if(!confirm('Remove this dealer and ALL their data? This cannot be undone.'))return;D=D.filter(d=>d.id!==id);if(ci===id)ci=D[0].id;buildNav();buildSel();render();saveAll();}
 
@@ -1587,7 +1696,7 @@ function resolveDealer(parsedName){
     mtd:{sold:0,obj:0,silver:0,gold:0},
     moSold:Array(12).fill(0),moObj:Array(12).fill(0),
     yoyCur:Array(12).fill(0),yoyPrior:Array(12).fill(0),
-    rc:null,inventory:null,contacts:[],consultHistory:[],tasks:[],pipeline:[]};
+    rc:null,inventory:null,contacts:[],consultHistory:[],snapshots:[],tasks:[],pipeline:[]};
   D.push(nd);
   ci=nd.id;
   buildSel();
@@ -1688,9 +1797,9 @@ function pFin(wb,n){
   sv('uNU',nuVal);sv('uNG',ngVal);sv('uOU',ouVal);sv('uOG',ogVal);sv('uNW',newU);
   sv('gTG',gTG);sv('gCR',gCR);sv('gTF',gTF);sv('gTU',Math.round(gTU_u));
 
-  const cc=resolveDealer(dlrNm);
+  const cc=gc();
   if(cc){
-    cc.nm=dlrNm||cc.nm; cc.fn.nm=dlrNm||cc.fn.nm; cc.fn.pr=period||cc.fn.pr;
+    cc.fn.pr=period||cc.fn.pr;
     cc.fn.tu=tuVal; cc.fn.tg=tgVal; cc.fn.tFI=tFIVal; cc.fn.cR=crVal;
     cc.fn.dGP=dGPVal; cc.fn.nu=nuVal; cc.fn.ng=ngVal; cc.fn.ou=ouVal; cc.fn.og=ogVal;
     cc.fn.newUnits=newU; cc.fn.tot=totUsed;
@@ -1759,9 +1868,8 @@ function pDept(wb,n){
   sv('uTU',tuVal);sv('uTG',tgVal);sv('uFI',tFIVal);sv('uCR',crTotal);sv('uDG',dGPVal);
   sv('uNU',nuVal);sv('uNG',ngVal);sv('gTG',gTG);sv('gCR',gCR);sv('gTF',gTF);sv('gTU',gTU);
 
-  const c=resolveDealer(dlrNm);
+  const c=gc();
   if(c){
-    c.nm=dlrNm||c.nm; c.fn.nm=dlrNm||c.fn.nm;
     c.fn.tu=tuVal; c.fn.tg=tgVal; c.fn.tFI=tFIVal; c.fn.cR=crTotal;
     c.fn.dGP=dGPVal; c.fn.nu=nuVal; c.fn.ng=ngVal; c.fn.tot=totVal;
     c.fn.gTG=gTG; c.fn.dTG=gTG; c.fn.gCR=gCR; c.fn.dCR=gCR;
