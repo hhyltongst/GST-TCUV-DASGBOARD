@@ -233,7 +233,7 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
       <div class="t">Gulf States Toyota &nbsp;·&nbsp; TCUV Performance CRM</div>
       <div class="s">Certified Used Vehicle District Management System</div>
     </div>
-    <span class="hdr-badge">v10 · build 26</span>
+    <span class="hdr-badge">v10 · build 27</span>
   </div>
   <div class="hdr-r">
     <div id="userPill" style="display:none;align-items:center;gap:8px;padding:5px 12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:20px;color:#fff;font-size:12px;font-weight:600">
@@ -252,7 +252,7 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
 <div class="nav" id="navBar"></div>
 <div class="pg" id="mainContent"></div>
 
-<footer>&copy; 2026 Gulf States Toyota &nbsp;&middot;&nbsp; TCUV CRM Dashboard v10 (build 26) &nbsp;&middot;&nbsp; Engineered by <strong style="color:var(--red)">Hussein Hylton</strong> &nbsp;&middot;&nbsp; All rights reserved</footer>
+<footer>&copy; 2026 Gulf States Toyota &nbsp;&middot;&nbsp; TCUV CRM Dashboard v10 (build 27) &nbsp;&middot;&nbsp; Engineered by <strong style="color:var(--red)">Hussein Hylton</strong> &nbsp;&middot;&nbsp; All rights reserved</footer>
 
 <div id="loginOverlay" style="position:fixed;inset:0;background:linear-gradient(135deg,#0A0E17 0%,#1a2035 100%);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px">
   <div style="width:100%;max-width:440px;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);overflow:hidden">
@@ -2102,9 +2102,9 @@ Provide a strategic analysis with these sections. Use plain text, no markdown he
 Rules: Be specific with numbers. Reference their actual data. No generic advice. Every suggestion must be backed by data from the numbers above. Professional tone. Under 500 words.`;
 
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
+    const resp=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
     let data;
-    try{data=await resp.json();}catch(pe){throw new Error('Server returned a non-JSON response (HTTP '+resp.status+'). The AI endpoint may only be available when this dashboard runs inside Claude.');}
+    try{data=await resp.json();}catch(pe){throw new Error('Server returned a non-JSON response (HTTP '+resp.status+'). Check that /api/claude is deployed and ANTHROPIC_API_KEY is set on Vercel.');}
     if(!resp.ok||data.error){throw new Error(data.error?.message||('HTTP '+resp.status));}
     const txt=(data.content?.[0]?.text||'').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
     // Store for email use
@@ -2118,7 +2118,7 @@ Rules: Be specific with numbers. Reference their actual data. No generic advice.
         </div>
         <div style="padding:18px;background:#fff;font-size:13px;color:var(--dim);line-height:1.75" id="perfAnalysisText">${txt}</div>
       </div>`;
-  }catch(e){area.innerHTML=`<div class="tip tip-red"><strong>Analysis failed:</strong> ${e.message}<br><span style="font-size:11px;opacity:.8">If this dashboard is not running inside Claude.ai, the AI endpoint will be unreachable. Open the HTML as a Claude artifact to enable AI features.</span></div>`;}
+  }catch(e){area.innerHTML=`<div class="tip tip-red"><strong>Analysis failed:</strong> ${e.message}<br><span style="font-size:11px;opacity:.8">Verify ANTHROPIC_API_KEY is configured in your Vercel project environment variables and that /api/claude is deployed.</span></div>`;}
   if(btn){btn.disabled=false;btn.textContent='Generate Strategic Analysis';}
 }
 
@@ -2395,9 +2395,9 @@ TCUV District Sales Consultant | Gulf States Toyota
 
 Rules: under 350 words. Professional but warm. Reference specific numbers/details from notes and performance data. Include concrete improvement recommendations with target numbers. No generic filler.`;
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
+    const resp=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
     let data;
-    try{data=await resp.json();}catch(pe){throw new Error('Server returned a non-JSON response (HTTP '+resp.status+'). The AI endpoint may only be available when this dashboard runs inside Claude.');}
+    try{data=await resp.json();}catch(pe){throw new Error('Server returned a non-JSON response (HTTP '+resp.status+'). Check that /api/claude is deployed and ANTHROPIC_API_KEY is set on Vercel.');}
     if(!resp.ok||data.error){throw new Error(data.error?.message||('HTTP '+resp.status));}
     const txt=data.content?.[0]?.text||'Error generating email.';
     const lines=txt.split('\n');
@@ -2418,7 +2418,7 @@ Rules: under 350 words. Professional but warm. Reference specific numbers/detail
           <div><label class="fl">Email Body</label><textarea id="eB_${uid}" class="email-area">${body.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea></div>
         </div>
       </div>`;
-  }catch(e){area.innerHTML=`<div class="tip tip-red"><strong>Email generation failed:</strong> ${e.message}<br><span style="font-size:11px;opacity:.8">If this dashboard is not running inside Claude.ai, the AI endpoint will be unreachable. Open the HTML as a Claude artifact to enable AI features.</span></div>`;}
+  }catch(e){area.innerHTML=`<div class="tip tip-red"><strong>Email generation failed:</strong> ${e.message}<br><span style="font-size:11px;opacity:.8">Verify ANTHROPIC_API_KEY is configured in your Vercel project environment variables and that /api/claude is deployed.</span></div>`;}
 }
 function copyEmail(uid){
   const subj=document.getElementById('eS_'+uid)?.value||'';
@@ -2926,7 +2926,7 @@ function pFin(wb,n){
   const ogVal  = n(rOther?.[3]);
 
   // ── F&I totals for non-cert and non-Toyota ────────────────────────
-  // Detection strategy (build 26): aggressive multi-pass
+  // Detection strategy (build 27): aggressive multi-pass
   //   Pass A: Pg6 line-66 label match (all variants)
   //   Pass B: Pg7 total non-cert F&I row
   //   Pass C: Brute-force scan EVERY sheet for any row whose label looks like
@@ -3069,7 +3069,7 @@ function pFin(wb,n){
     cc.fn.gTF=gTF; cc.fn.dTF=gTF; cc.fn.gTU=Math.round(gTU_u);
     buildSel(); if(tb!=='up')render(); saveAll();
     const verb=rd.status==='created'?'Created new dealer':rd.status==='switched'?'Switched to and updated':'Updated';
-    showToast('✓ '+verb+': '+cc.nm+' (Financial · build 26)',rd.status==='created'?'#1E4B8E':GN);
+    showToast('✓ '+verb+': '+cc.nm+' (Financial · build 27)',rd.status==='created'?'#1E4B8E':GN);
   }
   document.getElementById('d1').classList.add('done');
   document.getElementById('m1').innerHTML=`
