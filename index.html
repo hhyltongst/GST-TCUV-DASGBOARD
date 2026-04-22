@@ -233,7 +233,7 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
       <div class="t">Gulf States Toyota &nbsp;·&nbsp; TCUV Performance CRM</div>
       <div class="s">Certified Used Vehicle District Management System</div>
     </div>
-    <span class="hdr-badge">v10 · build 27</span>
+    <span class="hdr-badge">v10 · build 30</span>
   </div>
   <div class="hdr-r">
     <div id="userPill" style="display:none;align-items:center;gap:8px;padding:5px 12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:20px;color:#fff;font-size:12px;font-weight:600">
@@ -241,6 +241,7 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
       <span id="userNameDisp">Guest</span>
       <span id="userRoleBadge" style="font-size:9px;background:rgba(255,255,255,.2);padding:1px 7px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase"></span>
     </div>
+    <button class="btn-hdr" id="demoBtn" onclick="toggleDemoMode()" title="Anonymize dealer names for external demos - keeps all financial data intact">Demo Mode</button>
     <button class="btn-hdr" onclick="window.print()">Print</button>
     <button class="btn-hdr" style="color:#ff6b6b;border-color:rgba(255,107,107,.4)" onclick="clearAllData()">Clear Data</button>
     <button class="btn-hdr" id="signOutBtn" style="display:none;color:#ffd166;border-color:rgba(255,209,102,.4)" onclick="signOut()">Sign Out</button>
@@ -252,7 +253,7 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
 <div class="nav" id="navBar"></div>
 <div class="pg" id="mainContent"></div>
 
-<footer>&copy; 2026 Gulf States Toyota &nbsp;&middot;&nbsp; TCUV CRM Dashboard v10 (build 27) &nbsp;&middot;&nbsp; Engineered by <strong style="color:var(--red)">Hussein Hylton</strong> &nbsp;&middot;&nbsp; All rights reserved</footer>
+<footer>&copy; 2026 Gulf States Toyota &nbsp;&middot;&nbsp; TCUV CRM Dashboard v10 (build 30) &nbsp;&middot;&nbsp; Engineered by <strong style="color:var(--red)">Hussein Hylton</strong> &nbsp;&middot;&nbsp; All rights reserved</footer>
 
 <div id="loginOverlay" style="position:fixed;inset:0;background:linear-gradient(135deg,#0A0E17 0%,#1a2035 100%);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px">
   <div style="width:100%;max-width:440px;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);overflow:hidden">
@@ -346,9 +347,15 @@ const td=()=>new Date().toISOString().slice(0,10);
 function dleft(){const n=new Date();return Math.max(1,new Date(n.getFullYear(),n.getMonth()+1,0).getDate()-n.getDate());}
 
 // ═══ SEED DATA ════════════════════════════════════════════════
+// Default sample dealer used when the app opens fresh with no stored data.
+// Uses real per-unit numbers so the dashboard demonstrates correctly out of
+// the box. The dealer name is "Orion Toyota" so it can be shown to anyone
+// without exposing real dealer identities. If you upload a financial
+// statement for any other dealer (including Community Toyota), the parser
+// adds it as a separate dealer record alongside Orion - it does not overwrite.
 let D=[{
-  id:1,nm:'Community Toyota',dt:'2026-03-31',
-  fn:{nm:'Community Toyota',pr:'Jan 2026 to Mar 2026',cl:'Class 9',
+  id:1,nm:'Orion Toyota',dt:'2026-03-31',
+  fn:{nm:'Orion Toyota',pr:'Jan 2026 to Mar 2026',cl:'Class 9',
     tu:16.5,tg:55285.5,nu:52,ng:139605,ou:0,og:0,tot:68.5,
     cR:25734,dGP:317950,tFI:38248,rtCU:5.5,rtCGP:13402,
     gTG:1589,gCR:1104,gTU:24,gTF:2082,
@@ -361,7 +368,7 @@ let D=[{
   rc:{dt:'03/2026',
     ds:[{c:'42087',n:'DON MCGILL',s:16,g:55,t:71,o:79,p:89.9},
         {c:'42095',n:'FRED HAAS WORLD',s:3,g:87,t:90,o:81,p:111.1},
-        {c:'42138',n:'COMMUNITY',s:7,g:155,t:162,o:149,p:108.7},
+        {c:'42138',n:'ORION',s:7,g:155,t:162,o:149,p:108.7},
         {c:'42206',n:'TEGELER',s:0,g:0,t:0,o:5,p:0},
         {c:'42234',n:'GULLO OF CONROE',s:9,g:59,t:68,o:78,p:87.2},
         {c:'42259',n:'LOVING',s:3,g:8,t:11,o:13,p:84.6},
@@ -401,8 +408,41 @@ let finHideNonCert=false;
 const TABS=[
   {id:'crm',l:'CRM Dashboard'},{id:'overview',l:'Overview'},{id:'fin',l:'Financial'},
   {id:'recon',l:'Recon'},{id:'sold',l:'Sold vs Obj'},{id:'inv',l:'Inventory'},
-  {id:'perf',l:'Performance Plan'},{id:'contacts',l:'Contacts'},{id:'tasks',l:'Tasks'},{id:'up',l:'Upload'},{id:'admin',l:'Admin',adminOnly:true}
+  {id:'perf',l:'Performance Plan'},{id:'onepager',l:'One-Pager'},{id:'contacts',l:'Contacts'},{id:'tasks',l:'Tasks'},{id:'up',l:'Upload'},{id:'admin',l:'Admin',adminOnly:true}
 ];
+
+// ═══ DEMO MODE ════════════════════════════════════════════════
+// Anonymizes dealer names for external demos. Financial data remains real so
+// the presentation shows accurate per-unit figures and gaps - only the names
+// on screen change. Toggled via header button. State is session-only (not
+// persisted) so turning the browser off restores real names.
+let demoMode=false;
+// Deterministic mapping from real dealer name to a demo alias. Uses a simple
+// hash so the same dealer always gets the same alias across re-renders.
+const DEMO_ALIASES=['Alpha Toyota','Beta Toyota','Gamma Toyota','Delta Toyota','Epsilon Toyota','Zeta Toyota','Theta Toyota','Lambda Toyota','Sigma Toyota','Omega Toyota','Atlas Toyota','Nova Toyota'];
+function demoAlias(realName){
+  if(!realName)return 'Demo Dealer';
+  // Orion is already a generic name suitable for demos - leave it as-is so it
+  // displays consistently whether or not demo mode is on.
+  if(realName.toLowerCase().trim()==='orion toyota')return realName;
+  let h=0;for(let i=0;i<realName.length;i++)h=((h<<5)-h+realName.charCodeAt(i))|0;
+  return DEMO_ALIASES[Math.abs(h)%DEMO_ALIASES.length];
+}
+// Wrap any display of dealer name through this function. When demo mode is on,
+// it returns the alias; otherwise it returns the real name.
+function dnm(realName){return demoMode?demoAlias(realName):(realName||'');}
+function toggleDemoMode(){
+  demoMode=!demoMode;
+  const btn=document.getElementById('demoBtn');
+  if(btn){
+    btn.textContent=demoMode?'Demo: ON':'Demo Mode';
+    btn.style.background=demoMode?'rgba(91,33,182,.9)':'';
+    btn.style.color=demoMode?'#fff':'';
+    btn.style.borderColor=demoMode?'rgba(91,33,182,1)':'';
+  }
+  buildSel();render();
+  showToast(demoMode?'✓ Demo mode ON - dealer names are now anonymized':'✓ Demo mode OFF - real names restored',demoMode?'#5B21B6':DM);
+}
 
 // ═══ STORAGE ADAPTER ══════════════════════════════════════════
 // Unified store that prefers window.storage (Claude artifact host),
@@ -745,7 +785,7 @@ function buildNav(){
   const visible=TABS.filter(t=>!t.adminOnly||isAdmin);
   document.getElementById('navBar').innerHTML=visible.map(t=>`<button class="${tb===t.id?'active':''}" onclick="setTab('${t.id}')">${t.l}${t.adminOnly?' <span style="font-size:9px;background:var(--red);color:#fff;padding:1px 6px;border-radius:8px;margin-left:4px;letter-spacing:.5px">ADMIN</span>':''}</button>`).join('');
 }
-function buildSel(){document.getElementById('dealerSel').innerHTML=D.map(d=>`<option value="${d.id}"${d.id===ci?' selected':''}>${d.nm}</option>`).join('');}
+function buildSel(){document.getElementById('dealerSel').innerHTML=D.map(d=>`<option value="${d.id}"${d.id===ci?' selected':''}>${dnm(d.nm)}</option>`).join('');}
 function setTab(id){tb=id;buildNav();render();saveAll();}
 function pickDealer(id){
   const prev=ci;
@@ -760,7 +800,7 @@ function mkChart(id,cfg){if(!CL)return;const el=document.getElementById(id);if(!
 function render(){dc();const mc=document.getElementById('mainContent'),c=gc();if(!c)return;
   if(tb==='crm')rCRM(mc,c);else if(tb==='overview')rOv(mc,c);else if(tb==='fin')rFin(mc,c);
   else if(tb==='recon')rRecon(mc,c);else if(tb==='sold')rSold(mc,c);else if(tb==='inv')rInv(mc,c);
-  else if(tb==='perf')rPerf(mc,c);else if(tb==='contacts')rContacts(mc,c);else if(tb==='tasks')rTasks(mc,c);else if(tb==='up')rUp(mc);
+  else if(tb==='perf')rPerf(mc,c);else if(tb==='onepager')rOnePager(mc,c);else if(tb==='contacts')rContacts(mc,c);else if(tb==='tasks')rTasks(mc,c);else if(tb==='up')rUp(mc);
   else if(tb==='admin')rAdmin(mc);}
 
 // ═══ HELPERS ══════════════════════════════════════════════════
@@ -877,7 +917,7 @@ function rCRM(mc,c){
   mc.innerHTML=`
   <div style="display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap;align-items:stretch">
     <div style="flex:1;min-width:280px;background:#fff;border:1px solid var(--bdr);border-radius:var(--rl);padding:22px 26px;box-shadow:var(--sh);border-left:5px solid var(--red)">
-      <div style="font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;color:var(--txt);letter-spacing:.2px">${c.nm}</div>
+      <div style="font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;color:var(--txt);letter-spacing:.2px">${dnm(c.nm)}</div>
       <div style="font-size:13px;color:var(--dim-m);margin-top:4px">
         ${f.pr?`<span style="font-weight:600;color:var(--txt)">📅 ${f.pr}</span>`:''} 
         ${f.cl?`<span style="color:var(--dim-m)">&nbsp;·&nbsp;</span><strong>${f.cl}</strong>`:''}
@@ -1057,7 +1097,7 @@ function rOv(mc,c){
   const dl=dleft(),pace2=ovN>0?(ovN/dl).toFixed(1):0;
   const ms=c.moSold||Array(12).fill(0),mo=c.moObj||Array(12).fill(0);
   mc.innerHTML=`
-  <div class="pg-hdr"><div class="pg-ttl">${c.nm}</div><div class="pg-sub"><span style="font-weight:600;color:var(--txt)">📅 ${f.pr||'No period set'}</span>${f.cl?' &nbsp;·&nbsp; '+f.cl:''}</div><div class="pg-rule"></div></div>
+  <div class="pg-hdr"><div class="pg-ttl">${dnm(c.nm)}</div><div class="pg-sub"><span style="font-weight:600;color:var(--txt)">📅 ${f.pr||'No period set'}</span>${f.cl?' &nbsp;·&nbsp; '+f.cl:''}</div><div class="pg-rule"></div></div>
   <div class="kpi-row">
     ${kpi('Dept Total GP',f$(f.dGP),fN(f.tot||0)+' total used units',BL)}
     ${kpi('TCUV Avg Front/Unit',f$(aF),'GST: '+f$(gF),aF>=gF?GN:RE)}
@@ -1265,7 +1305,7 @@ function rFin(mc,c){
   const ntTot=ntFI_missing?0:ntAF+ntAB;
 
   mc.innerHTML=`
-  <div class="pg-hdr"><div class="pg-ttl">Financial Performance</div><div class="pg-sub"><span style="font-weight:600;color:var(--txt)">${f.nm||c.nm}</span> &nbsp;·&nbsp; <span style="font-weight:600;color:var(--txt)">📅 ${f.pr||'No period'}</span></div><div class="pg-rule"></div></div>
+  <div class="pg-hdr"><div class="pg-ttl">Financial Performance</div><div class="pg-sub"><span style="font-weight:600;color:var(--txt)">${dnm(f.nm||c.nm)}</span> &nbsp;·&nbsp; <span style="font-weight:600;color:var(--txt)">📅 ${f.pr||'No period'}</span></div><div class="pg-rule"></div></div>
   <div class="tip tip-blue" style="margin-bottom:14px">
     <strong>Denominator guide:</strong> TCUV metrics use <strong>${fN(f.tu)} TCUV units</strong> as denominator. 
     Dept GP/Unit uses <strong>${fN(totU)} total used units</strong>  -  ${f$(f.dGP)} ÷ ${fN(totU)} = <strong>${f$(deptGPpu)}/unit</strong>.
@@ -1409,6 +1449,33 @@ function rFin(mc,c){
 
     ${(ncU===0&&ntU===0)?`<div class="tip tip-gold" style="margin-top:12px;font-size:12px">No non-cert or non-Toyota figures entered yet. Click <strong>Edit Totals</strong> to add units and gross totals, or upload a Financial Statement that includes these categories.</div>`:''}
     `}
+
+    <!-- DATA SOURCE REFERENCE - shows which financial statement lines each metric comes from -->
+    <details style="margin-top:18px" class="op-card">
+      <summary style="cursor:pointer;padding:10px 14px;font-size:11px;font-weight:700;color:var(--dim-m);text-transform:uppercase;letter-spacing:1.2px">Data Source Reference · Which lines on your Comparison Financial Statement feed each metric</summary>
+      <div style="padding:10px 16px 14px;font-size:12px;color:var(--txt);line-height:1.7">
+        <div style="margin-bottom:10px;color:var(--dim-m)">Every figure on this tab traces to a specific line on the Toyota Comparison Financial Statement. Column letters refer to the spreadsheet layout: A=Line #, B=Dealer Units, C=Sales, D=Gross Profit, I=GST Units, K=GST Gross Profit.</div>
+        <table style="width:100%;font-size:12px">
+          <thead><tr style="border-bottom:1.5px solid var(--bdr)"><th style="text-align:left;padding:6px 8px;font-size:10px;color:var(--dim-m);text-transform:uppercase">Metric</th><th style="text-align:left;padding:6px 8px;font-size:10px;color:var(--dim-m);text-transform:uppercase">Source</th></tr></thead>
+          <tbody>
+            <tr><td style="padding:4px 8px">TCUV Units &amp; Front GP</td><td style="padding:4px 8px;color:var(--dim-m)">Pg6 Line 47 · "TOTAL TOYOTA CERT USED VEH AFTER RECON" · col B (units), col D (GP)</td></tr>
+            <tr><td style="padding:4px 8px">TCUV Recon Cost</td><td style="padding:4px 8px;color:var(--dim-m)">Pg6 Line 57 · "Total Certified Toyota/RT U/Veh. Recon" · col D</td></tr>
+            <tr><td style="padding:4px 8px">TCUV F&amp;I / Back-End</td><td style="padding:4px 8px;color:var(--dim-m)">Pg6 Line 65 · "Certified Used Vehicle F&amp;I Products and Aftermarket" · col D</td></tr>
+            <tr><td style="padding:4px 8px">Non-Cert Toyota Units &amp; Front</td><td style="padding:4px 8px;color:var(--dim-m)">Pg6 Line 53 · "TOT TOYOTA NON-CERT USED VEH AFT RECON" · col B, col D</td></tr>
+            <tr><td style="padding:4px 8px">Non-Toyota Units &amp; Front</td><td style="padding:4px 8px;color:var(--dim-m)">Pg6 Line 62 · "TOTAL USED VEHICLE - OTHER AFTER RECON" · col B, col D</td></tr>
+            <tr style="background:var(--blue-lt)"><td style="padding:4px 8px;font-weight:700">Combined Non-Cert F&amp;I (split by unit share)</td><td style="padding:4px 8px;color:var(--txt);font-weight:600">Pg6 Line 66 · "Non-Certified Used Vehicle F&amp;I Products and Aftermarket" · col D</td></tr>
+            <tr><td style="padding:4px 8px">Total Used Department GP</td><td style="padding:4px 8px;color:var(--dim-m)">Pg6 Line 75 · "TOTAL USED VEHICLE DEPARTMENT" · col D</td></tr>
+            <tr><td style="padding:4px 8px">Total Used w/ F&amp;I (identity input)</td><td style="padding:4px 8px;color:var(--dim-m)">Pg6 Line 68 · "TOTAL USED VEHICLE - W/ F&amp;I PRODUCTS &amp; AFTMKT" · col D</td></tr>
+            <tr><td style="padding:4px 8px">Total Used After Recon (identity input)</td><td style="padding:4px 8px;color:var(--dim-m)">Pg6 Line 64 · "TOTAL USED VEHICLE - AFTER RECON" · col D</td></tr>
+            <tr><td style="padding:4px 8px">GST Benchmark (all metrics)</td><td style="padding:4px 8px;color:var(--dim-m)">Same Pg6 rows · cols I (units) and K (GST GP)</td></tr>
+            <tr><td style="padding:4px 8px">Used:New Ratio &amp; Dept GP/Unit (when Dept Report used)</td><td style="padding:4px 8px;color:var(--dim-m)">UsedGP sheet (Departmental Comparison Report) · Lines 42, 54, 56</td></tr>
+            <tr><td style="padding:4px 8px">F&amp;I Product Detail (VSC, GAP, T&amp;W, etc.)</td><td style="padding:4px 8px;color:var(--dim-m)">Pg7 Lines 14-22 (Certified) and Lines 27-34 (Non-Certified)</td></tr>
+            <tr><td style="padding:4px 8px">Dealer Name / Period</td><td style="padding:4px 8px;color:var(--dim-m)">Pg1 row 2 col F (dealer name), row 4 col F (period)</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:10px;padding:8px 10px;background:var(--bg);border-radius:6px;font-size:11px;color:var(--dim)"><strong>Math identity used for back-end derivation:</strong> When Pg6 Line 66 is not directly matched by label, the parser derives Non-Cert F&amp;I as: <code>Line 68 GP − Line 64 GP − Line 65 GP</code>. The combined figure is then split across Non-Cert Toyota and Non-Toyota by unit share.</div>
+      </div>
+    </details>
   </div>`;
   setTimeout(()=>{
     mkChart('finBench',{type:'bar',
@@ -1721,7 +1788,7 @@ function rRecon(mc,c){
   const f=c.fn,tu=Math.max(f.tu||1,1);
   const cR=Math.round((f.cR||0)/tu),gC=Math.round(f.dCR||f.gCR||0),vari=cR-gC;
   mc.innerHTML=`
-  <div class="pg-hdr"><div class="pg-ttl">Reconditioning Analysis</div><div class="pg-sub"><span style="font-weight:600;color:var(--txt)">${f.nm||c.nm}</span> &nbsp;·&nbsp; <span style="font-weight:600;color:var(--txt)">📅 ${f.pr||'No period'}</span></div><div class="pg-rule"></div></div>
+  <div class="pg-hdr"><div class="pg-ttl">Reconditioning Analysis</div><div class="pg-sub"><span style="font-weight:600;color:var(--txt)">${dnm(f.nm||c.nm)}</span> &nbsp;·&nbsp; <span style="font-weight:600;color:var(--txt)">📅 ${f.pr||'No period'}</span></div><div class="pg-rule"></div></div>
   <div class="kpi-row">
     ${kpi('Dealer Recon/Unit',f$(cR),'Current period avg',cR<=gC?GN:RE)}
     ${kpi('GST Avg Recon/Unit',f$(gC),'District benchmark',BL)}
@@ -1781,7 +1848,17 @@ function rSold(mc,c){
   })():null;
   const rankDenom=rc.ds.length;
   mc.innerHTML=`
-  <div class="pg-hdr"><div class="pg-ttl">Sold vs Objective</div><div class="pg-sub">GST Recap · ${rc.dt}</div><div class="pg-rule"></div></div>
+  <div class="pg-hdr" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px">
+    <div>
+      <div class="pg-ttl">Sold vs Objective</div>
+      <div class="pg-sub">GST Recap · ${rc.dt}</div>
+      <div class="pg-rule"></div>
+    </div>
+    <div style="display:flex;gap:6px;padding-bottom:4px">
+      <button class="btn btn-sm btn-ghost" onclick="reuploadRecap()" title="Replace the current recap file - use this if you uploaded the wrong file">Re-upload Recap</button>
+      <button class="btn btn-sm btn-ghost" onclick="clearRecap()" title="Clear the current recap data without re-uploading">Clear Recap</button>
+    </div>
+  </div>
   <div class="kpi-row">
     ${kpi('Units Sold',sel.t,'Silver: '+sel.s+' · Gold: '+sel.g,RE)}
     ${kpi('Objective',sel.o,sel.p+'% attainment',sel.p>=100?GN:GD)}
@@ -1790,7 +1867,7 @@ function rSold(mc,c){
     ${kpi('District Total',di.t,di.p+'% attainment · '+rc.ds.length+' dealers',DM)}
     ${distRank?kpi('District Rank','#'+distRank+' of '+rankDenom,'By units sold',distRank===1?GN:distRank<=3?GD:distRank<=Math.ceil(rankDenom/2)?BL:RE):kpi('District Rank',' - ',selMatched?'No ranked dealers':'Dealer name not matched in recap',DM)}
   </div>
-  ${!selMatched&&rc.ds.length>0?`<div class="tip tip-blue" style="margin-bottom:12px;font-size:12px">⚠ "<strong>${c.nm}</strong>" was not matched to any dealer in the recap. Showing data for "<strong>${sel.n}</strong>" as a fallback. Verify the dealer name matches the recap file to get an accurate rank.</div>`:''}
+  ${!selMatched&&rc.ds.length>0?`<div class="tip tip-blue" style="margin-bottom:12px;font-size:12px">⚠ "<strong>${dnm(c.nm)}</strong>" was not matched to any dealer in the recap. Showing data for "<strong>${sel.n}</strong>" as a fallback. Verify the dealer name matches the recap file to get an accurate rank.</div>`:''}
 
   <div class="g2" style="margin-bottom:14px">
     <div class="card"><div class="card-title">Silver vs Gold Breakdown</div><div class="cw" style="height:230px"><canvas id="sdPie"></canvas></div></div>
@@ -1844,7 +1921,7 @@ function rInv(mc,c){
   const certGoalMet=cOfT>=certTarget;
   const tips=[
     {pct:'30-40%',desc:'of total used inventory should be Toyota Certified. Ensures certified stock to hit objectives without over-exposing reconditioning spend.',color:RE},
-    {pct:'50-60%',desc:'of Toyota-brand used should carry certification. Non-certified Toyota units are missed margin. Certified commands $1,000 to $1,500 higher front GP.',color:GD},
+    {pct:'50-60%',desc:'of Toyota-brand used should carry certification. Non-certified Toyota units leave money on the table - the exact gap shows on the Financial tab (TCUV vs Non-Cert per-unit front and back).',color:GD},
     {pct:'60-70%',desc:'of total used should be Toyota brand. Franchise lots leaning into their own brand benefit from stronger warranty support and customer loyalty.',color:BL},
     {pct:'45-60 days',desc:'supply sweet spot for certified units. Beyond 60 days the margin advantage erodes rapidly. Monitor turn rate and adjust certification pace.',color:GN}
   ];
@@ -1918,7 +1995,15 @@ function perfData(c){
   if(gB>0&&aB<gB)areas.push({cat:'Back-End / F&I',status:aB>=gB*0.85?'caution':'critical',val:f$(aB),target:'GST: '+f$(gB),gap:f$(gB-aB)+'/unit below',detail:'F&I averaging '+f$(aB)+'/unit vs GST '+f$(gB)+'. Opportunity to improve VSC, GAP, and protection product penetration.',priority:aB<gB*0.75?1:2});
   if(gR>0&&aR>gR)areas.push({cat:'Reconditioning Cost',status:aR<=gR*1.2?'caution':'critical',val:f$(aR),target:'GST: '+f$(gR),gap:f$(aR-gR)+'/unit over',detail:'Recon at '+f$(aR)+'/unit vs GST '+f$(gR)+'. Over-spending '+f$(aR-gR)+' per unit. Across '+fN(tu)+' units that is '+f$((aR-gR)*tu)+' excess.',priority:aR>gR*1.5?1:2});
   if(inv&&cPct<30)areas.push({cat:'Certified Inventory Mix',status:cPct>=20?'caution':'critical',val:cPct+'%',target:'30-40%',gap:(30-cPct)+'% below floor',detail:'Only '+cPct+'% of total used inventory is certified. Target 30-40% to ensure adequate stock for objectives.',priority:cPct<15?1:3});
-  if(inv&&cOfT<50)areas.push({cat:'Cert % of Toyota Brand',status:cOfT>=35?'caution':'critical',val:cOfT+'%',target:'50-60%',gap:(50-cOfT)+'% below floor',detail:'Only '+cOfT+'% of Toyota-brand used carries certification. Each non-certified Toyota is $1,000-$1,500 in missed front GP.',priority:3});
+  // Compute the real TCUV-vs-Non-Cert-Toyota front gap from stored data if we
+  // have it, so the recommendation text references actual dollars instead of
+  // a generic industry range. Falls back to a neutral phrasing if data is
+  // unavailable.
+  const tcuvFrontPU=Math.round((f.tg||0)/Math.max(f.tu||1,1));
+  const ncFrontPU=(f.nu||0)>0?Math.round((f.ng||0)/f.nu):0;
+  const certGap=(tcuvFrontPU>0&&ncFrontPU>0)?tcuvFrontPU-ncFrontPU:0;
+  const certGapNarr=certGap>0?'At this dealer the cert-vs-non-cert front gap measures $'+certGap.toLocaleString()+'/unit based on their reported data.':'Certified units generally command higher front GP than non-certified Toyota - check the Financial tab for this dealer\'s specific gap.';
+  if(inv&&cOfT<50)areas.push({cat:'Cert % of Toyota Brand',status:cOfT>=35?'caution':'critical',val:cOfT+'%',target:'50-60%',gap:(50-cOfT)+'% below floor',detail:'Only '+cOfT+'% of Toyota-brand used carries certification. '+certGapNarr,priority:3});
   if(nuR>0&&nuR<1.0)areas.push({cat:'Used-to-New Ratio',status:nuR>=0.8?'caution':'critical',val:nuR.toFixed(2),target:'1.00',gap:((1.0-nuR)*100).toFixed(0)+'% below target',detail:'Used-to-new ratio at '+nuR.toFixed(2)+' vs 1.00 target. Need to grow used volume relative to new.',priority:nuR<0.6?1:3});
   // Strengths
   const strengths=[];
@@ -1956,7 +2041,7 @@ function rPerf(mc,c){
   const cautCount=pd.areas.filter(a=>a.status==='caution').length;
 
   mc.innerHTML=`
-  <div class="pg-hdr"><div class="pg-ttl">Performance Improvement Plan</div><div class="pg-sub"><span style="font-weight:600;color:var(--txt)">${c.nm}</span> &middot; ${f.pr||'Current Period'} &middot; Score: <span style="color:${ds.color};font-weight:800">${ds.grade} (${ds.score}/100)</span></div><div class="pg-rule"></div></div>
+  <div class="pg-hdr"><div class="pg-ttl">Performance Improvement Plan</div><div class="pg-sub"><span style="font-weight:600;color:var(--txt)">${dnm(c.nm)}</span> &middot; ${f.pr||'Current Period'} &middot; Score: <span style="color:${ds.color};font-weight:800">${ds.grade} (${ds.score}/100)</span></div><div class="pg-rule"></div></div>
 
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:18px">
     <div style="background:${critCount>0?'var(--red-lt)':'var(--green-lt)'};border:1.5px solid ${critCount>0?'rgba(200,16,46,.25)':'rgba(10,124,58,.25)'};border-radius:var(--rl);padding:20px 22px;box-shadow:var(--sh)">
@@ -2062,22 +2147,69 @@ async function genPerfAnalysis(){
   if(btn)btn.textContent='Generating...';
   if(area)area.innerHTML=`<div class="tip tip-purple" style="text-align:center">Generating strategic performance analysis...</div>`;
 
+  // Build non-TCUV performance block if data is available. This is the core
+  // insight the dashboard surfaces: the gap between TCUV and non-TCUV F&I /
+  // front / total performance. The AI needs these numbers to write useful
+  // recommendations. If back-end is stored or can be derived from the dept
+  // identity (line68 - line64 - line65), include per-unit figures.
+  const ncU=Number(f.nu)||0, ncG=Number(f.ng)||0;
+  const ntU=Number(f.ntU||f.ou)||0, ntG=Number(f.ntG||f.og)||0;
+  let ncFI=Number(f.nFI)||0, ntFI=Number(f.ntFI||f.oFI)||0;
+  if((ncFI===0||ntFI===0)&&(ncU+ntU)>0){
+    const l68=Number(f._line68gp)||0, l64=Number(f._line64gp)||0, tFI=Number(f.tFI)||0;
+    if(l68>0&&l64>0&&tFI>0){
+      const impliedCombined=l68-l64-tFI;
+      if(impliedCombined>1000&&impliedCombined<10000000){
+        const totU=ncU+ntU;
+        if(totU>0){
+          if(ncFI===0)ncFI=Math.round(impliedCombined*(ncU/totU));
+          if(ntFI===0)ntFI=Math.round(impliedCombined*(ntU/totU));
+        }
+      }
+    }
+  }
+  const tcuvFront=Math.round((f.tg||0)/Math.max(f.tu||1,1));
+  const tcuvBack=Math.round((f.tFI||0)/Math.max(f.tu||1,1));
+  const ncFront=ncU>0?Math.round(ncG/ncU):0;
+  const ncBack=ncU>0&&ncFI>0?Math.round(ncFI/ncU):0;
+  const ntFront=ntU>0?Math.round(ntG/ntU):0;
+  const ntBack=ntU>0&&ntFI>0?Math.round(ntFI/ntU):0;
+  const nonTCUV_units=ncU+ntU;
+  const nonTCUV_front=ncG+ntG;
+  const nonTCUV_back=ncFI+ntFI;
+  const nonTCUV_frontPerUnit=nonTCUV_units>0?Math.round(nonTCUV_front/nonTCUV_units):0;
+  const nonTCUV_backPerUnit=nonTCUV_units>0&&nonTCUV_back>0?Math.round(nonTCUV_back/nonTCUV_units):0;
+  const gapFront=tcuvFront-nonTCUV_frontPerUnit;
+  const gapBack=nonTCUV_backPerUnit>0?tcuvBack-nonTCUV_backPerUnit:0;
+  const lostGPOpportunity=nonTCUV_units>0&&nonTCUV_backPerUnit>0?(gapFront+gapBack)*nonTCUV_units:0;
+  const nonTCUVBlock=nonTCUV_units>0?`
+
+NON-TCUV PERFORMANCE (this is the gap to close):
+- Non-Cert Toyota: ${fN(ncU)} units, Front $${ncFront}/unit, Back ${ncBack>0?'$'+ncBack+'/unit':'n/a'} (Total ${ncBack>0?'$'+(ncFront+ncBack):'$'+ncFront}/unit)
+- Non-Toyota Used: ${fN(ntU)} units, Front $${ntFront}/unit, Back ${ntBack>0?'$'+ntBack+'/unit':'n/a'} (Total ${ntBack>0?'$'+(ntFront+ntBack):'$'+ntFront}/unit)
+- Combined Non-TCUV: ${fN(nonTCUV_units)} units, Front $${nonTCUV_frontPerUnit}/unit, Back ${nonTCUV_backPerUnit>0?'$'+nonTCUV_backPerUnit+'/unit':'n/a'}
+
+TCUV vs NON-TCUV GAP:
+- Front gap: TCUV $${tcuvFront} vs Non-TCUV $${nonTCUV_frontPerUnit} = $${gapFront}/unit
+${nonTCUV_backPerUnit>0?'- Back gap: TCUV $'+tcuvBack+' vs Non-TCUV $'+nonTCUV_backPerUnit+' = $'+gapBack+'/unit':''}
+${lostGPOpportunity>0?'- If non-TCUV achieved TCUV-equivalent per-unit performance across '+fN(nonTCUV_units)+' units, that represents $'+lostGPOpportunity.toLocaleString()+' in additional GP.':''}`:'';
+
   const prompt=`You are a TCUV (Toyota Certified Used Vehicle) strategic master consultant at Gulf States Toyota. You understand the entire used car market across every territory and market condition. Provide a comprehensive, data-driven performance evaluation and improvement plan.
 
 DEALER: ${c.nm}
 PERIOD: ${f.pr||'Current'} | CLASS: ${f.cl||'N/A'}
 SCORE: ${ds.grade} (${ds.score}/100)
 
-CURRENT PERFORMANCE:
+TCUV PERFORMANCE:
 - TCUV Units: ${fN(f.tu)} avg/mo
-- Front GP/Unit: $${Math.round(f.tg/Math.max(f.tu,1))} (GST Avg: $${Math.round(f.dTG||f.gTG||0)})
-- Back-End/Unit: $${Math.round(f.tFI/Math.max(f.tu,1))} (GST Avg: $${Math.round(f.dTF||f.gTF||0)})
+- Front GP/Unit: $${tcuvFront} (GST Avg: $${Math.round(f.dTG||f.gTG||0)})
+- Back-End/Unit: $${tcuvBack} (GST Avg: $${Math.round(f.dTF||f.gTF||0)})
 - Recon/Unit: $${Math.round((f.cR||0)/Math.max(f.tu,1))} (GST Avg: $${Math.round(f.dCR||f.gCR||0)})
 - Dept Total GP: $${Math.round(f.dGP||0)}
-- Total Used Units: ${Math.round(f.tot||0)} (TCUV: ${Math.round(f.tu)}, Non-Cert: ${Math.round(f.nu||0)}, Other: ${Math.round(f.ou||0)})
+- Total Used Units: ${Math.round(f.tot||0)} (TCUV: ${Math.round(f.tu)}, Non-Cert Toyota: ${fN(ncU)}, Non-Toyota: ${fN(ntU)})
 - Used:New Ratio: ${(f.usedNewRatio||0).toFixed(2)} (Target: 1.00)
 ${rc?'- Attainment: '+rc.p+'% (Sold: '+rc.t+', Obj: '+rc.o+')':''}
-${inv?'- Inventory: '+inv.c+' certified, '+(inv.u-inv.c)+' non-cert Toyota, '+inv.t+' non-Toyota ('+inv.a+' total)':''}
+${inv?'- Inventory: '+inv.c+' certified, '+(inv.u-inv.c)+' non-cert Toyota, '+inv.t+' non-Toyota ('+inv.a+' total)':''}${nonTCUVBlock}
 
 IDENTIFIED GAPS:
 ${pd.areas.map(a=>'- '+a.cat+': '+a.val+' vs target '+a.target+' ('+a.gap+') ['+a.status+']').join('\n')}
@@ -2089,17 +2221,17 @@ IMPLEMENTATION TIMELINE: ${tl.label} (next visit: ${nv})
 
 Provide a strategic analysis with these sections. Use plain text, no markdown headers or bullets:
 
-1. EXECUTIVE SUMMARY: 2-3 sentences on overall dealer health and positioning in the market.
+1. EXECUTIVE SUMMARY: 2-3 sentences on overall dealer health. ${nonTCUV_units>0?'Highlight the TCUV-vs-Non-TCUV performance delta and what it means for this dealer.':''}
 
-2. CRITICAL IMPROVEMENT AREAS: For each gap identified above, provide a specific, actionable recommendation. Reference the dealer's actual numbers. Explain WHY this matters in the context of their market. Consider factors like market competition, regional demographics, used car supply conditions, and franchise positioning.
+2. CRITICAL IMPROVEMENT AREAS: For each gap identified above, provide a specific, actionable recommendation. Reference the dealer\'s actual numbers. ${nonTCUV_units>0?'Where relevant, reference the specific TCUV vs Non-TCUV dollar gap rather than quoting generic industry ranges.':''} Explain WHY this matters in the context of their market.
 
 3. STRATEGIC RECOMMENDATIONS: 3-5 specific actions the dealer should take in the next ${tl.weeks} weeks. Each action should include: what to do, who should own it, and what the measurable target is.
 
-4. MARKET CONTEXT: Brief analysis of how this dealer's performance compares within their market and what external factors they should be aware of.
+4. MARKET CONTEXT: Brief analysis of how this dealer\'s performance compares within their market and what external factors they should be aware of.
 
 5. EXPECTED OUTCOMES: If the dealer executes this plan, what measurable improvements should they expect within the ${tl.label} window?
 
-Rules: Be specific with numbers. Reference their actual data. No generic advice. Every suggestion must be backed by data from the numbers above. Professional tone. Under 500 words.`;
+Rules: Be specific with numbers. Reference their actual data. No generic advice. Every claim about dollar gaps or opportunities must use the numbers in the data block above, not industry averages or estimated ranges. Professional tone. Under 600 words.`;
 
   try{
     const resp=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
@@ -2132,7 +2264,163 @@ function copyPerfAnalysis(){
   }).catch(()=>alert('Copy failed.'));
 }
 
-// CONTACTS & CONSULTATIONS
+// ONE-PAGER REPORT
+// ═══════════════════════════════════════════════════════════════
+// Single-page, print-ready dealer summary that a consultant can hand to a
+// dealer during a visit. Pulls the most decision-relevant numbers from the
+// dealer record: current TCUV performance vs GST, the TCUV-vs-Non-TCUV gap,
+// attainment, and the top 3 priorities from perfData. Designed to fit on one
+// letter-size page when printed.
+function rOnePager(mc,c){
+  const f=c.fn||{};
+  const tu=Math.max(f.tu||1,1);
+  const aF=Math.round((f.tg||0)/tu), gF=Math.round(f.dTG||f.gTG||0);
+  const aB=Math.round((f.tFI||0)/tu), gB=Math.round(f.dTF||f.gTF||0);
+  const aR=Math.round((f.cR||0)/tu), gR=Math.round(f.dCR||f.gCR||0);
+  const aTot=aF+aB, gTot=gF+gB;
+  const totU=Math.max(f.tot||tu,1);
+  const deptGPpu=Math.round((f.dGP||0)/totU);
+  const rc=c.rc?.ds?.find(d=>nm(d.n,c.nm));
+  const att=rc?rc.p:null;
+  const pd=perfData(c);
+  const ds=dealerScore(c);
+  const tl=suggestTimeline(pd.areas);
+  const nv=nextVisitDate(tl.weeks);
+
+  // Non-TCUV figures (same derivation as the gap card on the Financial tab)
+  const ncU=Number(f.nu)||0, ntU=Number(f.ntU||f.ou)||0;
+  const ncG=Number(f.ng)||0, ntG=Number(f.ntG||f.og)||0;
+  let ncFI=Number(f.nFI)||0, ntFI=Number(f.ntFI||f.oFI)||0;
+  if((ncFI===0||ntFI===0)&&(ncU+ntU)>0){
+    const l68=Number(f._line68gp)||0, l64=Number(f._line64gp)||0, tFIv=Number(f.tFI)||0;
+    if(l68>0&&l64>0&&tFIv>0){
+      const implied=l68-l64-tFIv;
+      if(implied>1000&&implied<10000000){
+        const totNon=ncU+ntU;
+        if(ncFI===0)ncFI=Math.round(implied*(ncU/totNon));
+        if(ntFI===0)ntFI=Math.round(implied*(ntU/totNon));
+      }
+    }
+  }
+  const nonU=ncU+ntU;
+  const nonFrontPU=nonU>0?Math.round((ncG+ntG)/nonU):0;
+  const nonBackPU=(nonU>0&&(ncFI+ntFI)>0)?Math.round((ncFI+ntFI)/nonU):0;
+  const nonTotPU=nonFrontPU+nonBackPU;
+  const gapFront=aF-nonFrontPU, gapBack=nonBackPU>0?aB-nonBackPU:0, gapTot=aTot-nonTotPU;
+  const gpOpportunity=nonU>0&&nonBackPU>0?gapTot*nonU:0;
+
+  // Top 3 priorities (first three sorted by perfData priority)
+  const priorities=pd.areas.slice(0,3);
+
+  const arrow=(good)=>good?'<span style="color:'+GN+'">▲</span>':'<span style="color:'+RE+'">▼</span>';
+
+  mc.innerHTML=`
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      .pg { padding: 0 !important; }
+      body { background: #fff !important; }
+      .op-card { page-break-inside: avoid; }
+    }
+    .op-card { background:#fff; border:1px solid var(--bdr); border-radius:10px; padding:14px 16px; box-shadow:var(--sh); }
+    .op-kv { display:flex; justify-content:space-between; padding:4px 0; font-size:12.5px; border-bottom:1px dashed var(--bdr); }
+    .op-kv:last-child { border-bottom:none; }
+    .op-kv .k { color:var(--dim-m); }
+    .op-kv .v { font-weight:700; color:var(--txt); font-family:'Orbitron',sans-serif; }
+  </style>
+
+  <div class="no-print" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+    <div>
+      <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:800;color:var(--txt);letter-spacing:1px">One-Pager Report</div>
+      <div style="font-size:12px;color:var(--dim-m);margin-top:2px">Print-ready dealer summary. Click Print to generate a PDF or hard copy.</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm" onclick="window.print()" style="background:var(--red)">🖨 Print / Save as PDF</button>
+    </div>
+  </div>
+
+  <div style="background:#fff;padding:24px 28px;border-radius:12px;box-shadow:var(--sh);border:1px solid var(--bdr);max-width:900px;margin:0 auto">
+
+    <!-- HEADER -->
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:3px solid var(--red);margin-bottom:18px;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--red);letter-spacing:2px;text-transform:uppercase">Gulf States Toyota · TCUV Performance Report</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;color:var(--txt);margin-top:4px">${dnm(c.nm)}</div>
+        <div style="font-size:12px;color:var(--dim-m);margin-top:3px">${f.pr||'Current Period'}${f.cl?' · '+f.cl:''} · Report date: ${td()}</div>
+      </div>
+    </div>
+
+    <!-- KEY PERFORMANCE -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <div class="op-card">
+        <div style="font-size:10px;font-weight:700;color:var(--dim-m);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px">TCUV Performance</div>
+        <div class="op-kv"><span class="k">Units (avg/mo)</span><span class="v">${fN(f.tu)}</span></div>
+        <div class="op-kv"><span class="k">Front GP / Unit</span><span class="v" style="color:${gF>0&&aF<gF?RE:'var(--txt)'}">${f$(aF)} ${gF>0?arrow(aF>=gF):''}</span></div>
+        <div class="op-kv"><span class="k">GST Front Benchmark</span><span class="v" style="color:var(--dim-m)">${f$(gF)}</span></div>
+        <div class="op-kv"><span class="k">Back-End / Unit</span><span class="v" style="color:${gB>0&&aB<gB?RE:'var(--txt)'}">${f$(aB)} ${gB>0?arrow(aB>=gB):''}</span></div>
+        <div class="op-kv"><span class="k">GST Back Benchmark</span><span class="v" style="color:var(--dim-m)">${f$(gB)}</span></div>
+        <div class="op-kv"><span class="k">Recon / Unit</span><span class="v" style="color:${gR>0&&aR>gR?RE:'var(--txt)'}">${f$(aR)} ${gR>0?arrow(aR<=gR):''}</span></div>
+        <div class="op-kv"><span class="k">GST Recon Benchmark</span><span class="v" style="color:var(--dim-m)">${f$(gR)}</span></div>
+        <div class="op-kv" style="border-top:2px solid var(--txt);padding-top:6px;margin-top:4px"><span class="k" style="font-weight:700;color:var(--txt)">Total GP / Unit</span><span class="v" style="color:${aTot>=gTot?GN:RE}">${f$(aTot)}</span></div>
+      </div>
+
+      <div class="op-card">
+        <div style="font-size:10px;font-weight:700;color:var(--dim-m);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px">Objective & Department</div>
+        ${att!==null?`<div class="op-kv"><span class="k">Attainment</span><span class="v" style="color:${att>=100?GN:RE}">${att}%</span></div>
+        <div class="op-kv"><span class="k">Units Sold vs Obj</span><span class="v" style="color:${rc.t>=rc.o?'var(--txt)':RE}">${rc.t} / ${rc.o}</span></div>`:'<div class="op-kv"><span class="k">Attainment</span><span class="v" style="color:var(--dim-m)">No recap uploaded</span></div>'}
+        <div class="op-kv"><span class="k">Total Used Units</span><span class="v">${fN(totU)}</span></div>
+        <div class="op-kv"><span class="k">Dept Total GP</span><span class="v">${f$(f.dGP||0)}</span></div>
+        <div class="op-kv"><span class="k">Dept GP / Total Unit</span><span class="v">${f$(deptGPpu)}</span></div>
+        <div class="op-kv"><span class="k">Used:New Ratio</span><span class="v" style="color:${(f.usedNewRatio||0)>=1?GN:RE}">${(f.usedNewRatio||0).toFixed(2)}</span></div>
+      </div>
+    </div>
+
+    <!-- TCUV vs NON-TCUV GAP -->
+    ${nonU>0?`<div class="op-card" style="margin-bottom:16px;border-left:4px solid var(--blue)">
+      <div style="font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">TCUV vs Non-TCUV Performance Gap · ${fN(tu)} TCUV · ${fN(nonU)} Non-TCUV</div>
+      <table style="width:100%;font-size:12.5px">
+        <thead>
+          <tr style="border-bottom:1.5px solid var(--bdr)">
+            <th style="text-align:left;padding:6px 8px;font-size:10px;color:var(--dim-m);text-transform:uppercase">Metric</th>
+            <th style="text-align:right;padding:6px 8px;font-size:10px;color:var(--dim-m);text-transform:uppercase">TCUV</th>
+            <th style="text-align:right;padding:6px 8px;font-size:10px;color:var(--dim-m);text-transform:uppercase">Non-TCUV</th>
+            <th style="text-align:right;padding:6px 8px;font-size:10px;color:var(--dim-m);text-transform:uppercase">Gap / Unit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:5px 8px">Front GP / Unit</td><td style="text-align:right;padding:5px 8px;font-family:'Orbitron',sans-serif;font-weight:700">${f$(aF)}</td><td style="text-align:right;padding:5px 8px;font-family:'Orbitron',sans-serif;font-weight:700">${f$(nonFrontPU)}</td><td style="text-align:right;padding:5px 8px;font-family:'Orbitron',sans-serif;font-weight:800;color:${gapFront>0?GN:RE}">${gapFront>=0?'+':''}${f$(gapFront)}</td></tr>
+          ${nonBackPU>0?`<tr><td style="padding:5px 8px">Back-End / Unit</td><td style="text-align:right;padding:5px 8px;font-family:'Orbitron',sans-serif;font-weight:700">${f$(aB)}</td><td style="text-align:right;padding:5px 8px;font-family:'Orbitron',sans-serif;font-weight:700">${f$(nonBackPU)}</td><td style="text-align:right;padding:5px 8px;font-family:'Orbitron',sans-serif;font-weight:800;color:${gapBack>0?GN:RE}">${gapBack>=0?'+':''}${f$(gapBack)}</td></tr>`:''}
+          <tr style="border-top:1.5px solid var(--txt);background:var(--bg)"><td style="padding:6px 8px;font-weight:700">Total GP / Unit</td><td style="text-align:right;padding:6px 8px;font-family:'Orbitron',sans-serif;font-weight:800">${f$(aTot)}</td><td style="text-align:right;padding:6px 8px;font-family:'Orbitron',sans-serif;font-weight:800">${f$(nonTotPU)}</td><td style="text-align:right;padding:6px 8px;font-family:'Orbitron',sans-serif;font-weight:900;color:${gapTot>0?GN:RE}">${gapTot>=0?'+':''}${f$(gapTot)}</td></tr>
+        </tbody>
+      </table>
+      ${gpOpportunity>0?`<div style="margin-top:10px;padding:10px 12px;background:var(--green-lt);border-radius:6px;border-left:3px solid var(--green);font-size:12px;color:var(--txt)"><strong>Opportunity:</strong> Closing the per-unit gap across ${fN(nonU)} non-TCUV units represents <strong style="color:var(--green)">${f$(gpOpportunity)}</strong> in additional gross profit at TCUV-equivalent performance.</div>`:''}
+    </div>`:''}
+
+    <!-- TOP PRIORITIES -->
+    ${priorities.length>0?`<div class="op-card" style="margin-bottom:16px">
+      <div style="font-size:10px;font-weight:700;color:var(--dim-m);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">Top Priorities · ${tl.label} Implementation Window</div>
+      <ol style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.7;color:var(--txt)">
+        ${priorities.map(a=>`<li style="margin-bottom:6px"><strong style="color:${a.status==='critical'?RE:GD}">${a.cat}:</strong> ${a.val} vs ${a.target} <span style="color:var(--dim-m)">(${a.gap})</span><br><span style="font-size:11.5px;color:var(--dim)">${a.detail}</span></li>`).join('')}
+      </ol>
+    </div>`:''}
+
+    <!-- STRENGTHS -->
+    ${pd.strengths.length>0?`<div class="op-card" style="margin-bottom:16px;border-left:4px solid var(--green)">
+      <div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px">Strengths</div>
+      <ul style="margin:0;padding-left:20px;font-size:12px;line-height:1.7;color:var(--txt)">${pd.strengths.map(s=>'<li>'+s+'</li>').join('')}</ul>
+    </div>`:''}
+
+    <!-- FOOTER -->
+    <div style="border-top:1px solid var(--bdr);margin-top:18px;padding-top:12px;display:flex;justify-content:space-between;align-items:center;font-size:10.5px;color:var(--dim-m);flex-wrap:wrap;gap:8px">
+      <div><strong style="color:var(--txt)">Next visit target:</strong> ${nv} (${tl.label})</div>
+      <div>Confidential · TCUV District Management · Gulf States Toyota</div>
+    </div>
+
+  </div>`;
+}
+// END ONE-PAGER
+
+
 // ═══════════════════════════════════════════════════════════════
 function rContacts(mc,c){
   const contacts=c.contacts||[],history=c.consultHistory||[];
@@ -2362,6 +2650,38 @@ async function _genEmail(area,c,contact,notes,type,outcome,date,uid){
   const ctInfo=(c.contacts||[]).find(ct=>ct.name&&ct.name.toLowerCase().includes((contact||'').toLowerCase()));
   const f=c.fn||{};
   const rc=c.rc?.ds?.find(d=>nm(d.n,c.nm));
+  // Include non-TCUV performance context if data is available (same derivation
+  // as the perf analysis prompt). The AI needs this to make its improvement
+  // recommendations reference real per-unit gaps rather than guessing.
+  const ncU=Number(f.nu)||0, ntU=Number(f.ntU||f.ou)||0;
+  const ncG=Number(f.ng)||0, ntG=Number(f.ntG||f.og)||0;
+  let ncFI=Number(f.nFI)||0, ntFI=Number(f.ntFI||f.oFI)||0;
+  if((ncFI===0||ntFI===0)&&(ncU+ntU)>0){
+    const l68=Number(f._line68gp)||0, l64=Number(f._line64gp)||0, tFI=Number(f.tFI)||0;
+    if(l68>0&&l64>0&&tFI>0){
+      const impliedCombined=l68-l64-tFI;
+      if(impliedCombined>1000&&impliedCombined<10000000){
+        const totU=ncU+ntU;
+        if(totU>0){
+          if(ncFI===0)ncFI=Math.round(impliedCombined*(ncU/totU));
+          if(ntFI===0)ntFI=Math.round(impliedCombined*(ntU/totU));
+        }
+      }
+    }
+  }
+  const nonTCUV_units=ncU+ntU;
+  const nonTCUV_front=ncG+ntG;
+  const nonTCUV_back=ncFI+ntFI;
+  const tcuvFront=Math.round((f.tg||0)/Math.max(f.tu||1,1));
+  const tcuvBack=Math.round((f.tFI||0)/Math.max(f.tu||1,1));
+  const nonTCUV_frontPerUnit=nonTCUV_units>0?Math.round(nonTCUV_front/nonTCUV_units):0;
+  const nonTCUV_backPerUnit=nonTCUV_units>0&&nonTCUV_back>0?Math.round(nonTCUV_back/nonTCUV_units):0;
+  const nonTCUVBlock=nonTCUV_units>0?`
+NON-TCUV PERFORMANCE (use this for gap-closing recommendations):
+- Non-Cert Toyota: ${fN(ncU)} units, Front $${ncU>0?Math.round(ncG/ncU):0}/unit${ncFI>0?', Back $'+Math.round(ncFI/ncU)+'/unit':''}
+- Non-Toyota: ${fN(ntU)} units, Front $${ntU>0?Math.round(ntG/ntU):0}/unit${ntFI>0?', Back $'+Math.round(ntFI/ntU)+'/unit':''}
+- TCUV vs Non-TCUV front gap: $${tcuvFront-nonTCUV_frontPerUnit}/unit${nonTCUV_backPerUnit>0?' | back gap: $'+(tcuvBack-nonTCUV_backPerUnit)+'/unit':''}`:'';
+
   const prompt=`You are a professional Toyota TCUV district sales consultant at Gulf States Toyota. Write a polished, specific, action-oriented follow-up email that includes performance improvement recommendations.
 
 DEALER: ${c.nm}
@@ -2371,9 +2691,9 @@ CONTEXT: ${f.pr||''} \u00b7 ${f.cl||''}${rc?' \u00b7 Attainment: '+rc.p+'%':''}
 
 PERFORMANCE DATA:
 - TCUV Units: ${fN(f.tu||0)} avg/mo
-- Front GP/Unit: ${f$(Math.round((f.tg||0)/Math.max(f.tu||1,1)))} (GST: ${f$(Math.round(f.dTG||f.gTG||0))})
-- Back-End/Unit: ${f$(Math.round((f.tFI||0)/Math.max(f.tu||1,1)))} (GST: ${f$(Math.round(f.dTF||f.gTF||0))})
-- Recon/Unit: ${f$(Math.round((f.cR||0)/Math.max(f.tu||1,1)))} (GST: ${f$(Math.round(f.dCR||f.gCR||0))})
+- Front GP/Unit: ${f$(tcuvFront)} (GST: ${f$(Math.round(f.dTG||f.gTG||0))})
+- Back-End/Unit: ${f$(tcuvBack)} (GST: ${f$(Math.round(f.dTF||f.gTF||0))})
+- Recon/Unit: ${f$(Math.round((f.cR||0)/Math.max(f.tu||1,1)))} (GST: ${f$(Math.round(f.dCR||f.gCR||0))})${nonTCUVBlock}
 ${c._lastPerfAnalysis?'\nPERFORMANCE ANALYSIS SUMMARY:\n'+c._lastPerfAnalysis.slice(0,600):''}
 
 VISIT NOTES (base entire email on these specifics):
@@ -2385,7 +2705,7 @@ Subject: [specific subject line starting with "Subject: "]
 [Greeting]
 [Thank them + reference specific visit]
 [2-3 bullet points of key discussion topics from notes]
-[Performance Improvement Section: Include 2-3 specific, data-backed recommendations for areas where the dealer is underperforming vs GST benchmarks. Frame these constructively as opportunities.]
+[Performance Improvement Section: Include 2-3 specific, data-backed recommendations for areas where the dealer is underperforming vs GST benchmarks. Frame these constructively as opportunities. Use dollar gaps from the actual data above, not generic industry figures.]
 [Numbered action items: who owns what by when]
 [Encouraging, specific close referencing their performance and setting expectations for the next check-in]
 
@@ -2393,7 +2713,7 @@ Subject: [specific subject line starting with "Subject: "]
 TCUV District Sales Consultant | Gulf States Toyota
 [Your Phone] | [Your Email]
 
-Rules: under 350 words. Professional but warm. Reference specific numbers/details from notes and performance data. Include concrete improvement recommendations with target numbers. No generic filler.`;
+Rules: under 350 words. Professional but warm. Reference specific numbers/details from notes and performance data. Include concrete improvement recommendations with target numbers from the actual data block, not made-up industry averages. No generic filler.`;
   try{
     const resp=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
     let data;
@@ -2683,16 +3003,51 @@ function rUp(mc){
   </div>
   <div class="card">
     <div class="card-title">Manage Dealers (${D.length})</div>
-    ${D.map((d,i)=>`
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:${d.id===ci?'var(--red-lt)':'var(--surface)'};border:1.5px solid ${d.id===ci?'rgba(200,16,46,.25)':'var(--bdr)'};border-radius:10px;margin-bottom:6px;transition:all .15s">
-        <div style="display:flex;align-items:center;gap:10px">
+    ${(()=>{
+      // Detect duplicate dealers by name AND same-day upload. A dealer is
+      // flagged as a duplicate if another dealer with a similar name was
+      // created on the same day. When duplicates exist, show a warning banner
+      // and mark each duplicate row so the user can see which to remove.
+      const dupGroups={};
+      for(const d of D){
+        if(!d.nm)continue;
+        const key=d.nm.toLowerCase().trim()+'|'+(d.dt||'');
+        if(!dupGroups[key])dupGroups[key]=[];
+        dupGroups[key].push(d.id);
+      }
+      const dupIds=new Set();
+      let dupWarning='';
+      for(const key in dupGroups){
+        if(dupGroups[key].length>1){
+          dupGroups[key].forEach(id=>dupIds.add(id));
+        }
+      }
+      if(dupIds.size>0){
+        dupWarning=`<div class="tip tip-gold" style="margin-bottom:12px;font-size:12px"><strong>⚠ Duplicate dealers detected.</strong> ${dupIds.size} records share the same dealer name and upload date. Compare the data in each (TCUV units, period, file source) before deciding which to remove. Incomplete records typically show $0 for key metrics.</div>`;
+      }
+      return dupWarning+D.map((d,i)=>{
+        const f=d.fn||{};
+        const isDup=dupIds.has(d.id);
+        // Annotate each dup row with a 'quality' indicator - count how many
+        // key financial fields are non-zero. Rows with more populated fields
+        // are more complete and should usually be kept.
+        const keyFields=['tu','tg','tFI','cR','dGP','nu','ntU','tot'];
+        const populated=keyFields.filter(k=>Number(f[k])>0).length;
+        const qualityLabel=isDup?` <span class="badge pill-${populated>=6?'green':populated>=3?'gold':'red'}" title="${populated}/${keyFields.length} key metrics populated">${populated}/${keyFields.length} complete</span>`:'';
+        return `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:${d.id===ci?'var(--red-lt)':isDup?'var(--gold-lt)':'var(--surface)'};border:1.5px solid ${d.id===ci?'rgba(200,16,46,.25)':isDup?'rgba(138,98,0,.35)':'var(--bdr)'};border-radius:10px;margin-bottom:6px;transition:all .15s">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           ${d.id===ci?`<span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;flex-shrink:0"></span>`:''}
-          <span style="font-weight:700;font-size:14px">${d.nm}</span>
+          <span style="font-weight:700;font-size:14px">${dnm(d.nm)}</span>
           <span style="font-size:12px;color:var(--dim-m)">${d.dt}</span>
+          ${f.pr?`<span style="font-size:11px;color:var(--dim-m);font-style:italic">${f.pr}</span>`:''}
           ${d.fn?.cl?`<span class="badge pill-blue">${d.fn.cl}</span>`:''}
+          ${qualityLabel}
         </div>
         ${i>0?`<button class="btn btn-sm btn-del" onclick="removeDealer(${d.id})">Remove</button>`:`<span class="badge pill-green">Active</span>`}
-      </div>`).join('')}
+      </div>`;
+      }).join('');
+    })()}
   </div>`;
 }
 function addDealer(){
@@ -2713,6 +3068,26 @@ function addDealer(){
   D.push(nd);ci=nd.id;tb='crm';buildNav();buildSel();render();saveAll();
 }
 function removeDealer(id){if(D.length<=1){alert('Cannot remove the last dealer.');return;}if(!confirm('Remove this dealer and ALL their data? This cannot be undone.'))return;D=D.filter(d=>d.id!==id);if(ci===id)ci=D[0].id;buildNav();buildSel();render();saveAll();}
+
+// Sold vs Obj recap management. reuploadRecap switches to the Upload tab and
+// auto-clicks the recap file-picker so the user can select a replacement
+// without navigating manually. clearRecap wipes the current recap without
+// prompting for a new file.
+function reuploadRecap(){
+  const c=gc();if(!c)return;
+  if(!confirm('Replace the current recap file? The existing recap data will be discarded when you select the new file.'))return;
+  // Go to the Upload tab and open the recap picker after a short delay so the
+  // Upload UI has a chance to render its file inputs.
+  tb='up';buildNav();render();
+  setTimeout(()=>{const el=document.getElementById('f3');if(el)el.click();},200);
+}
+function clearRecap(){
+  const c=gc();if(!c)return;
+  if(!confirm('Clear the current Sold vs Objective recap for this dealer? This does not delete any other dealer data.'))return;
+  c.rc=null;
+  saveAll();render();
+  showToast('✓ Recap cleared',DM);
+}
 
 // ═══ FILE PARSING ══════════════════════════════════════════════
 // Smart dealer resolution: if the file's dealer name doesn't match the
@@ -2926,7 +3301,7 @@ function pFin(wb,n){
   const ogVal  = n(rOther?.[3]);
 
   // ── F&I totals for non-cert and non-Toyota ────────────────────────
-  // Detection strategy (build 27): aggressive multi-pass
+  // Detection strategy (build 28): aggressive multi-pass
   //   Pass A: Pg6 line-66 label match (all variants)
   //   Pass B: Pg7 total non-cert F&I row
   //   Pass C: Brute-force scan EVERY sheet for any row whose label looks like
@@ -3069,7 +3444,7 @@ function pFin(wb,n){
     cc.fn.gTF=gTF; cc.fn.dTF=gTF; cc.fn.gTU=Math.round(gTU_u);
     buildSel(); if(tb!=='up')render(); saveAll();
     const verb=rd.status==='created'?'Created new dealer':rd.status==='switched'?'Switched to and updated':'Updated';
-    showToast('✓ '+verb+': '+cc.nm+' (Financial · build 27)',rd.status==='created'?'#1E4B8E':GN);
+    showToast('✓ '+verb+': '+cc.nm+' (Financial · build 28)',rd.status==='created'?'#1E4B8E':GN);
   }
   document.getElementById('d1').classList.add('done');
   document.getElementById('m1').innerHTML=`
