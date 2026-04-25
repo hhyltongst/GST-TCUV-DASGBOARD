@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<!--
+  Gulf States Toyota TCUV Dealer Scheduling Agent
+  Created by: Hussein Hylton
+  Copyright (c) 2026 All Rights Reserved
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>GST TCUV Scheduling Agent</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#C8102E;--red-lt:rgba(200,16,46,.07);--red-dk:#a30e26;
+  --gold:#8A6200;--gold-lt:rgba(138,98,0,.08);
+  --green:#0A7C3A;--green-lt:rgba(10,124,58,.08);
+  --blue:#1558B0;--blue-lt:rgba(21,88,176,.08);
+  --purple:#5B21B6;--purple-lt:rgba(91,33,182,.08);
+  --orange:#C2410C;--orange-lt:rgba(194,65,12,.08);
+  --teal:#0E7490;--teal-lt:rgba(14,116,144,.08);
+  --bg:#f4f1ea;--surface:#fff;--card:#fff;
+  --bdr:#e7e5e4;--bdr-dk:#d4d4d4;
+  --txt:#1a1a1a;--dim:#3A4252;--dim-m:#57534e;--dim-lt:#a8a29e;
+  --hdr:#1a1a1a;
+  --sh:0 1px 4px rgba(0,0,0,.09),0 1px 2px rgba(0,0,0,.06);
+  --sh-md:0 4px 18px rgba(0,0,0,.11),0 2px 6px rgba(0,0,0,.06);
+  --r:8px;--rl:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5;min-height:100vh}
+
+/* HEADER */
+.hdr{background:#1a1a1a;color:#f4f1ea;padding:24px 32px;border-bottom:3px solid var(--red)}
+.hdr-row{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.hdr-eyebrow{font-size:11px;letter-spacing:.2em;color:var(--red);margin-bottom:4px;font-family:'Helvetica Neue','Inter',sans-serif}
+.hdr h1{margin:0;font-size:28px;font-weight:400;letter-spacing:-.01em;font-family:'Orbitron',sans-serif}
+.hdr-sub{font-size:13px;color:#a8a29e;margin-top:4px}
+.hdr-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.hdr input{padding:8px 12px;background:#2a2724;border:1px solid #57534e;color:#f4f1ea;font-size:13px;font-family:'Inter',sans-serif;width:240px;outline:none}
+.hdr input:focus{border-color:var(--red)}
+
+/* STATS BAR */
+.stats{background:#fff;border-bottom:1px solid var(--bdr);padding:16px 32px}
+.stats-grid{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr);gap:24px}
+.stat{}
+.stat-lbl{font-size:11px;letter-spacing:.1em;color:var(--dim-m);text-transform:uppercase;margin-bottom:4px;font-family:'Helvetica Neue','Inter',sans-serif}
+.stat-val{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:800;line-height:1.1}
+
+/* NAV */
+.nav{background:#fff;border-bottom:1px solid var(--bdr)}
+.nav-row{max-width:1400px;margin:0 auto;display:flex;gap:0}
+.nav button{padding:14px 28px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--dim-m);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;cursor:pointer}
+.nav button.active{background:var(--bg);color:var(--txt);border-bottom-color:var(--red)}
+.nav button:hover:not(.active){color:var(--txt)}
+
+/* MAIN */
+main{max-width:1400px;margin:0 auto;padding:32px}
+
+/* CARDS */
+.card{background:#fff;border:1px solid var(--bdr);border-radius:var(--r);padding:18px 22px;box-shadow:var(--sh);margin-bottom:14px}
+.card-title{font-size:11px;color:var(--dim-m);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;font-family:'Helvetica Neue','Inter',sans-serif}
+
+/* BUTTONS */
+.btn{padding:9px 18px;border:none;border-radius:6px;background:#1a1a1a;color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:background .15s}
+.btn:hover{background:#000}
+.btn:disabled{background:#a8a29e;cursor:not-allowed}
+.btn-red{background:var(--red)}
+.btn-red:hover{background:var(--red-dk)}
+.btn-blue{background:var(--blue)}
+.btn-blue:hover{background:#0e3f7d}
+.btn-green{background:var(--green)}
+.btn-green:hover{background:#085a2a}
+.btn-ghost{background:#fff;border:1px solid var(--bdr-dk);color:var(--dim-m)}
+.btn-ghost:hover{background:#fafaf9;color:var(--txt)}
+.btn-sm{padding:6px 12px;font-size:11px}
+
+/* FORMS */
+.fl{font-size:11px;color:var(--dim-m);font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;display:block;font-family:'Helvetica Neue','Inter',sans-serif}
+.fi{padding:8px 12px;border:1px solid var(--bdr-dk);border-radius:6px;background:#fff;font-size:13px;font-family:'Inter',sans-serif;outline:none;width:100%}
+.fi:focus{border-color:var(--red)}
+select.fi{cursor:pointer}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;border-radius:4px;font-size:10px;font-weight:700;padding:3px 8px;letter-spacing:.05em;text-transform:uppercase;font-family:'Helvetica Neue','Inter',sans-serif}
+.pill-red{background:var(--red-lt);color:var(--red)}
+.pill-blue{background:var(--blue-lt);color:var(--blue)}
+.pill-gold{background:var(--gold-lt);color:var(--gold)}
+.pill-gray{background:#f4f4f4;color:var(--dim-m)}
+.pill-green{background:var(--green-lt);color:var(--green)}
+.pill-purple{background:var(--purple-lt);color:var(--purple)}
+
+/* TABLES */
+table{width:100%;border-collapse:collapse}
+th{padding:10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim-m);border-bottom:1.5px solid var(--bdr);text-align:left;font-family:'Helvetica Neue','Inter',sans-serif}
+td{padding:10px;font-size:13px;border-bottom:1px solid var(--bdr);color:var(--txt)}
+th.r,td.r{text-align:right}
+th.c,td.c{text-align:center}
+tr:hover td{background:#fafaf9}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+.modal{background:#fff;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.4);max-width:680px;width:100%;overflow:hidden;max-height:90vh;display:flex;flex-direction:column}
+.modal-hdr{padding:18px 22px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center}
+.modal-ttl{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;letter-spacing:.05em}
+.modal-body{padding:18px 22px;overflow-y:auto;flex:1}
+.modal-foot{padding:14px 22px;border-top:1px solid var(--bdr);display:flex;justify-content:flex-end;gap:8px;background:#fafaf9}
+
+/* GRID HELPERS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px}
+
+/* WEEK PLAN */
+.week-card{background:#fff;border:1px solid var(--bdr);border-radius:var(--rl);overflow:hidden;margin-bottom:18px;box-shadow:var(--sh)}
+.week-hdr{padding:16px 20px;background:#fafaf9;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.week-ttl{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:800;letter-spacing:.02em}
+.week-meta{font-size:12px;color:var(--dim-m);margin-top:3px}
+.week-days{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:14px}
+.day{background:#fafaf9;border:1px solid var(--bdr);border-radius:6px;padding:10px;min-height:120px}
+.day-hdr{font-size:11px;font-weight:700;color:var(--dim-m);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--bdr)}
+.visit{background:#fff;border:1px solid var(--bdr);border-radius:5px;padding:7px 9px;margin-bottom:5px;font-size:11px}
+.visit-time{font-weight:700;color:var(--red);font-family:'Orbitron',sans-serif;font-size:10px}
+.visit-name{font-weight:600;line-height:1.3;margin-top:2px}
+.visit-meta{color:var(--dim-m);font-size:10px;margin-top:2px}
+.day-note{font-size:10px;color:var(--dim-lt);font-style:italic;padding:6px;background:#fff;border-radius:4px;margin-top:4px}
+
+/* FILTERS */
+.filter-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-end}
+.filter-row .f{flex:1;min-width:150px}
+
+/* TRIP CARDS */
+.trip-card{background:#fff;border:1px solid var(--bdr);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh);transition:transform .15s,box-shadow .15s;cursor:pointer}
+.trip-card:hover{transform:translateY(-2px);box-shadow:var(--sh-md)}
+.trip-name{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;margin-bottom:6px}
+.trip-stats{font-size:12px;color:var(--dim-m);margin-bottom:10px}
+
+/* DEALER ROW */
+.dealer-row{padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .1s}
+.dealer-row:hover{background:#fafaf9}
+.dealer-row.completed{opacity:.5}
+.dealer-row.scheduled{background:var(--blue-lt)}
+
+/* TOAST */
+#toast{position:fixed;top:20px;right:20px;background:#1a1a1a;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:0;transition:opacity .25s;z-index:9999;pointer-events:none}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row">
+    <div>
+      <div class="hdr-eyebrow">TCUV / GSFS AREA 3</div>
+      <h1>Dealer Consultation Scheduler</h1>
+      <div class="hdr-sub">156 dealers across TX, LA, OK, AR, MS &mdash; field visit planning and outreach</div>
+    </div>
+    <div class="hdr-actions">
+      <input id="senderName" type="text" placeholder="Your name (for email signatures)">
+      <button class="btn btn-ghost" onclick="showRules()">Rules</button>
+      <button class="btn btn-red" onclick="exportCSV()" id="exportBtn" disabled>Export CSV</button>
+    </div>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stats-grid" id="statsGrid"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-row" id="navRow"></div>
+</nav>
+
+<main id="main"></main>
+
+<div id="toast"></div>
+
+<script>
+// ============ DEALER DATA (embedded) ============
+const DEALER_JSON = `[{"n":42087,"name":"DON MCGILL TOYOTA","area":"A1","dm":"ROBERTS","tcuv":1015,"used":3766,"ps":0.7573,"tier":"Tier 1","des":"Grow & Develop I","addr":"11800 Katy Freeway","city":"Houston","st":"TX","zip":"77079","ph":"(281) 496-2000","gm_f":"Chad","gm_l":"Mahaffey","gm_e":"chadm@donmcgill.com","dp_f":"John","dp_l":"McGill","dp_e":"Jmcgill@donmcgill.com","sal":"Mr.","lat":29.7604,"lng":-95.3698,"dh":0.0},{"n":42284,"name":"DON MCGILL TOYOTA OF KATY","area":"A1","dm":"ROBERTS","tcuv":974,"used":4051,"ps":0.7379,"tier":"Tier 1","des":"Grow & Develop I","addr":"21555 Katy Freeway","city":"Katy","st":"TX","zip":"77450","ph":"(832) 772-1000","gm_f":"Michael","gm_l":"Hartmann","gm_e":"mhartmann@donmcgill.com","dp_f":"John","dp_l":"McGill","dp_e":"Jmcgill@donmcgill.com","sal":"Mr.","lat":29.7858,"lng":-95.8244,"dh":27.3},{"n":42327,"name":"FAMILY TOYOTA OF BURLESON","area":"A2","dm":"GARRETT","tcuv":428,"used":2838,"ps":0.6291,"tier":"Tier 2","des":"Grow & Develop I","addr":"801 S. Burleson Blvd","city":"Burleson","st":"TX","zip":"76028","ph":"(817) 447-4400","gm_f":"Dustin","gm_l":"Herndon","gm_e":"DustinHerndon@FamilyCarGroup.com","dp_f":"Skip","dp_l":"Jabbar","dp_e":"skipjabbar@familycargroup.com","sal":"Mr.","lat":32.5421,"lng":-97.3208,"dh":224.2},{"n":42073,"name":"STERLING MCCALL TOYOTA","area":"A1","dm":"GODFREY","tcuv":933,"used":5121,"ps":0.7158,"tier":"Tier 1","des":"Grow & Develop I","addr":"9400 Southwest Freeway","city":"Houston","st":"TX","zip":"77074","ph":"(713) 270-3900","gm_f":"Keegan","gm_l":"Savell","gm_e":"ksavell@group1auto.com","dp_f":"Daryl","dp_l":"Kenningham","dp_e":"dkenningham@group1auto.com","sal":"Mr.","lat":29.7604,"lng":-95.3698,"dh":0.0},{"n":42298,"name":"ROUND ROCK TOYOTA","area":"A2","dm":"KLOTZ","tcuv":870,"used":3204,"ps":0.6896,"tier":"Tier 1","des":"Grow & Develop I","addr":"2307 North I-35","city":"Round Rock","st":"TX","zip":"78664","ph":"(512) 244-6900","gm_f":"Mark","gm_l":"Trimble","gm_e":"mtrimble@penskeautomotive.com","dp_f":"Roger","dp_l":"Penske","dp_e":"sspradlin@penskeautomotive.com                                                  cc: JZiniti@penskeautomotive.com","sal":"Mr.","lat":30.5083,"lng":-97.6789,"dh":147.3},{"n":42201,"name":"RED MCCOMBS TOYOTA","area":"A2","dm":"MONROY","tcuv":434,"used":2557,"ps":0.8017,"tier":"Tier 1","des":"Grow & Develop I","addr":"13526 IH-10 West","city":"San Antonio","st":"TX","zip":"78249","ph":"(210) 530-3000","gm_f":"Kevin","gm_l":"Browning","gm_e":"kbrowning@redmac.net","dp_f":"Marsha","dp_l":"Shields","dp_e":"mshields@mccombshq.com","sal":"Ms.","lat":29.4241,"lng":-98.4936,"dh":189.1},{"n":42095,"name":"FRED HAAS TOYOTA WORLD","area":"A1","dm":"ROBERTS","tcuv":866,"used":5012,"ps":0.8285,"tier":"Tier 1","des":"Grow & Develop I","addr":"20400 I-45 North","city":"Spring","st":"TX","zip":"77373","ph":"(281) 297-7000","gm_f":"Pat","gm_l":"Goldwait","gm_e":"pgoldwait@fhtworld.com","dp_f":"Mark","dp_l":"Haas","dp_e":"mark_haas@fredhaastoyota.com","sal":"Mr.","lat":30.0799,"lng":-95.4172,"dh":22.3},{"n":42282,"name":"FRED HAAS TOYOTA COUNTRY","area":"A1","dm":"ROBERTS","tcuv":310,"used":2940,"ps":0.5563,"tier":"Tier 2","des":"Grow & Develop I","addr":"22435 SH-249","city":"Houston","st":"TX","zip":"77070","ph":"(281) 357-4000","gm_f":"Brad","gm_l":"Dupuis","gm_e":"brad_dupuis@fredhaastoyotacountry.com","dp_f":"Steven","dp_l":"Haas","dp_e":"haas_steve@yahoo.com","sal":"Mr.","lat":29.7604,"lng":-95.3698,"dh":0.0},{"n":42410,"name":"DOGGETT TOYOTA/BEAUMONT","area":"A1","dm":"GODFREY","tcuv":283,"used":921,"ps":0.5787,"tier":"Tier 2","des":"Grow & Develop I","addr":"4235 Eastex Freeway","city":"Beaumont","st":"TX","zip":"77704","ph":"(409) 892-4888","gm_f":"Gary","gm_l":"Weems","gm_e":"gary.weems@doggettauto.com","dp_f":"Leslie","dp_l":"Doggett","dp_e":"ldoggett@doggett.com","sal":"Mr.","lat":30.0802,"lng":-94.1266,"dh":77.7},{"n":42273,"name":"GROUP 1 TOYOTA FORT BEND","area":"A1","dm":"GODFREY","tcuv":209,"used":2340,"ps":0.5497,"tier":"Tier 2","des":"Grow & Develop I","addr":"20465 Southwest Freeway","city":"Richmond","st":"TX","zip":"77469","ph":"(281) 341-5900","gm_f":"Martin","gm_l":"Morcho","gm_e":"mmorcho@sterlingmccalltoyotafortbend.com","dp_f":"Daryl","dp_l":"Kenningham","dp_e":"dkenningham@group1auto.com","sal":"Mr.","lat":29.5819,"lng":-95.7607,"dh":26.5},{"n":17083,"name":"ALL STAR TOY BATON ROUGE","area":"A1","dm":"MELANCON","tcuv":272,"used":692,"ps":0.5469,"tier":"Tier 2","des":"Grow & Develop I","addr":"9150 Airline Highway","city":"Baton Rouge","st":"LA","zip":"70815","ph":"(225) 925-2525","gm_f":"Mark","gm_l":"Turner","gm_e":"mturner@allstarautomotive.com","dp_f":"David","dp_l":"Hudson","dp_e":"dhudson@hudsonauto.com","sal":"Mr.","lat":30.4515,"lng":-91.1871,"dh":254.5},{"n":42283,"name":"AUTONATION TOY CC","area":"A2","dm":"MONROY","tcuv":280,"used":1665,"ps":0.7224,"tier":"Tier 1","des":"Grow & Develop I","addr":"6672 South Padre Island Drive","city":"Corpus Christi","st":"TX","zip":"78412","ph":"(361) 444-0160","gm_f":"Jeff","gm_l":"Amidon","gm_e":"amidonj@autonation.com","dp_f":"Jeff","dp_l":"Parent","dp_e":"DealerPrincipalJP@autonation.com\\ncc: bowserm@autonation.com","sal":"Mr.","lat":27.8006,"lng":-97.3964,"dh":182.7},{"n":17014,"name":"PRICE LEBLANC TOYOTA","area":"A1","dm":"MELANCON","tcuv":247,"used":1246,"ps":0.5585,"tier":"Tier 2","des":"Grow & Develop II","addr":"13250 Airline Highway","city":"Baton Rouge","st":"LA","zip":"70817","ph":"(225) 408-1100","gm_f":"Ryan","gm_l":"Ipson","gm_e":"ripson@leblancauto.com","dp_f":"Brent","dp_l":"LeBlanc","dp_e":"brent@leblancauto.com","sal":"Mr.","lat":30.4515,"lng":-91.1871,"dh":254.5},{"n":42057,"name":"TOYOTA OF IRVING","area":"A2","dm":"TOSCH","tcuv":407,"used":1457,"ps":0.5859,"tier":"Tier 2","des":"Grow & Develop I","addr":"1999 West Airport Freeway","city":"Irving","st":"TX","zip":"75062","ph":"(972) 258-1200","gm_f":"Jereme","gm_l":"Schoemaker","gm_e":"jschoemaker@toyotaofirving.com","dp_f":"David","dp_l":"Schoemaker","dp_e":"david_schoemaker@toyota-irving.com","sal":"Mr.","lat":32.814,"lng":-96.9489,"dh":230.7},{"n":35055,"name":"BOB HOWARD TOYOTA","area":"A3","dm":"COOK","tcuv":73,"used":1631,"ps":0.4315,"tier":"Tier 3","des":"Grow & Develop II","addr":"12929 North Kelley Avenue","city":"Oklahoma City","st":"OK","zip":"73131","ph":"(405) 936-8600","gm_f":"Aaron","gm_l":"London","gm_e":"alondon@bobhowardauto.com","dp_f":"Daryl","dp_l":"Kenningham","dp_e":"dkenningham@group1auto.com","sal":"Mr.","lat":35.4676,"lng":-97.5164,"dh":413.6},{"n":42295,"name":"PAT LOBB TOYOTA/MCKINNEY","area":"A2","dm":"TOSCH","tcuv":288,"used":3515,"ps":0.7456,"tier":"Tier 1","des":"Grow & Develop I","addr":"3350 South Central Expressway","city":"McKinney","st":"TX","zip":"75070","ph":"(214) 544-8696","gm_f":"John","gm_l":"Ellis","gm_e":"Jellis@toyotaofmckinney.com","dp_f":"Pat","dp_l":"Lobb","dp_e":"pat@patlobbtoyota.com","sal":"Mr.","lat":33.1972,"lng":-96.6398,"dh":249.0},{"n":42408,"name":"JOHN EAGLE SPORT CITY TOY","area":"A2","dm":"TOSCH","tcuv":223,"used":1807,"ps":0.6835,"tier":"Tier 1","des":"Grow & Develop I","addr":"12650 LBJ Freeway","city":"Dallas","st":"TX","zip":"75228","ph":"(972) 681-3000","gm_f":"","gm_l":"","gm_e":"","dp_f":"Bryan","dp_l":"DeBoer","dp_e":"dealerprincipal@lithia.com\\ncc: mvaccaro@lithia.com","sal":"Mr.","lat":32.7767,"lng":-96.797,"dh":224.8},{"n":42291,"name":"COMMUNITY TOYOTA","area":"A1","dm":"GODFREY","tcuv":205,"used":945,"ps":0.5523,"tier":"Tier 2","des":"Grow & Develop II","addr":"4701 Interstate 10 East","city":"Baytown","st":"TX","zip":"77521","ph":"(281) 839-7700","gm_f":"David","gm_l":"Smith","gm_e":"david_smith@communitytoyota.com.com","dp_f":"Roger","dp_l":"Elswick","dp_e":"roger_elswick@communitytoyota.com","sal":"Mr.","lat":29.7355,"lng":-94.9774,"dh":23.6},{"n":17055,"name":"TEAM TOYOTA","area":"A1","dm":"MELANCON","tcuv":157,"used":1099,"ps":0.6003,"tier":"Tier 2","des":"Grow & Develop II","addr":"1788 O'Neal Lane","city":"Baton Rouge","st":"LA","zip":"70816","ph":"(225) 273-5880","gm_f":"Preston","gm_l":"Petersen","gm_e":"preston_petersen@team-toyota.com","dp_f":"Preston","dp_l":"Petersen","dp_e":"preston_petersen@team-toyota.com","sal":"Mr.","lat":30.4515,"lng":-91.1871,"dh":254.5},{"n":42417,"name":"TOYOTA OF PHARR","area":"A2","dm":"ENRIQUEZ","tcuv":74,"used":1572,"ps":0.3729,"tier":"Tier 3","des":"Grow & Develop II","addr":"1625 W. Interstate 2","city":"Pharr","st":"TX","zip":"78577","ph":"(956) 784-3300","gm_f":"Victor","gm_l":"Pardo","gm_e":"vpardo@grupoinlosa.com","dp_f":"Shelby","dp_l":"Longoria","dp_e":"slongoria@slongoria.com","sal":"Mr.","lat":26.1948,"lng":-98.1836,"dh":300.3},{"n":42302,"name":"TOYOTA OF ROCKWALL","area":"A2","dm":"GARRETT","tcuv":185,"used":1149,"ps":0.6136,"tier":"Tier 2","des":"Grow & Develop II","addr":"1250 East I-30","city":"Rockwall","st":"TX","zip":"75087","ph":"(469) 402-1300","gm_f":"Antoine","gm_l":"Yazbeck","gm_e":"tony@toyotaofrockwall.com","dp_f":"Steven","dp_l":"Jackson","dp_e":"sjackson266@yahoo.com","sal":"Mr.","lat":32.9312,"lng":-96.4597,"dh":228.3},{"n":42402,"name":"SHOTTENKIRK TOY/WEATHRFRD","area":"A2","dm":"GARRETT","tcuv":61,"used":1645,"ps":0.426,"tier":"Tier 3","des":"Grow & Develop II","addr":"2601 E. I-20 Service Road","city":"Hudson Oaks","st":"TX","zip":"76087","ph":"(817) 597-5000","gm_f":"Barry","gm_l":"Schwerdt","gm_e":"barryschwerdt@shottenkirk.com","dp_f":"Gregory","dp_l":"Shottenkirk","dp_e":"gshottenkirk@gmail.com","sal":"Mr.","lat":32.7579,"lng":-97.6984,"dh":248.6},{"n":3074,"name":"MARK MCLARTY TOYOTA","area":"A3","dm":"JONES","tcuv":167,"used":1840,"ps":0.4821,"tier":"Tier 3","des":"Grow & Develop II","addr":"4336 Landers Road","city":"N. Little Rock","st":"AR","zip":"72117","ph":"(501) 753-0400","gm_f":"Tom","gm_l":"Lewis","gm_e":"tlewis@mclartyauto.com","dp_f":"Mark","dp_l":"McLarty","dp_e":"mark@mclarty.com","sal":"Mr.","lat":34.7695,"lng":-92.2671,"dh":390.6},{"n":42347,"name":"TOYOTA OF FORT WORTH","area":"A2","dm":"GARRETT","tcuv":40,"used":1431,"ps":0.4013,"tier":"Tier 3","des":"Grow & Develop II","addr":"9001 Camp Bowie West Blvd.","city":"Fort Worth","st":"TX","zip":"76116","ph":"(817) 560-1500","gm_f":"George","gm_l":"Rollins","gm_e":"george.rollins@toyotafortworth.com","dp_f":"Christopher","dp_l":"Doherty","dp_e":"chrisdoherty@lakelandtoyota.com","sal":"Mr.","lat":32.7555,"lng":-97.3308,"dh":237.1},{"n":42403,"name":"SHOTTENKIRK TOY/ GRANBURY","area":"A2","dm":"GARRETT","tcuv":26,"used":1110,"ps":0.3924,"tier":"Tier 3","des":"Grow & Develop II","addr":"5100 East US Highway 377","city":"Granbury","st":"TX","zip":"76049","ph":"(817) 279-6800","gm_f":"Barry","gm_l":"Schwerdt","gm_e":"barryschwerdt@shottenkirk.com","dp_f":"Gregory","dp_l":"Shottenkirk","dp_e":"gshottenkirk@gmail.com","sal":"Mr.","lat":32.4421,"lng":-97.7942,"dh":234.3},{"n":42290,"name":"LITHIA TOYOTA OF ODESSA","area":"A3","dm":"OPEN","tcuv":211,"used":1188,"ps":0.6315,"tier":"Tier 2","des":"Grow & Develop II","addr":"5050 John Ben Shepperd Parkway","city":"Odessa","st":"TX","zip":"79762","ph":"(432) 367-2000","gm_f":"Robbie","gm_l":"Richards","gm_e":"robbierichards@lithia.com","dp_f":"Bryan","dp_l":"DeBoer","dp_e":"dealerprincipal@lithia.com\\ncc: mvaccaro@lithia.com","sal":"Mr.","lat":31.8457,"lng":-102.3676,"dh":439.5},{"n":42216,"name":"TOYOTA OF WACO","area":"A2","dm":"KLOTZ","tcuv":150,"used":1309,"ps":0.6169,"tier":"Tier 2","des":"Grow & Develop II","addr":"1440 West Loop 340","city":"Waco","st":"TX","zip":"76712","ph":"(254) 662-6644","gm_f":"Kyle","gm_l":"White","gm_e":"kyle.white@jeffhuntertoyota.com","dp_f":"Peter","dp_l":"Mankins","dp_e":"peterfmankins@me.com","sal":"Mr.","lat":31.5493,"lng":-97.1467,"dh":162.6},{"n":42262,"name":"AUTONATION TOY S. AUSTIN","area":"A2","dm":"KLOTZ","tcuv":123,"used":2932,"ps":0.5521,"tier":"Tier 2","des":"Grow & Develop II","addr":"4800 IH-35 South","city":"Austin","st":"TX","zip":"78745","ph":"(512) 518-6900","gm_f":"Rafael","gm_l":"Valdes","gm_e":"valdesr2@autonation.com","dp_f":"Jeff","dp_l":"Parent","dp_e":"DealerPrincipalJP@autonation.com\\ncc: bowserm@autonation.com","sal":"Mr.","lat":30.2672,"lng":-97.7431,"dh":146.2},{"n":42292,"name":"LITHIA TOYOTA OF ABILENE","area":"A3","dm":"OPEN","tcuv":58,"used":1158,"ps":0.4379,"tier":"Tier 3","des":"Grow & Develop II","addr":"4449 Southwest Drive","city":"Abilene","st":"TX","zip":"79606","ph":"(325) 793-3000","gm_f":"Kenan","gm_l":"Pyeatt","gm_e":"kpyeatt@lithia.com","dp_f":"Bryan","dp_l":"DeBoer","dp_e":"dealerprincipal@lithia.com\\ncc: mvaccaro@lithia.com","sal":"Mr.","lat":32.4487,"lng":-99.7331,"dh":318.0},{"n":42025,"name":"TOYOTA OF LAREDO","area":"A2","dm":"MONROY","tcuv":53,"used":572,"ps":0.3468,"tier":"Tier 3","des":"Grow & Develop II","addr":"6324 Bob Bullock Loop","city":"Laredo","st":"TX","zip":"78041","ph":"(956) 718-4200","gm_f":"Zachry","gm_l":"Powell","gm_e":"zpowell@powellwatson.com","dp_f":"Jonathan","dp_l":"Watson","dp_e":"jwatson@powellwatson.com","sal":"Mr.","lat":27.5306,"lng":-99.4803,"dh":293.0},{"n":42411,"name":"PLATINUM TOYOTA OF TEXOMA","area":"A2","dm":"FREEMAN","tcuv":86,"used":466,"ps":0.6335,"tier":"Tier 2","des":"Grow & Develop II","addr":"1920 US Highway 75 North","city":"Denison","st":"TX","zip":"75020","ph":"(903) 463-9800","gm_f":"","gm_l":"","gm_e":"","dp_f":"Stephen","dp_l":"Gilchrist","dp_e":"sg@gilchristautomotive.com","sal":"Mr.","lat":33.7557,"lng":-96.5367,"dh":284.4},{"n":42264,"name":"GENE MESSER TOYOTA","area":"A3","dm":"OPEN","tcuv":44,"used":2038,"ps":0.6033,"tier":"Tier 2","des":"Grow & Develop II","addr":"6102 West 19th Street","city":"Lubbock","st":"TX","zip":"79407","ph":"(806) 748-4800","gm_f":"Brady","gm_l":"Keys","gm_e":"bkeys@genemesser.com","dp_f":"Daryl","dp_l":"Kenningham","dp_e":"dkenningham@group1auto.com","sal":"Mr.","lat":33.5779,"lng":-101.8552,"dh":463.5},{"n":42316,"name":"HUNTSVILLE TOYOTA","area":"A1","dm":"FLETCHER","tcuv":137,"used":832,"ps":0.7244,"tier":"Tier 1","des":"Grow & Develop II","addr":"849 I-45 South","city":"Huntsville","st":"TX","zip":"77340","ph":"(936)349-0909","gm_f":"Rusty","gm_l":"Chandler","gm_e":"rchandler@purdygroupusa.com","dp_f":"Javier","dp_l":"Quiros","dp_e":"Xavier@grupopurdy.com","sal":"Mr.","lat":30.7235,"lng":-95.5508,"dh":67.4},{"n":42414,"name":"SHOTTENKIRK TOY SN ANTNIO","area":"A2","dm":"MONROY","tcuv":1091,"used":3391,"ps":0.9574,"tier":"Tier 1","des":"LEADERS","addr":"18019 North U.S. Highway 281","city":"San Antonio","st":"TX","zip":"78232","ph":"(210) 494-1604","gm_f":"Cody","gm_l":"Freeman","gm_e":"cfreeman@shottenkirk.com","dp_f":"Gregory","dp_l":"Shottenkirk","dp_e":"gshottenkirk@gmail.com","sal":"Mr.","lat":29.4241,"lng":-98.4936,"dh":189.1},{"n":42286,"name":"VANDERGRIFF TOYOTA","area":"A2","dm":"GARRETT","tcuv":1308,"used":4370,"ps":0.874,"tier":"Tier 1","des":"LEADERS + RT OPP","addr":"1000 West I-20","city":"Arlington","st":"TX","zip":"76017","ph":"(817) 380-4144","gm_f":"Charlie","gm_l":"Evans","gm_e":"chevans@vtaig.com","dp_f":"Jeff","dp_l":"Rachor","dp_e":"jrachor@berkshirehathawayautomotive.com","sal":"Mr.","lat":32.7357,"lng":-97.1081,"dh":229.8},{"n":42352,"name":"TOYOTA OF LONGVIEW","area":"A3","dm":"RUSHING","tcuv":132,"used":918,"ps":0.6606,"tier":"Tier 2","des":"Grow & Develop II","addr":"1400 West Loop 281","city":"Longview","st":"TX","zip":"75604","ph":"(903) 295-9300","gm_f":"Tony","gm_l":"Lucas","gm_e":"tlucas@toyotaoflongview.com","dp_f":"John","dp_l":"Dobbs","dp_e":"jhdobbsjr@dobbsequity.com","sal":"Mr.","lat":32.5007,"lng":-94.7405,"dh":193.0},{"n":42315,"name":"BRYAN COLLEGE STN TOYOTA","area":"A1","dm":"FLETCHER","tcuv":90,"used":1622,"ps":0.5212,"tier":"Tier 2","des":"Grow & Develop II","addr":"728 North Earl Rudder Freeway","city":"Bryan","st":"TX","zip":"77802","ph":"(979) 776-0404","gm_f":"Rusty","gm_l":"Chandler","gm_e":"rchandler@purdygroupusa.com","dp_f":"Javier","dp_l":"Quiros","dp_e":"Xavier@grupopurdy.com","sal":"Mr.","lat":30.6744,"lng":-96.37,"dh":86.9},{"n":23076,"name":"CANNON TOYOTA","area":"A3","dm":"BOND","tcuv":149,"used":724,"ps":0.4464,"tier":"Tier 3","des":"Grow & Develop II","addr":"2047 North Frontage Road","city":"Vicksburg","st":"MS","zip":"39180","ph":"(601) 636-2855","gm_f":"Billy","gm_l":"Crozier","gm_e":"bcrozier@nobodybeatsacannondeal.com","dp_f":"Michael Joe","dp_l":"Cannon","dp_e":"mcannon@nobodybeatsacannondeal.com","sal":"Mr.","lat":32.3526,"lng":-90.8779,"dh":320.5},{"n":42344,"name":"TOYOTA OF CEDAR PARK","area":"A2","dm":"KLOTZ","tcuv":2545,"used":8162,"ps":0.8494,"tier":"Tier 1","des":"LEADERS + RT OPP","addr":"5600 183A Toll Road","city":"Cedar Park","st":"TX","zip":"78641","ph":"(512) 379-7575","gm_f":"Rigoberto","gm_l":"Guevara","gm_e":"rigog@toyotacedarpark.com","dp_f":"Ben","dp_l":"Keating","dp_e":"ben@keatingauto.com","sal":"Mr.","lat":30.5052,"lng":-97.8203,"dh":155.2},{"n":42271,"name":"AUTONATION TOY GULF FRWY","area":"A1","dm":"ROBERTS","tcuv":89,"used":1278,"ps":0.4153,"tier":"Tier 3","des":"Grow & Develop II","addr":"12111 Gulf Freeway, Bldg B","city":"Houston","st":"TX","zip":"77034","ph":"(713) 489-2097","gm_f":"Cooper","gm_l":"Prince","gm_e":"princec1@autonation.com","dp_f":"Jeff","dp_l":"Parent","dp_e":"DealerPrincipalJP@autonation.com\\ncc: bowserm@autonation.com","sal":"Mr.","lat":29.7604,"lng":-95.3698,"dh":0.0},{"n":42228,"name":"TOYOTA OF KILLEEN","area":"A2","dm":"KLOTZ","tcuv":25,"used":687,"ps":0.3162,"tier":"Tier 4","des":"Monitor","addr":"4001 East Central Texas Expressway","city":"Killeen","st":"TX","zip":"76543","ph":"(254) 690-5800","gm_f":"Robert","gm_l":"Gill","gm_e":"rgill@toyotaofkilleen.com","dp_f":"Paula","dp_l":"Lohse","dp_e":"paula_lohse@toyotaofkilleen.com","sal":"Ms.","lat":31.1171,"lng":-97.7278,"dh":168.9},{"n":23083,"name":"TOYOTA OF JACKSON","area":"A3","dm":"BOND","tcuv":113,"used":1020,"ps":0.6414,"tier":"Tier 2","des":"Grow & Develop II","addr":"6100 I-55 North Frontage Road","city":"Jackson","st":"MS","zip":"39211","ph":"(601) 956-9696","gm_f":"Nat","gm_l":"Keating","gm_e":"natkeating@lithia.com","dp_f":"Bryan","dp_l":"DeBoer","dp_e":"dealerprincipal@lithia.com","sal":"Mr.","lat":32.2988,"lng":-90.1848,"dh":353.5},{"n":23079,"name":"PRINCIPLE TOY/HERNANDO","area":"A3","dm":"BOND","tcuv":47,"used":1343,"ps":0.5763,"tier":"Tier 2","des":"Grow & Develop II","addr":"2887 McIngvale Road South","city":"Hernando","st":"MS","zip":"38632","ph":"(662) 624-2585","gm_f":"Garrett","gm_l":"McDonald","gm_e":"gmcdonald@principleauto.com","dp_f":"Mark","dp_l":"Smith","dp_e":"msmith@synergy-autos.com","sal":"Mr.","lat":34.8237,"lng":-89.9945,"dh":469.9},{"n":35048,"name":"NORTHCUTT TOYOTA","area":"A3","dm":"COOK","tcuv":72,"used":348,"ps":0.5294,"tier":"Tier 2","des":"Monitor","addr":"3409 W. Owen K. Garriott Road","city":"Enid","st":"OK","zip":"73703","ph":"(580) 234-5171","gm_f":"Scott","gm_l":"Northcutt","gm_e":"sn@northcuttauto.com","dp_f":"Scott","dp_l":"Northcutt","dp_e":"sn@northcuttauto.com","sal":"Mr.","lat":36.3956,"lng":-97.8784,"dh":480.9},{"n":17079,"name":"PRICE LEBLNC TOY/ACADIANA","area":"A1","dm":"MELANCON","tcuv":81,"used":512,"ps":0.6204,"tier":"Tier 2","des":"Grow & Develop II","addr":"4127 I-49 South Service Road","city":"Opelousas","st":"LA","zip":"70570","ph":"(337) 948-8255","gm_f":"Brennan","gm_l":"LeBlanc","gm_e":"brennan@leblancauto.com","dp_f":"Brent","dp_l":"LeBlanc","dp_e":"brent@leblancauto.com","sal":"Mr.","lat":30.5335,"lng":-92.0815,"dh":203.6},{"n":42196,"name":"DON RINGLER TOYOTA","area":"A2","dm":"KLOTZ","tcuv":17,"used":396,"ps":0.3195,"tier":"Tier 4","des":"Monitor","addr":"7777 South General Bruce Drive","city":"Temple","st":"TX","zip":"76502","ph":"(254) 778-4285","gm_f":"","gm_l":"","gm_e":"","dp_f":"Donnie","dp_l":"Ringler, Jr.","dp_e":"donnie@donringler.com","sal":"Mr.","lat":31.0982,"lng":-97.3428,"dh":149.5},{"n":35011,"name":"DOENGES TOYOTA","area":"A3","dm":"COOK","tcuv":2,"used":241,"ps":0.3439,"tier":"Tier 3","des":"Monitor","addr":"1911 SE Washington Blvd.","city":"Bartlesville","st":"OK","zip":"74006","ph":"(918) 333-0900","gm_f":"Brad","gm_l":"Doenges","gm_e":"brad_doenges@doengeschoice.com","dp_f":"Brad","dp_l":"Doenges","dp_e":"brad_doenges@doengeschoice.com","sal":"Mr.","lat":36.7473,"lng":-95.9808,"dh":484.0},{"n":42186,"name":"CAVENDER TOYOTA","area":"A1","dm":"WIMSETT","tcuv":5080,"used":12154,"ps":0.9105,"tier":"Tier 1","des":"LEADERS","addr":"5730 Northwest Loop 410","city":"San Antonio","st":"TX","zip":"78238","ph":"(210) 681-6601","gm_f":"David","gm_l":"Reyes","gm_e":"davidr@cavender.com","dp_f":"Stephen","dp_l":"Cavender","dp_e":"stephenc@cavendertoyota.com","sal":"Mr.","lat":29.4241,"lng":-98.4936,"dh":189.1},{"n":42305,"name":"VIC VAUGHAN TOYOTA/BOERNE","area":"A1","dm":"WIMSETT","tcuv":2696,"used":7864,"ps":0.9268,"tier":"Tier 1","des":"LEADERS","addr":"31205 IH-10 West","city":"Boerne","st":"TX","zip":"78006","ph":"(210) 870-1800","gm_f":"Chris","gm_l":"Franklin","gm_e":"cfranklin@toyotaofboerne.com","dp_f":"Shawn","dp_l":"Vaughan","dp_e":"sv@goteamva.com","sal":"Mr.","lat":29.7947,"lng":-98.732,"dh":201.6},{"n":3075,"name":"RED RIVER TOYOTA","area":"A3","dm":"JONES","tcuv":10,"used":520,"ps":0.4789,"tier":"Tier 3","des":"Monitor","addr":"1903 Falls Boulevard","city":"Wynne","st":"AR","zip":"72396","ph":"(870) 238-7770","gm_f":"","gm_l":"","gm_e":"","dp_f":"Mitchell","dp_l":"Ward","dp_e":"mitch@redriverauto.com","sal":"Mr.","lat":35.224,"lng":-90.7868,"dh":462.3},{"n":42192,"name":"MITCHELL TOYOTA","area":"A2","dm":"MONROY","tcuv":90,"used":653,"ps":0.6144,"tier":"Tier 2","des":"Monitor","addr":"1500 Knickerbocker Road","city":"San Angelo","st":"TX","zip":"76904","ph":"(325) 653-2302","gm_f":"Shon","gm_l":"Jones","gm_e":"sales@mitchelltoyota.com","dp_f":"Michael","dp_l":"Mitchell, DECEASED","dp_e":"","sal":"Mr.","lat":31.4638,"lng":-100.437,"dh":323.4},{"n":35076,"name":"SOUTHWEST TOYOTA/LAWTON","area":"A3","dm":"","tcuv":33,"used":520,"ps":0.5401,"tier":"Tier 2","des":"Monitor","addr":"7110 NW Quanah Parker Trailway","city":"Lawton","st":"OK","zip":"73505","ph":"(580) 355-7223","gm_f":"Justin","gm_l":"Rogers","gm_e":"jrogers@gilchristautomotive.com","dp_f":"Stephen","dp_l":"Gilchrist","dp_e":"sg@gilchristautomotive.com","sal":"Mr.","lat":34.6087,"lng":-98.3903,"dh":378.6},{"n":42254,"name":"TOYOTA OF DEL RIO","area":"A2","dm":"MONROY","tcuv":6,"used":462,"ps":0.2538,"tier":"Tier 4","des":"Monitor","addr":"3617 Highway 90 West","city":"Del Rio","st":"TX","zip":"78840","ph":"(830) 775-7575","gm_f":"Ross","gm_l":"Wright","gm_e":"rwright@toyotadelrio.com","dp_f":"Nick","dp_l":"Khoury","dp_e":"nick@khouryautogroup.com","sal":"Mr.","lat":29.3627,"lng":-100.8967,"dh":333.3},{"n":42138,"name":"MIKE CALVERT TOYOTA","area":"A1","dm":"FLETCHER","tcuv":1551,"used":5321,"ps":0.774,"tier":"Tier 1","des":"LEADERS","addr":"2333 South Loop West","city":"Houston","st":"TX","zip":"77054","ph":"(713) 558-8100","gm_f":"Mike","gm_l":"Gorbet","gm_e":"mgorbet@mikecalverttoyota.com","dp_f":"Shawn","dp_l":"Vaughan","dp_e":"sv@goteamva.com","sal":"Mr.","lat":29.7604,"lng":-95.3698,"dh":0.0},{"n":42299,"name":"BRUNER TOYOTA","area":"A3","dm":"OPEN","tcuv":29,"used":182,"ps":0.2836,"tier":"Tier 4","des":"Monitor","addr":"224 Early Boulevard","city":"Early","st":"TX","zip":"76802","ph":"(325) 646-0500","gm_f":"Cory","gm_l":"Howard","gm_e":"coryhoward@brunerauto.com","dp_f":"Greg","dp_l":"Bruner","dp_e":"gregbruner@brunerauto.com","sal":"Mr.","lat":31.704,"lng":-98.9467,"dh":251.3},{"n":42309,"name":"TOYOTA OF MIDLAND","area":"A3","dm":"GRANADO","tcuv":6,"used":987,"ps":0.3671,"tier":"Tier 3","des":"Monitor","addr":"800 North Loop 250 West","city":"Midland","st":"TX","zip":"79703","ph":"(432) 520-4114","gm_f":"Michael","gm_l":"Fisher","gm_e":"mkf@toyotaofmidland.com","dp_f":"Daniel","dp_l":"Bradley","dp_e":"dgb@autoinc.com\\ncc:kevandwilson@autoinc.com","sal":"Mr.","lat":31.9973,"lng":-102.0779,"dh":426.7},{"n":42234,"name":"GULLO TOYOTA OF CONROE","area":"A1","dm":"FLETCHER","tcuv":987,"used":2684,"ps":0.8272,"tier":"Tier 1","des":"LEADERS","addr":"500 I-45 South","city":"Conroe","st":"TX","zip":"77304","ph":"(936) 441-4141","gm_f":"Shawn","gm_l":"Mize","gm_e":"shawn_mize@gullo.net","dp_f":"Tony","dp_l":"Gullo","dp_e":"tonygullo@gullo.net","sal":"Mr.","lat":30.3119,"lng":-95.456,"dh":38.5},{"n":17078,"name":"VAUGHN TOYOTA OF BASTROP","area":"A3","dm":"RUSHING","tcuv":34,"used":354,"ps":0.5151,"tier":"Tier 2","des":"Monitor","addr":"2329 East Madison Avenue","city":"Bastrop","st":"LA","zip":"71220","ph":"(318) 281-5555","gm_f":"Joey","gm_l":"Fuller","gm_e":"jfuller@vaughnvalue.com","dp_f":"Lloyd","dp_l":"Vaughn, III","dp_e":"lvaughn@vaughnauto.com","sal":"Mr.","lat":32.7754,"lng":-91.9109,"dh":291.7},{"n":17076,"name":"KARL MALONE TOYOTA/RUSTON","area":"A3","dm":"RUSHING","tcuv":11,"used":527,"ps":0.3046,"tier":"Tier 4","des":"Monitor","addr":"1001 North Service Road East","city":"Ruston","st":"LA","zip":"71270","ph":"(318) 255-1387","gm_f":"Joel","gm_l":"Benton","gm_e":"jbenton@gomalone.com","dp_f":"Karl","dp_l":"Malone","dp_e":"KAM@gomalone.com\\namadsen@kmamauto.com","sal":"Mr.","lat":32.5232,"lng":-92.638,"dh":250.1},{"n":42342,"name":"NORTH PARK TOYOTA OF SA","area":"A1","dm":"WIMSETT","tcuv":943,"used":4862,"ps":0.8905,"tier":"Tier 1","des":"LEADERS","addr":"10703 Southwest Loop 410","city":"San Antonio","st":"TX","zip":"78211","ph":"(210) 635-5000","gm_f":"Tania","gm_l":"Eubanks","gm_e":"teubanks@nptosa.com","dp_f":"Jeff","dp_l":"Rachor","dp_e":"jrachor@berkshirehathawayautomotive.com","sal":"Mr.","lat":29.4241,"lng":-98.4936,"dh":189.1},{"n":23061,"name":"CARL HOGAN TOYOTA","area":"A3","dm":"BOND","tcuv":35,"used":549,"ps":0.2794,"tier":"Tier 4","des":"Monitor","addr":"3907 Highway 45 North","city":"Columbus","st":"MS","zip":"39705","ph":"(662) 241-6000","gm_f":"","gm_l":"","gm_e":"","dp_f":"Carl","dp_l":"Hogan, DECEASED","dp_e":"","sal":"Mr.","lat":33.4957,"lng":-88.4273,"dh":483.0},{"n":17062,"name":"GROUP 1 TOYOTA WEST BANK","area":"A3","dm":"BOND","tcuv":19,"used":733,"ps":0.5127,"tier":"Tier 2","des":"Monitor","addr":"3800 Lapalco Boulevard","city":"Harvey","st":"LA","zip":"70058","ph":"(504) 341-3300","gm_f":"Martin","gm_l":"Bonura","gm_e":"mbonura@bohnzone.com","dp_f":"Daryl","dp_l":"Kenningham","dp_e":"dkenningham@group1auto.com","sal":"Mr.","lat":29.9066,"lng":-90.0767,"dh":317.4},{"n":42255,"name":"SILSBEE TOYOTA","area":"A1","dm":"GODFREY","tcuv":60,"used":494,"ps":0.3295,"tier":"Tier 3","des":"Monitor","addr":"1396 Highway 327 East","city":"Silsbee","st":"TX","zip":"77656","ph":"(409) 895-3700","gm_f":"Justin","gm_l":"Bumsted","gm_e":"justin@donalsonauto.com","dp_f":"Jerald Alex","dp_l":"Donalson","dp_e":"adonalson@donalsonauto.com","sal":"Mr.","lat":30.3463,"lng":-94.1755,"dh":82.1},{"n":17080,"name":"TOYOTA OF KENNER","area":"A3","dm":"BOND","tcuv":19,"used":560,"ps":0.3708,"tier":"Tier 3","des":"Monitor","addr":"2460 Veterans Memorial Boulevard","city":"Kenner","st":"LA","zip":"70062","ph":"(504) 464-4500","gm_f":"Emerson","gm_l":"Alvarez","gm_e":"ealvarez@millsautogroup.com","dp_f":"Damian","dp_l":"Mills","dp_e":"dmills@millsautogroup.com","sal":"Mr.","lat":29.9941,"lng":-90.2417,"dh":307.6},{"n":42412,"name":"LEGACY TOYOTA OF DALLAS","area":"A2","dm":"GARRETT","tcuv":5,"used":1039,"ps":0.3669,"tier":"Tier 3","des":"ReActivate","addr":"39660 LBJ Freeway (I-20)","city":"Dallas","st":"TX","zip":"75237","ph":"(972) 780-1166","gm_f":"Shannon","gm_l":"Ashford","gm_e":"sashford@legacytoyotadallas.com","dp_f":"Richard","dp_l":"Romero","dp_e":"rj@oremor.net","sal":"Mr.","lat":32.7767,"lng":-96.797,"dh":224.8},{"n":23071,"name":"OAKES TOYOTA","area":"A3","dm":"BOND","tcuv":19,"used":110,"ps":0.4214,"tier":"Tier 3","des":"Monitor","addr":"1753 Highway 1 South","city":"Greenville","st":"MS","zip":"38701","ph":"(662) 378-8101","gm_f":"Sara","gm_l":"Goodwin","gm_e":"sara@oakestoyota.com","dp_f":"Bryan","dp_l":"Oakes","dp_e":"bryan@oakestoyota.com","sal":"Mr.","lat":33.4101,"lng":-91.0618,"dh":357.5},{"n":23054,"name":"OXFORD TOYOTA","area":"A3","dm":"BOND","tcuv":14,"used":446,"ps":0.3249,"tier":"Tier 3","des":"Monitor","addr":"435A Highway 6 West","city":"Oxford","st":"MS","zip":"38655","ph":"(662) 234-4661","gm_f":"Mickey","gm_l":"Fowler","gm_e":"mickey_fowler@oxfordtoyota.com","dp_f":"Frank","dp_l":"Belk","dp_e":"fwbelk4@gmail.com","sal":"Mr.","lat":34.3665,"lng":-89.5193,"dh":467.4},{"n":42268,"name":"TEXAS TOYOTA OF GRAPEVINE","area":"A2","dm":"GARRETT","tcuv":0,"used":5326,"ps":0.4162,"tier":"Tier 3","des":"ReActivate","addr":"701 State Highway 114 East","city":"Grapevine","st":"TX","zip":"76051","ph":"(817) 329-5949","gm_f":"Nael","gm_l":"Asaad","gm_e":"nasaad@vtaig.com","dp_f":"Jeff","dp_l":"Rachor","dp_e":"jrachor@berkshirehathawayautomotive.com","sal":"Mr.","lat":32.9343,"lng":-97.0781,"dh":241.3},{"n":17065,"name":"HAMPTON TOYOTA","area":"A1","dm":"MELANCON","tcuv":15,"used":845,"ps":0.5232,"tier":"Tier 2","des":"Monitor","addr":"6191 Johnston Street","city":"Lafayette","st":"LA","zip":"70503","ph":"(337) 984-5010","gm_f":"Michael","gm_l":"Perry","gm_e":"mike_perry@hamptontoyota.com","dp_f":"Mark","dp_l":"Hampton","dp_e":"mark_hampton@hamptontoyota.com","sal":"Mr.","lat":30.2241,"lng":-92.0198,"dh":203.0},{"n":17041,"name":"MUSSON-PATOUT TOYOTA","area":"A1","dm":"MELANCON","tcuv":0,"used":228,"ps":0.2354,"tier":"Tier 4","des":"Not Participating","addr":"208 West Highway 90 Frontage Road","city":"New Iberia","st":"LA","zip":"70560","ph":"(337) 367-0488","gm_f":"Nathan","gm_l":"Hebert","gm_e":"nhebert@mussonpatout.com","dp_f":"Diane","dp_l":"Musson","dp_e":"dianemusson@gmail.com","sal":"Ms.","lat":30.0035,"lng":-91.8187,"dh":213.4},{"n":17070,"name":"GREG LEBLANC TOYOTA","area":"A1","dm":"MELANCON","tcuv":0,"used":271,"ps":0.2008,"tier":"Tier 4","des":"Not Participating","addr":"220 South Hollywood Road","city":"Houma","st":"LA","zip":"70360","ph":"(985) 876-7210","gm_f":"Gregory","gm_l":"Breaux","gm_e":"gregb@gregleblanc.com","dp_f":"Greg","dp_l":"LeBlanc","dp_e":"greg@gregleblanc.com","sal":"Mr.","lat":29.5958,"lng":-90.7195,"dh":279.4},{"n":17073,"name":"HIXSON TOYOTA","area":"A1","dm":"MELANCON","tcuv":0,"used":688,"ps":0.3666,"tier":"Tier 3","des":"Not Participating","addr":"2517 Highway 171","city":"DeRidder","st":"LA","zip":"70634","ph":"(337) 239-3452","gm_f":"Clint","gm_l":"Hixson","gm_e":"clinthixson@hixsonhasit.com","dp_f":"Clint","dp_l":"Hixson","dp_e":"Clint@hixsonhasit.com","sal":"Mr.","lat":30.8471,"lng":-93.2891,"dh":145.1},{"n":42270,"name":"JOE MYERS TOYOTA","area":"A1","dm":"ROBERTS","tcuv":20,"used":3452,"ps":0.3836,"tier":"Tier 3","des":"ReActivate","addr":"19010 Northwest Highway","city":"Houston","st":"TX","zip":"77065","ph":"(281) 890-8700","gm_f":"Lance","gm_l":"Lewis","gm_e":"llewis@vtaig.com","dp_f":"Jeff","dp_l":"Rachor","dp_e":"jrachor@berkshirehathawayautomotive.com","sal":"Mr.","lat":29.7604,"lng":-95.3698,"dh":0.0},{"n":42409,"name":"TOYOTA OF NORTH AUSTIN","area":"A2","dm":"KLOTZ","tcuv":5,"used":4468,"ps":0.3593,"tier":"Tier 3","des":"ReActivate","addr":"8400 Research Boulevard","city":"Austin","st":"TX","zip":"78758","ph":"(512) 458-2222","gm_f":"Steven","gm_l":"Riddick","gm_e":"sriddick@toyotaofnorthaustin.com","dp_f":"Daryl","dp_l":"Kenningham","dp_e":"dkenningham@group1auto.com","sal":"Mr.","lat":30.2672,"lng":-97.7431,"dh":146.2},{"n":42336,"name":"MAC HAIK TOYOTA","area":"A1","dm":"GODFREY","tcuv":18,"used":1435,"ps":0.31,"tier":"Tier 4","des":"ReActivate","addr":"2112 Gulf Freeway","city":"League City","st":"TX","zip":"77573","ph":"(281) 338-9700","gm_f":"Marc","gm_l":"Renjard","gm_e":"mrenjard@machaiktoyota.com","dp_f":"Mac","dp_l":"Haik","dp_e":"mac@machaik.com","sal":"Mr.","lat":29.5075,"lng":-95.0949,"dh":24.0},{"n":17027,"name":"VAN-TROW TOYOTA","area":"A3","dm":"RUSHING","tcuv":0,"used":302,"ps":0.2108,"tier":"Tier 4","des":"RT Only","addr":"2015 Louisville Avenue","city":"Monroe","st":"LA","zip":"71201","ph":"(318) 387-2020","gm_f":"John","gm_l":"VanVeckhoven","gm_e":"johnvan1957@yahoo.com","dp_f":"John","dp_l":"VanVeckhoven","dp_e":"johnvan1957@yahoo.com","sal":"Mr.","lat":32.5093,"lng":-92.1193,"dh":270.2},{"n":17081,"name":"MORGAN CITY TOYOTA","area":"A1","dm":"MELANCON","tcuv":0,"used":672,"ps":0.3639,"tier":"Tier 3","des":"RT Only","addr":"1105 Brashear Avenue","city":"Morgan City","st":"LA","zip":"70380","ph":"(985) 380-2395","gm_f":"Sakil","gm_l":"Hossain","gm_e":"sakil@morgancitytoyota.com","dp_f":"Michael","dp_l":"Hutchinson","dp_e":"mwh1177@yahoo.com","sal":"Mr.","lat":29.6994,"lng":-91.2068,"dh":249.8},{"n":42407,"name":"SAN MARCOS TOYOTA","area":"A2","dm":"MONROY","tcuv":852,"used":3478,"ps":0.8715,"tier":"Tier 1","des":"ReActivate","addr":"5101 IH-35 South","city":"San Marcos","st":"TX","zip":"78666","ph":"(512) 392-1999","gm_f":"TJ","gm_l":"Kendall","gm_e":"TJKendall@sanmarcostoyota.com","dp_f":"Ben","dp_l":"Keating","dp_e":"ben@keatingauto.com","sal":"Mr.","lat":29.8833,"lng":-97.9414,"dh":154.4},{"n":17082,"name":"CARLOCK TOYOTA OF SLIDELL","area":"A3","dm":"BOND","tcuv":0,"used":495,"ps":0.2716,"tier":"Tier 4","des":"RT Only","addr":"300 East Howze Beach Road","city":"Slidell","st":"LA","zip":"70461","ph":"(985) 643-0005","gm_f":"James","gm_l":"Surrett","gm_e":"jim.surrett@carlockcars.com","dp_f":"Clay","dp_l":"Carlock, Jr.","dp_e":"clay.carlock@carlockcars.com","sal":"Mr.","lat":30.2752,"lng":-89.7812,"dh":336.2},{"n":17058,"name":"TOYOTA OF NEW ORLEANS","area":"A3","dm":"BOND","tcuv":8,"used":868,"ps":0.5874,"tier":"Tier 2","des":"Monitor","addr":"13150 I-10 Service Road","city":"New Orleans","st":"LA","zip":"70128","ph":"(504) 940-0000","gm_f":"Godfrey","gm_l":"Peters","gm_e":"gpeters@toyotaofneworleans.com","dp_f":"Troy","dp_l":"Duhon","dp_e":"troy@premierautomotive.com","sal":"Mr.","lat":29.9511,"lng":-90.0715,"dh":317.7},{"n":42202,"name":"TOYOTA OF RICHARDSON","area":"A2","dm":"TOSCH","tcuv":0,"used":3675,"ps":0.3643,"tier":"Tier 3","des":"ReActivate","addr":"1221 North Central Expressway","city":"Richardson","st":"TX","zip":"75080","ph":"(214) 446-8081","gm_f":"Brad","gm_l":"Clark","gm_e":"bclark01@vtaig.com","dp_f":"Jeff","dp_l":"Rachor","dp_e":"jrachor@berkshirehathawayautomotive.com","sal":"Mr.","lat":32.9483,"lng":-96.7299,"dh":234.4},{"n":23085,"name":"TOYOTA OF MERIDIAN","area":"A3","dm":"BOND","tcuv":7,"used":627,"ps":0.5033,"tier":"Tier 3","des":"Monitor","addr":"2900 Highway 39 North","city":"Meridian","st":"MS","zip":"39301","ph":"(601) 485-1620","gm_f":"Trenard","gm_l":"Rush","gm_e":"trenard.rush@toyotaofmeridian.com","dp_f":"Thomas","dp_l":"Duff","dp_e":"thomas.duff@stmtires.com","sal":"Mr.","lat":32.3643,"lng":-88.7037,"dh":433.5},{"n":42405,"name":"TOYOTA OF MT. PLEASANT","area":"A3","dm":"","tcuv":0,"used":480,"ps":0.2312,"tier":"Tier 4","des":"Not Participating","addr":"102 Tankersley Road","city":"Mt. Pleasant","st":"TX","zip":"75455","ph":"(903) 577-7770","gm_f":"Danny","gm_l":"Cole","gm_e":"Danny.Cole@toyotaofparistx.com","dp_f":"Jeff","dp_l":"Dyke","dp_e":"jeff.dyke@sonicautomotive.com","sal":"Mr.","lat":33.1568,"lng":-94.9683,"dh":235.9},{"n":42253,"name":"FREEMAN TOYOTA","area":"A2","dm":"GARRETT","tcuv":0,"used":1815,"ps":0.3316,"tier":"Tier 3","des":"ReActivate","addr":"204 Northeast Loop 820","city":"Hurst","st":"TX","zip":"76053","ph":"(817) 287-5200","gm_f":"Dane","gm_l":"Minor","gm_e":"dane_minor@freemantoyota.com","dp_f":"Jerald","dp_l":"Freeman","dp_e":"jfreeman@freemanauto.com","sal":"Mr.","lat":32.8235,"lng":-97.1706,"dh":236.8},{"n":42304,"name":"MIKE SHAW TOYOTA","area":"A2","dm":"ENRIQUEZ","tcuv":0,"used":1192,"ps":0.3139,"tier":"Tier 4","des":"ReActivate","addr":"3232 U.S. Highway 77","city":"Corpus Christi","st":"TX","zip":"78380","ph":"(361) 316-3355","gm_f":"","gm_l":"","gm_e":"","dp_f":"Michael","dp_l":"Shaw","dp_e":"mjshaw@mikeshawautomotive.com","sal":"Mr.","lat":27.8006,"lng":-97.3964,"dh":182.7},{"n":42313,"name":"TOYOTA OF VICTORIA","area":"A2","dm":"MONROY","tcuv":0,"used":1631,"ps":0.3699,"tier":"Tier 3","des":"ReActivate","addr":"5902 North Navarro","city":"Victoria","st":"TX","zip":"77904","ph":"(361) 578-1505","gm_f":"Ross","gm_l":"Carpenter","gm_e":"ross@toyotaofvictoria.com","dp_f":"Ben","dp_l":"Keating","dp_e":"ben@keatingauto.com","sal":"Mr.","lat":28.8053,"lng":-97.0036,"dh":118.5},{"n":42278,"name":"TOYOTA OF DALLAS","area":"A2","dm":"TOSCH","tcuv":0,"used":2974,"ps":0.2354,"tier":"Tier 4","des":"ReActivate","addr":"2610 Forest Lane","city":"Dallas","st":"TX","zip":"75234","ph":"(972) 241-6655","gm_f":"Darren","gm_l":"Dortch","gm_e":"ddortch@vtaig.com","dp_f":"Jeff","dp_l":"Rachor","dp_e":"jrachor@berkshirehathawayautomotive.com","sal":"Mr.","lat":32.7767,"lng":-96.797,"dh":224.8},{"n":42415,"name":"TEXANA TOYOTA","area":"A1","dm":"GODREY","tcuv":0,"used":398,"ps":0.3304,"tier":"Tier 3","des":"RT Only","addr":"2500 IH 10 W","city":"Orange","st":"TX","zip":"77632","ph":"(409) 883-8451","gm_f":"","gm_l":"","gm_e":"","dp_f":"Richard","dp_l":"Jones","dp_e":"rmjcc@yahoo.com","sal":"Mr.","lat":30.0935,"lng":-93.7363,"dh":100.5},{"n":42215,"name":"STEWART TOYOTA","area":"A2","dm":"KLOTZ","tcuv":0,"used":750,"ps":0.3643,"tier":"Tier 3","des":"RT Only","addr":"3400 South Interstate 45","city":"Corsicana","st":"TX","zip":"75110","ph":"(903) 874-6556","gm_f":"Brent","gm_l":"Stewart","gm_e":"smcbs99@yahoo.com","dp_f":"Paul","dp_l":"Stewart","dp_e":"stewart.paul@sbcglobal.net","sal":"Mr.","lat":32.0954,"lng":-96.4689,"dh":174.0},{"n":42323,"name":"TOYOTA OF DENTON","area":"A2","dm":"GARRETT","tcuv":0,"used":718,"ps":0.3104,"tier":"Tier 4","des":"RT Only","addr":"4100 South IH-35 East","city":"Denton","st":"TX","zip":"76210","ph":"(940) 382-5481","gm_f":"Scott","gm_l":"Fly","gm_e":"sfly@toyotadenton.com","dp_f":"Terry","dp_l":"Taylor","dp_e":"skilburn@amsinet.com","sal":"Mr.","lat":33.2148,"lng":-97.1331,"dh":260.3},{"n":42206,"name":"TEGELER TOYOTA","area":"A1","dm":"GODFREY","tcuv":2,"used":297,"ps":0.3547,"tier":"Tier 3","des":"RT Only","addr":"1515 Highway 290 West","city":"Brenham","st":"TX","zip":"77833","ph":"(979) 836-1615","gm_f":"Russell","gm_l":"Rogas","gm_e":"russell_rogas@tegelertoyota.com","dp_f":"Larry","dp_l":"Tegeler","dp_e":"larry@tegelerchevrolet.com","sal":"Mr.","lat":30.1669,"lng":-96.3977,"dh":67.6},{"n":42418,"name":"MCGAVOCK TOYOTA OF PAMPA","area":"A3","dm":"","tcuv":0,"used":549,"ps":0.256,"tier":"Tier 4","des":"Not Participating","addr":"805 North Hobart Street","city":"Pampa","st":"TX","zip":"79065","ph":"(806) 665-1665","gm_f":"Harrison","gm_l":"Rose","gm_e":"brose@mcgavocknissan.com","dp_f":"Steven","dp_l":"McGavock","dp_e":"steve@mcgavocknissan.com","sal":"Mr.","lat":35.5361,"lng":-100.9599,"dh":514.6},{"n":3024,"name":"MAGNESS TOYOTA","area":"A3","dm":"","tcuv":0,"used":145,"ps":0.2251,"tier":"Tier 4","des":"Not Participating","addr":"1407 Highway 62-65-412 North","city":"Harrison","st":"AR","zip":"72601","ph":"(870) 741-5451","gm_f":"Matt","gm_l":"Magness","gm_e":"matt_magness@magnesstoyota.com","dp_f":"Bill","dp_l":"Magness","dp_e":"bill_magness@magnesstoyota.com","sal":"Mr.","lat":36.2298,"lng":-93.1077,"dh":465.8},{"n":3049,"name":"RYBURN TOYOTA","area":"A3","dm":"","tcuv":0,"used":375,"ps":0.2251,"tier":"Tier 4","des":"Not Participating","addr":"156 Highway 425 South","city":"Monticello","st":"AR","zip":"71655","ph":"(870) 367-5353","gm_f":"Bennie","gm_l":"Ryburn","gm_e":"bennie_ryburn@ryburntoyota.com","dp_f":"Bennie","dp_l":"Ryburn","dp_e":"bennie_ryburn@ryburntoyota.com","sal":"Mr.","lat":33.629,"lng":-91.7907,"dh":340.1},{"n":42275,"name":"PHILPOTT TOYOTA","area":"A1","dm":"GODFREY","tcuv":2,"used":388,"ps":0.1892,"tier":"Tier 4","des":"RT Only","addr":"2229 Highway 69","city":"Nederland","st":"TX","zip":"77627","ph":"(409) 853-3800","gm_f":"","gm_l":"","gm_e":"","dp_f":"Jeff","dp_l":"Dyke","dp_e":"jeff.dyke@sonicautomotive.com","sal":"Mr.","lat":29.9741,"lng":-93.9924,"dh":83.8},{"n":42338,"name":"BROWNSVILLE TOYOTA","area":"A2","dm":"ENRIQUEZ","tcuv":481,"used":1429,"ps":0.7719,"tier":"Tier 1","des":"Stay the Course","addr":"6750 N. Expressway","city":"Brownsville","st":"TX","zip":"78526","ph":"(956) 435-8100","gm_f":"Luis","gm_l":"Galvan","gm_e":"lgalvan@brownsvilletoyota.com","dp_f":"Christopher","dp_l":"Zamora","dp_e":"chrisz@dlrconsultinggroup.com","sal":"Mr.","lat":25.9017,"lng":-97.4975,"dh":296.6},{"n":17029,"name":"BUBBA OUSTALET TOYOTA","area":"A1","dm":"MELANCON","tcuv":1,"used":612,"ps":0.2649,"tier":"Tier 4","des":"RT Only","addr":"246 North Broadway","city":"Jennings","st":"LA","zip":"70546","ph":"(337) 824-3673","gm_f":"Darren","gm_l":"Oustalet","gm_e":"darren@oustaletford.com","dp_f":"Rick","dp_l":"Oustalet, DECEASED","dp_e":"","sal":"Mr.","lat":30.2221,"lng":-92.6565,"dh":165.5},{"n":42324,"name":"BERT OGDEN TOY/HARLINGEN","area":"A2","dm":"ENRIQUEZ","tcuv":323,"used":819,"ps":0.6072,"tier":"Tier 2","des":"Stay the Course","addr":"8721 W. Expressway 83","city":"Harlingen","st":"TX","zip":"78552","ph":"(956) 423-0000","gm_f":"Adrian","gm_l":"Burone","gm_e":"ab@bertogden.com","dp_f":"Robert","dp_l":"Vackar","dp_e":"bv@bertogden.com","sal":"Mr.","lat":26.1906,"lng":-97.6961,"dh":284.6},{"n":42343,"name":"FAMILY TOYOTA/ARLINGTON","area":"A2","dm":"GARRETT","tcuv":584,"used":2087,"ps":0.8188,"tier":"Tier 1","des":"Stay the Course","addr":"1661 Wet 'N Wild Way","city":"Arlington","st":"TX","zip":"76011","ph":"(682) 227-8877","gm_f":"Matthew","gm_l":"Luck","gm_e":"mattluck@familycargroup.com","dp_f":"Skip","dp_l":"Jabbar","dp_e":"skipjabbar@familycargroup.com","sal":"Mr.","lat":32.7357,"lng":-97.1081,"dh":229.8},{"n":42320,"name":"LONE STAR TOY/LEWISVILLE","area":"A2","dm":"GARRETT","tcuv":200,"used":1343,"ps":0.6842,"tier":"Tier 1","des":"Stay the Course","addr":"1547 South Stemmons Freeway","city":"Lewisville","st":"TX","zip":"75067","ph":"(469) 671-5500","gm_f":"Michael","gm_l":"Grewenig","gm_e":"mgrewenig@lonestartoyota.com","dp_f":"Mack","dp_l":"McLarty","dp_e":"tfmclarty@maglobal.com\\ncc: talwood@rmlauto.com","sal":"Mr.","lat":33.0462,"lng":-96.9942,"dh":246.4},{"n":3053,"name":"PHIL WRIGHT TOYOTA- CO.","area":"A3","dm":"","tcuv":0,"used":371,"ps":0.2331,"tier":"Tier 4","des":"Not Participating","addr":"3200 East Main Street","city":"Russellville","st":"AR","zip":"72802","ph":"(479) 968-1555","gm_f":"Eric","gm_l":"Edens","gm_e":"ericbedens@yahoo.com","dp_f":"Phil","dp_l":"Wright","dp_e":"phildwright@hotmail.com\\ncc:dmoore@philwrightautoplex.com","sal":"Mr.","lat":35.2784,"lng":-93.1338,"dh":402.9},{"n":3058,"name":"TROTTER TOYOTA","area":"A3","dm":"","tcuv":0,"used":185,"ps":0.1958,"tier":"Tier 4","des":"Not Participating","addr":"3010 Auto Drive","city":"Pine Bluff","st":"AR","zip":"71601","ph":"(870) 534-7521","gm_f":"Michael","gm_l":"Harper","gm_e":"mharper@trottertoyota.com","dp_f":"Ford","dp_l":"Trotter","dp_e":"ftrotter@trotterford.com","sal":"Mr.","lat":34.2284,"lng":-92.0032,"dh":366.3},{"n":23074,"name":"DOC-S TOYOTA","area":"A3","dm":"","tcuv":0,"used":240,"ps":0.2224,"tier":"Tier 4","des":"Not Participating","addr":"15120 Highway 16 West","city":"Philadelphia","st":"MS","zip":"39350","ph":"(601) 914-9143","gm_f":"","gm_l":"","gm_e":"","dp_f":"Azhar","dp_l":"Pasha","dp_e":"azharpasha7@icloud.com","sal":"Dr.","lat":32.7716,"lng":-89.1167,"dh":423.8},{"n":42312,"name":"LOST PINES TOYOTA","area":"A2","dm":"KLOTZ","tcuv":335,"used":1363,"ps":0.676,"tier":"Tier 2","des":"Stay the Course","addr":"806 Highway 71 West","city":"Bastrop","st":"TX","zip":"78602","ph":"(512) 303-1200","gm_f":"Christy","gm_l":"Liriano","gm_e":"christy@lostpinestoyota.com","dp_f":"Carlos","dp_l":"Liriano","dp_e":"carlos_liriano@lostpinestoyota.com","sal":"Mr.","lat":30.1105,"lng":-97.3153,"dh":119.0},{"n":23080,"name":"NATCHEZ TOYOTA","area":"A3","dm":"","tcuv":0,"used":509,"ps":0.2704,"tier":"Tier 4","des":"Not Participating","addr":"335 Highway 61 South","city":"Natchez","st":"MS","zip":"39120","ph":"(601) 446-5588","gm_f":"Kenneth","gm_l":"Jackson","gm_e":"kenny@natcheztoyota.com","dp_f":"Brett","dp_l":"Oubre","dp_e":"brett@lakesideford.com","sal":"Mr.","lat":31.5604,"lng":-91.4032,"dh":266.5},{"n":42219,"name":"FOX TOYOTA OF EL PASO","area":"A2","dm":"MONROY","tcuv":791,"used":2555,"ps":0.8247,"tier":"Tier 1","des":"Stay the Course","addr":"11165 Gateway Boulevard West","city":"El Paso","st":"TX","zip":"79935","ph":"(915) 598-0399","gm_f":"Barry","gm_l":"Nester","gm_e":"barry@foxautoteam.com","dp_f":"Steve","dp_l":"Fox","dp_e":"fox@foxautoteam.com","sal":"Mr.","lat":31.7619,"lng":-106.485,"dh":673.9},{"n":42241,"name":"UNIVERSAL TOYOTA","area":"A2","dm":"MONROY","tcuv":636,"used":3602,"ps":0.8762,"tier":"Tier 1","des":"Stay the Course","addr":"12102 IH-35 North","city":"San Antonio","st":"TX","zip":"78233","ph":"(210) 654-1515","gm_f":"Adam","gm_l":"Soto","gm_e":"asoto@redmac.net","dp_f":"Marsha","dp_l":"Shields","dp_e":"mshields@mccombshq.com","sal":"Ms.","lat":29.4241,"lng":-98.4936,"dh":189.1},{"n":17071,"name":"SUPREME TOYOTA OF HAMMOND","area":"A1","dm":"MELANCON","tcuv":0,"used":444,"ps":0.1335,"tier":"Tier 4","des":"RT Only","addr":"1415 South Morrison Boulevard","city":"Hammond","st":"LA","zip":"70403","ph":"(985) 345-1425","gm_f":"Kyle","gm_l":"Gaudet","gm_e":"kgaudet@supremeauto.net","dp_f":"Allen","dp_l":"Krake","dp_e":"akrake@supremeauto.net","sal":"Mr.","lat":30.5044,"lng":-90.4612,"dh":297.8},{"n":42321,"name":"KEATING TOYOTA","area":"A1","dm":"FLETCHER","tcuv":726,"used":2905,"ps":0.8699,"tier":"Tier 1","des":"Stay the Course","addr":"4233 Del Bello Boulevard","city":"Manvel","st":"TX","zip":"77578","ph":"(281) 388-8600","gm_f":"Anson","gm_l":"Jones","gm_e":"ajones@keatingtoyota.com","dp_f":"Ben","dp_l":"Keating","dp_e":"ben@keatingauto.com","sal":"Mr.","lat":29.4649,"lng":-95.3588,"dh":20.4},{"n":42413,"name":"SPACE CITY TOYOTA","area":"A1","dm":"FLETCHER","tcuv":647,"used":2872,"ps":0.9068,"tier":"Tier 1","des":"Stay the Course","addr":"19011 Highway 59 North","city":"Humble","st":"TX","zip":"77338","ph":"(281) 446-0271","gm_f":"Ben","gm_l":"Saxton","gm_e":"bsaxton@spacecitytoyota.com","dp_f":"Shawn","dp_l":"Vaughan","dp_e":"sv@goteamva.com","sal":"Mr.","lat":29.9988,"lng":-95.2622,"dh":17.7},{"n":17060,"name":"LAKE CHARLES TOYOTA","area":"A1","dm":"MELANCON","tcuv":343,"used":1629,"ps":0.7441,"tier":"Tier 1","des":"Stay the Course","addr":"3905 Gerstner Memorial Drive","city":"Lake Charles","st":"LA","zip":"70607","ph":"(337) 478-3511","gm_f":"Corey","gm_l":"Tarver","gm_e":"corey@lakecharlestoyota.com","dp_f":"Phillip","dp_l":"Tarver","dp_e":"phillip@lakecharlestoyota.com","sal":"Mr.","lat":30.2266,"lng":-93.2174,"dh":132.8},{"n":17075,"name":"WALKER TOYOTA","area":"A1","dm":"MELANCON","tcuv":182,"used":789,"ps":0.6741,"tier":"Tier 2","des":"Stay the Course","addr":"5735 Coliseum Boulevard","city":"Alexandria","st":"LA","zip":"71303","ph":"(318) 445-1486","gm_f":"John","gm_l":"Heaton","gm_e":"john@walkerautomotive.com","dp_f":"Foster","dp_l":"Walker","dp_e":"fwalker@walkerautomotive.com","sal":"Mr.","lat":31.3113,"lng":-92.4451,"dh":204.4},{"n":23082,"name":"TOYOTA OF BROOKHAVEN","area":"A3","dm":"","tcuv":0,"used":577,"ps":0.2943,"tier":"Tier 4","des":"Not Participating","addr":"890 Brookway Boulevard","city":"Brookhaven","st":"MS","zip":"39601","ph":"(601) 823-7000","gm_f":"Prentiss","gm_l":"Smith","gm_e":"prentiss.smith@toyotaofbrookhaven.com","dp_f":"Thomas","dp_l":"Duff","dp_e":"thomas.duff@stmtires.com","sal":"Mr.","lat":31.5793,"lng":-90.4407,"dh":318.7},{"n":42311,"name":"CLASSIC TOYOTA GALVESTON","area":"A1","dm":"ROBERTS","tcuv":87,"used":219,"ps":0.6051,"tier":"Tier 2","des":"Stay the Course","addr":"7802 Broadway","city":"Galveston","st":"TX","zip":"77554","ph":"(409) 744-5711","gm_f":"Howard","gm_l":"Bentley","gm_e":"hbentley@classicgalveston.com","dp_f":"Thomas","dp_l":"Durant","dp_e":"thetopdog@mac.com","sal":"Mr.","lat":29.3013,"lng":-94.7977,"dh":46.8},{"n":35074,"name":"FOUR STARS TOYOTA","area":"A3","dm":"","tcuv":0,"used":774,"ps":0.3247,"tier":"Tier 3","des":"Not Participating","addr":"2600 East Broadway","city":"Altus","st":"OK","zip":"73521","ph":"(580) 482-3814","gm_f":"Dell","gm_l":"Pauley","gm_e":"dpauley@fourstarstoyota.com","dp_f":"Michael","dp_l":"Hernandez","dp_e":"mikeh@dmautoleasing.com","sal":"Mr.","lat":34.6381,"lng":-99.334,"dh":408.9},{"n":35072,"name":"JIM NORTON TOY/OKLAHOMA","area":"A3","dm":"COOK","tcuv":6,"used":1749,"ps":0.3638,"tier":"Tier 3","des":"ReActivate","addr":"8401 Northwest Expressway","city":"Oklahoma City","st":"OK","zip":"73162","ph":"(405) 721-1911","gm_f":"Ryan","gm_l":"Rentschler","gm_e":"ryan@jimnortontoyotaokc.com","dp_f":"Jim","dp_l":"Norton","dp_e":"jim_norton@jimnortontoyota.com","sal":"Mr.","lat":35.4676,"lng":-97.5164,"dh":413.6},{"n":35075,"name":"POST OAK TOYOTA","area":"A3","dm":"COOK","tcuv":0,"used":1946,"ps":0.2251,"tier":"Tier 4","des":"ReActivate","addr":"5800 Tinker Diagonal","city":"Midwest City","st":"OK","zip":"73110","ph":"(405) 741-4451","gm_f":"Jason","gm_l":"Sanchez","gm_e":"jsanchez@postoaktoyota.com","dp_f":"Rick","dp_l":"Jones","dp_e":"rickjones@cardinalbuickgmc.com","sal":"Mr.","lat":35.4495,"lng":-97.3967,"dh":410.4},{"n":42345,"name":"POE TOYOTA","area":"A2","dm":"MONROY","tcuv":410,"used":1451,"ps":0.7505,"tier":"Tier 1","des":"Stay the Course","addr":"6330 Montana Ave.","city":"El Paso","st":"TX","zip":"79925","ph":"(915) 775-2000","gm_f":"Gerald","gm_l":"Miller","gm_e":"gerald@poetoyota.com","dp_f":"Richard","dp_l":"Poe, II","dp_e":"rcpoe@rcpoe.com","sal":"Mr.","lat":31.7619,"lng":-106.485,"dh":673.9},{"n":42221,"name":"TOYOTA OF PLANO","area":"A2","dm":"TOSCH","tcuv":736,"used":3114,"ps":0.8591,"tier":"Tier 1","des":"Stay the Course","addr":"6888 State Hwy 121","city":"Plano","st":"TX","zip":"75024","ph":"(972) 248-7777","gm_f":"John","gm_l":"Phelan","gm_e":"john_phelan@toyotaofplano.com","dp_f":"Jack","dp_l":"Guenther, Jr.","dp_e":"jackg@sbcglobal.net","sal":"Mr.","lat":33.0198,"lng":-96.6989,"dh":238.5},{"n":3072,"name":"LANDERS TOYOTA","area":"A3","dm":"JONES","tcuv":3,"used":2680,"ps":0.3067,"tier":"Tier 4","des":"ReActivate","addr":"10825 Colonel Glenn Road","city":"Little Rock","st":"AR","zip":"72204","ph":"(501) 568-5800","gm_f":"Chris","gm_l":"Chase","gm_e":"Chris.Chase@landerscorp.com","dp_f":"David","dp_l":"Luther","dp_e":"david.luther@lutherauto.com","sal":"Mr.","lat":34.7465,"lng":-92.2896,"dh":388.6},{"n":3073,"name":"LANDERS TOYOTA NWA","area":"A3","dm":"JONES","tcuv":1,"used":2219,"ps":0.3292,"tier":"Tier 3","des":"ReActivate","addr":"411 South Metro Parkway","city":"Rogers","st":"AR","zip":"72758","ph":"(479) 845-1444","gm_f":"Rodney","gm_l":"Plack","gm_e":"Rodney.plack@landerscorp.com","dp_f":"David","dp_l":"Luther","dp_e":"david.luther@lutherauto.com","sal":"Mr.","lat":36.332,"lng":-94.1185,"dh":459.8},{"n":42250,"name":"GULF COAST TOYOTA","area":"A1","dm":"FLETCHER","tcuv":69,"used":296,"ps":0.4741,"tier":"Tier 3","des":"Stay the Course","addr":"3000 North 288 Freeway","city":"Angleton","st":"TX","zip":"77515","ph":"(713) 422-7200","gm_f":"Mark","gm_l":"Holian","gm_e":"mholian@gulfcoast.net\\ncc:Robert@Baldwininterests.com","dp_f":"Robert","dp_l":"Baldwin","dp_e":"Robert@Baldwininterests.com","sal":"Mr.","lat":29.1694,"lng":-95.4319,"dh":41.0},{"n":35049,"name":"JIM NORTON TOYOTA","area":"A3","dm":"COOK","tcuv":0,"used":2132,"ps":0.3624,"tier":"Tier 3","des":"ReActivate","addr":"9809 South Memorial Drive","city":"Tulsa","st":"OK","zip":"74133","ph":"(918) 250-6888","gm_f":"Ryan","gm_l":"Redding","gm_e":"ryan.redding@jimnortontoyota.com","dp_f":"Jim","dp_l":"Norton","dp_e":"jim_norton@jimnortontoyota.com","sal":"Mr.","lat":36.154,"lng":-95.9928,"dh":443.2},{"n":42242,"name":"CLASSIC TOYOTA","area":"A3","dm":"RUSHING","tcuv":0,"used":1651,"ps":0.3201,"tier":"Tier 3","des":"ReActivate","addr":"1717 West Southwest Loop 323","city":"Tyler","st":"TX","zip":"75701","ph":"(903) 581-0600","gm_f":"Michael","gm_l":"Allare","gm_e":"Mike@myclassictoyota.com","dp_f":"Michael","dp_l":"Allare","dp_e":"Mike@myclassictoyota.com","sal":"Mr.","lat":32.3513,"lng":-95.3011,"dh":179.1},{"n":23069,"name":"CARLOCK TOYOTA OF TUPELO","area":"A3","dm":"STRAKNA","tcuv":2,"used":1001,"ps":0.3951,"tier":"Tier 3","des":"ReActivate","addr":"882 Cross Creek Drive","city":"Saltillo","st":"MS","zip":"38866","ph":"(662) 821-0642","gm_f":"","gm_l":"","gm_e":"","dp_f":"Clay","dp_l":"Carlock, Jr.","dp_e":"clay.carlock@carlockcars.com","sal":"Mr.","lat":34.3754,"lng":-88.69,"dh":504.4},{"n":23081,"name":"GRAY-DANIELS TOYOTA","area":"A3","dm":"STRAKNA","tcuv":0,"used":2114,"ps":0.2624,"tier":"Tier 4","des":"ReActivate","addr":"104 Gray Daniels Boulevard","city":"Brandon","st":"MS","zip":"39042","ph":"(601) 948-0576","gm_f":"Branden","gm_l":"Parker","gm_e":"bparker@graydaniels.com","dp_f":"Mark","dp_l":"McLarty","dp_e":"mark@mclarty.com","sal":"Mr.","lat":32.2737,"lng":-89.9862,"dh":362.9},{"n":3076,"name":"KARL MALONE TOYOTA CHEV","area":"A3","dm":"JONES","tcuv":0,"used":478,"ps":0.1943,"tier":"Tier 4","des":"RT Only","addr":"1830 West Hillsboro","city":"El Dorado","st":"AR","zip":"71730","ph":"(870) 862-2900","gm_f":"","gm_l":"","gm_e":"","dp_f":"Karl","dp_l":"Malone","dp_e":"KAM@gomalone.com \\ncc:amadsen@kmamauto.com","sal":"Mr.","lat":33.2076,"lng":-92.6663,"dh":286.5},{"n":42406,"name":"TOYOTA OF WICHITA FALLS","area":"A3","dm":"","tcuv":0,"used":423,"ps":0.2251,"tier":"Tier 4","des":"RT Only","addr":"5715 Kell E. Boulevard","city":"Wichita Falls","st":"TX","zip":"76310","ph":"(940) 280-2510","gm_f":"Aaron","gm_l":"Medanich","gm_e":"aaron.medanich@toyotaofwf.com","dp_f":"Daniel","dp_l":"Bradley","dp_e":"dgb@autoinc.com\\ncc:kevandwilson@autoinc.com","sal":"Mr.","lat":33.9137,"lng":-98.4934,"dh":340.5},{"n":3065,"name":"GREGG ORR TOYOTA","area":"A3","dm":"","tcuv":0,"used":595,"ps":0.2524,"tier":"Tier 4","des":"RT Only","addr":"4709 Central Avenue","city":"Hot Springs","st":"AR","zip":"71913","ph":"(501) 520-0000","gm_f":"Jeremy","gm_l":"Lawrence","gm_e":"jlawrence@orrtoyotaofsearcy.com","dp_f":"Gregg","dp_l":"Orr","dp_e":"williamorr10@gmail.com","sal":"Mr.","lat":34.5037,"lng":-93.0552,"dh":354.6},{"n":3067,"name":"CENTRAL TOYOTA","area":"A3","dm":"","tcuv":0,"used":954,"ps":0.3393,"tier":"Tier 3","des":"RT Only","addr":"3305 Stadium Boulevard","city":"Jonesboro","st":"AR","zip":"72404","ph":"(870) 268-5418","gm_f":"Zach","gm_l":"Gartman","gm_e":"zgartman@centralcts.com","dp_f":"Ken","dp_l":"Yarbrough","dp_e":"ken@centralcts.com","sal":"Mr.","lat":35.8423,"lng":-90.7043,"dh":499.8},{"n":3069,"name":"ORR TOYOTA","area":"A3","dm":"","tcuv":0,"used":559,"ps":0.2593,"tier":"Tier 4","des":"RT Only","addr":"1745 Janet Drive","city":"Searcy","st":"AR","zip":"72143","ph":"(501) 281-4620","gm_f":"Brad","gm_l":"Vaughan","gm_e":"bvaughan@orrtoyotaofsearcy.com","dp_f":"Gregg","dp_l":"Orr","dp_e":"williamorr10@gmail.com","sal":"Mr.","lat":35.2506,"lng":-91.7362,"dh":434.3},{"n":35061,"name":"JAMES HODGE TOYOTA","area":"A3","dm":"","tcuv":0,"used":292,"ps":0.1997,"tier":"Tier 4","des":"RT Only","addr":"2314 West Shawnee","city":"Muskogee","st":"OK","zip":"74401","ph":"(918) 687-1234","gm_f":"","gm_l":"","gm_e":"","dp_f":"Jack","dp_l":"Hodge","dp_e":"jhodge@hodgeautogroup.com","sal":"Mr.","lat":35.7479,"lng":-95.3697,"dh":413.7},{"n":35065,"name":"TOYOTA OF ARDMORE","area":"A3","dm":"","tcuv":0,"used":218,"ps":0.1931,"tier":"Tier 4","des":"RT Only","addr":"402 Holiday Drive","city":"Ardmore","st":"OK","zip":"73401","ph":"(580) 223-8495","gm_f":"Jeremy","gm_l":"Hodge","gm_e":"jeremyhodge@toyotaofardmore.com","dp_f":"Jeremy","dp_l":"Hodge","dp_e":"jeremyhodge@toyotaofardmore.com","sal":"Mr.","lat":34.1743,"lng":-97.1436,"dh":322.2},{"n":42325,"name":"PALESTINE TOYOTA","area":"A3","dm":"RUSHING","tcuv":0,"used":535,"ps":0.2724,"tier":"Tier 4","des":"RT Only","addr":"2728 South Loop 256","city":"Palestine","st":"TX","zip":"75801","ph":"(903) 480-9390","gm_f":"Michael","gm_l":"Berry","gm_e":"mberry@palestinetoyota.com","dp_f":"Chuck","dp_l":"Eldridge","dp_e":"chuck@palestinetoyota.com","sal":"Mr.","lat":31.7621,"lng":-95.6308,"dh":139.2},{"n":42404,"name":"TOYOTA OF PARIS","area":"A3","dm":"RUSHING","tcuv":4,"used":536,"ps":0.2404,"tier":"Tier 4","des":"RT Only","addr":"3235 NE Loop 286","city":"Paris","st":"TX","zip":"75460","ph":"(903) 784-8989","gm_f":"Danny","gm_l":"Cole","gm_e":"Danny.Cole@toyotaofparistx.com","dp_f":"Jeff","dp_l":"Dyke","dp_e":"jeff.dyke@sonicautomotive.com","sal":"Mr.","lat":33.6609,"lng":-95.5555,"dh":269.7},{"n":42026,"name":"ROBBINS TOYOTA","area":"A3","dm":"RUSHING","tcuv":0,"used":361,"ps":0.0901,"tier":"Tier 4","des":"RT Only","addr":"6233 Mall Drive","city":"Nash","st":"TX","zip":"75569","ph":"(903) 794-5121","gm_f":"Charles","gm_l":"Pankey","gm_e":"charles_pankey@robbinstoyota.com","dp_f":"Susan","dp_l":"Robbins","dp_e":"susan_robbins@robbinstoyota.com","sal":"Ms.","lat":33.4418,"lng":-94.1272,"dh":264.7},{"n":42348,"name":"SHAPEN TOYOTA","area":"A3","dm":"RUSHING","tcuv":0,"used":235,"ps":0.1101,"tier":"Tier 4","des":"RT Only","addr":"5015 East End Boulevard South","city":"Marshall","st":"TX","zip":"75672","ph":"(903) 938-9026","gm_f":"Ken","gm_l":"Shapen","gm_e":"ken.shapen@shapentoyota.com","dp_f":"Ken","dp_l":"Shapen","dp_e":"ken.shapen@shapentoyota.com","sal":"Mr.","lat":32.5449,"lng":-94.3674,"dh":201.3},{"n":23057,"name":"KIRK TOYOTA","area":"A3","dm":"BOND","tcuv":1,"used":376,"ps":0.3772,"tier":"Tier 3","des":"RT Only","addr":"237 Southwest Frontage Road","city":"Grenada","st":"MS","zip":"38901","ph":"(662) 226-1181","gm_f":"Eric","gm_l":"Anderson","gm_e":"ericanderson@kirkautomotive.com","dp_f":"Cannon","dp_l":"Kirk","dp_e":"cannonkirk05@yahoo.com","sal":"Mr.","lat":33.7746,"lng":-89.8148,"dh":428.1},{"n":35025,"name":"FOWLER TOYOTA","area":"A3","dm":"COOK","tcuv":347,"used":1479,"ps":0.7923,"tier":"Tier 1","des":"Stay the Course","addr":"4050 North Interstate Drive","city":"Norman","st":"OK","zip":"73072","ph":"(800) 375-9550","gm_f":"","gm_l":"","gm_e":"","dp_f":"Michael","dp_l":"Fowler","dp_e":"mikefowler@fowlerholding.com","sal":"Mr.","lat":35.2226,"lng":-97.4395,"dh":396.2},{"n":42346,"name":"LONGO TOYOTA OF PROSPER","area":"A2","dm":"TOSCH","tcuv":571,"used":1673,"ps":0.8183,"tier":"Tier 1","des":"Stay the Course","addr":"2100 West University Drive","city":"Prosper","st":"TX","zip":"75078","ph":"(469)296-4557","gm_f":"Daniel","gm_l":"Sanchez","gm_e":"daniel.sanchez@prospertoyota.com","dp_f":"Roger","dp_l":"Penske","dp_e":"sspradlin@penskeautomotive.com                              cc: Greg.Penske@PenskeMotorgroup.com","sal":"Mr.","lat":33.2362,"lng":-96.8011,"dh":254.5},{"n":42416,"name":"NORM REEVES TOYOTA DALLAS","area":"A2","dm":"TOSCH","tcuv":478,"used":1370,"ps":0.7133,"tier":"Tier 1","des":"Stay the Course","addr":"9525 East R.L. Thornton Freeway","city":"Dallas","st":"TX","zip":"75228","ph":"(214) 324-0411","gm_f":"Bryan","gm_l":"Haarhues","gm_e":"bryan.haarhues@normreeves.com","dp_f":"David","dp_l":"Conant","dp_e":"david.conant@normreeves.com  \\ncc: tbconant@normreeves.com","sal":"Mr.","lat":32.7767,"lng":-96.797,"dh":224.8},{"n":35071,"name":"FOWLER TOYOTA OF TULSA","area":"A3","dm":"COOK","tcuv":190,"used":615,"ps":0.6419,"tier":"Tier 2","des":"Stay the Course","addr":"6868 East B.A. Frontage Road","city":"Tulsa","st":"OK","zip":"74145","ph":"(918) 836-2769","gm_f":"","gm_l":"","gm_e":"","dp_f":"Michael","dp_l":"Fowler","dp_e":"mikefowler@fowlerholding.com","sal":"Mr.","lat":36.154,"lng":-95.9928,"dh":443.2},{"n":35052,"name":"JANZEN TOYOTA","area":"A3","dm":"COOK","tcuv":109,"used":410,"ps":0.5212,"tier":"Tier 2","des":"Stay the Course","addr":"4900 West Sixth Street","city":"Stillwater","st":"OK","zip":"74074","ph":"(405) 372-4550","gm_f":"Juergen","gm_l":"Janzen","gm_e":"juergen_janzen@janzentoyota.com","dp_f":"Juergen","dp_l":"Janzen","dp_e":"juergen_janzen@janzentoyota.com","sal":"Mr.","lat":36.1156,"lng":-97.0584,"dh":449.9},{"n":3066,"name":"TOYOTA OF FAYETTEVILLE","area":"A3","dm":"JONES","tcuv":450,"used":1662,"ps":0.7494,"tier":"Tier 1","des":"Stay the Course","addr":"1352 West Showroom Drive","city":"Fayetteville","st":"AR","zip":"72704","ph":"(479) 695-7600","gm_f":"Glenn","gm_l":"Gibbs","gm_e":"ggibbs@penskeautomotive.com","dp_f":"Roger","dp_l":"Penske","dp_e":"sspradlin@penskeautomotive.com                                                  cc: JZiniti@penskeautomotive.com","sal":"Mr.","lat":36.0822,"lng":-94.1719,"dh":442.3},{"n":3068,"name":"CALDWELL TOYOTA","area":"A3","dm":"JONES","tcuv":300,"used":787,"ps":0.6517,"tier":"Tier 2","des":"Stay the Course","addr":"1355 Exchange Avenue","city":"Conway","st":"AR","zip":"72032","ph":"(501) 327-3900","gm_f":"Jay","gm_l":"Caldwell","gm_e":"jay@caldwellcares.com","dp_f":"Andrew","dp_l":"Caldwell","dp_e":"jay@caldwellcares.com","sal":"Mr.","lat":35.0887,"lng":-92.4421,"dh":405.8},{"n":3050,"name":"J. PAULEY TOYOTA","area":"A3","dm":"JONES","tcuv":137,"used":615,"ps":0.5751,"tier":"Tier 2","des":"Stay the Course","addr":"6200 South 36th Street","city":"Fort Smith","st":"AR","zip":"72908","ph":"(479) 646-7800","gm_f":"Ronald","gm_l":"Pawley","gm_e":"ron_pawley@jpauleytoyota.com","dp_f":"Ronald","dp_l":"Pawley","dp_e":"ron_pawley@jpauleytoyota.com","sal":"Mr.","lat":35.3859,"lng":-94.3985,"dh":392.8},{"n":42161,"name":"STREET TOYOTA","area":"A3","dm":"OPEN","tcuv":823,"used":2930,"ps":0.7788,"tier":"Tier 1","des":"Stay the Course","addr":"4500 South Soncy Rd","city":"Amarillo","st":"TX","zip":"79119","ph":"(806) 355-9846","gm_f":"Cory","gm_l":"Dupriest","gm_e":"cdupriest@street-toyota.com","dp_f":"Joe","dp_l":"Street","dp_e":"jstreet@street-toyota.com","sal":"Mr.","lat":35.222,"lng":-101.8313,"dh":532.8},{"n":17023,"name":"YOKEM TOYOTA","area":"A3","dm":"RUSHING","tcuv":202,"used":824,"ps":0.6433,"tier":"Tier 2","des":"Stay the Course","addr":"1199 East Bert Kouns Industrial Loop","city":"Shreveport","st":"LA","zip":"71105","ph":"(318) 798-3773","gm_f":"Leonard","gm_l":"Washington","gm_e":"LWashington@yokemtoyota.com","dp_f":"Alan","dp_l":"Yokem","dp_e":"alan_yokem@yokemtoyota.com","sal":"Mr.","lat":32.5252,"lng":-93.7502,"dh":213.7},{"n":17057,"name":"JOHN HARVEY TOYOTA","area":"A3","dm":"RUSHING","tcuv":165,"used":720,"ps":0.6685,"tier":"Tier 2","des":"Stay the Course","addr":"2901 Benton Road","city":"Bossier City","st":"LA","zip":"71111","ph":"(318) 741-1337","gm_f":"Tommy","gm_l":"Harvey","gm_e":"tommy@harveyautos.com","dp_f":"Tommy","dp_l":"Harvey","dp_e":"tommy@harveyautos.com","sal":"Mr.","lat":32.5159,"lng":-93.7321,"dh":213.6},{"n":42259,"name":"LOVING TOYOTA","area":"A3","dm":"RUSHING","tcuv":145,"used":485,"ps":0.63,"tier":"Tier 2","des":"Stay the Course","addr":"1807 South Medford Drive","city":"Lufkin","st":"TX","zip":"75901","ph":"(936) 699-1000","gm_f":"Trae","gm_l":"Gerard","gm_e":"trae_gerard@lovingtoyota.com","dp_f":"Joe","dp_l":"Loving","dp_e":"joe_loving@lovingtoyota.com","sal":"Mr.","lat":31.3382,"lng":-94.7291,"dh":115.5},{"n":17066,"name":"NORTHSHORE TOYOTA","area":"A3","dm":"STRAKNA","tcuv":563,"used":1407,"ps":0.85,"tier":"Tier 1","des":"Stay the Course","addr":"68500 Highway 190 Service Road","city":"Covington","st":"LA","zip":"70433","ph":"(985) 893-7778","gm_f":"Kurt","gm_l":"Hanks","gm_e":"kurt_hanks@northshoretoyota.com","dp_f":"Tony","dp_l":"Gullo","dp_e":"tonygullo@gullo.net","sal":"Mr.","lat":30.4755,"lng":-90.1009,"dh":318.7},{"n":23052,"name":"J. ALLEN TOYOTA","area":"A3","dm":"STRAKNA","tcuv":422,"used":1633,"ps":0.735,"tier":"Tier 1","des":"Stay the Course","addr":"11397 Helen Richards Road","city":"Gulfport","st":"MS","zip":"39503","ph":"(228) 896-8220","gm_f":"","gm_l":"","gm_e":"","dp_f":"Jonathan","dp_l":"Allen","dp_e":"jallen@allentoyota.com","sal":"Mr.","lat":30.3674,"lng":-89.0928,"dh":377.6},{"n":23035,"name":"TOYOTA OF HATTIESBURG","area":"A3","dm":"STRAKNA","tcuv":313,"used":1268,"ps":0.6879,"tier":"Tier 1","des":"Stay the Course","addr":"6461 US Highway 98","city":"Hattiesburg","st":"MS","zip":"39402","ph":"(601) 544-9630","gm_f":"Alton","gm_l":"Pierce","gm_e":"alton@toyotahattiesburg.com","dp_f":"Alton","dp_l":"Pierce","dp_e":"alton@toyotahattiesburg.com","sal":"Mr.","lat":31.3271,"lng":-89.2903,"dh":377.6},{"n":23084,"name":"CANNON TOYOTA/MOSS POINT","area":"A3","dm":"STRAKNA","tcuv":254,"used":897,"ps":0.7201,"tier":"Tier 1","des":"Stay the Course","addr":"6521 Highway 63","city":"Moss Point","st":"MS","zip":"39563","ph":"(228) 762-3533","gm_f":"Chuck","gm_l":"McDowell","gm_e":"cmcdowell@nobodybeatsacannondeal.com","dp_f":"Michael Joe","dp_l":"Cannon","dp_e":"mcannon@nobodybeatsacannondeal.com","sal":"Mr.","lat":30.408,"lng":-88.5287,"dh":411.4},{"n":17050,"name":"LAKESIDE TOYOTA","area":"A3","dm":"STRAKNA","tcuv":253,"used":1413,"ps":0.7467,"tier":"Tier 1","des":"Stay the Course","addr":"3701 North Causeway Blvd.","city":"Metairie","st":"LA","zip":"70002","ph":"(504) 833-3311","gm_f":"Troy","gm_l":"Campise","gm_e":"troy_campise@lakesidetoyota.com","dp_f":"Tony","dp_l":"Gullo","dp_e":"tonygullo@gullo.net","sal":"Mr.","lat":29.9841,"lng":-90.1529,"dh":312.9},{"n":23062,"name":"KIM-S TOYOTA","area":"A3","dm":"STRAKNA","tcuv":141,"used":686,"ps":0.6015,"tier":"Tier 2","des":"Stay the Course","addr":"550 S. 16th Ave.","city":"Laurel","st":"MS","zip":"39440","ph":"(601) 425-4701","gm_f":"Kevin","gm_l":"Drye","gm_e":"KevinDrye@kimsnobull.com","dp_f":"Kim","dp_l":"Hobbs","dp_e":"kimsnobull@aol.com","sal":"Ms.","lat":31.6941,"lng":-89.1306,"dh":393.8}]
+`;
+const DEALERS_RAW = JSON.parse(DEALER_JSON);
+
+// Houston anchor
+const HOUSTON = { lat: 29.7604, lng: -95.3698 };
+
+// ============ GEO + ENRICHMENT ============
+function distanceMiles(a, b) {
+  const R = 3958.8;
+  const toRad = (d) => (d * Math.PI) / 180;
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const lat1 = toRad(a.lat);
+  const lat2 = toRad(b.lat);
+  const x = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(x));
+}
+function estimateDriveHours(miles) { return miles / 60; }
+
+function enrichDealers() {
+  return DEALERS_RAW.map((d) => {
+    const inHouston60mi = d.dh !== null && d.dh <= 60;
+    const isTeamsOnlyDesignation = d.des === "Not Participating" || d.des === "RT Only";
+    const visitMode = isTeamsOnlyDesignation && !inHouston60mi ? "Teams" : "In-Person";
+    const isLeader = d.des === "LEADERS" || d.des === "LEADERS + RT OPP";
+    const outOfState = d.st !== "TX";
+    return {
+      dealer_num: d.n, name: d.name, area: d.area, district_mgr: d.dm,
+      tcuv_ytd: d.tcuv, used_ytd: d.used, priority_score: d.ps,
+      tier: d.tier, designation: d.des, address: d.addr, city: d.city,
+      state: d.st, zip: d.zip, phone: d.ph,
+      gm_first: d.gm_f, gm_last: d.gm_l, gm_email: d.gm_e,
+      dp_first: d.dp_f, dp_last: d.dp_l, dp_email: d.dp_e,
+      salutation: d.sal, lat: d.lat, lng: d.lng,
+      distToHouston: d.dh, inHouston60mi, visitMode, outOfState, isLeader,
+      effectivePriority: isLeader ? d.ps * 0.3 : d.ps
+    };
+  });
+}
+const ALL_DEALERS = enrichDealers();
+
+// ============ CLUSTERING ============
+function clusterDealers(dealers) {
+  const clusters = {
+    "Houston Metro": [], "East Texas / Beaumont Corridor": [], "San Antonio / South Texas": [],
+    "Rio Grande Valley": [], "Austin / Central Texas": [], "Dallas / Fort Worth Metroplex": [],
+    "West Texas / El Paso": [], "Oklahoma": [], "Arkansas": [],
+    "Louisiana - Baton Rouge / Lafayette": [], "Louisiana - Shreveport / Monroe": [],
+    "Louisiana - New Orleans / Northshore": [], "Mississippi - North": [], "Mississippi - Central / South": []
+  };
+  dealers.forEach((d) => {
+    const { state, lat, lng, inHouston60mi } = d;
+    if (state === "TX" && inHouston60mi) clusters["Houston Metro"].push(d);
+    else if (state === "TX" && lng > -95 && lat < 32 && !inHouston60mi) clusters["East Texas / Beaumont Corridor"].push(d);
+    else if (state === "TX" && lat < 27.5) clusters["Rio Grande Valley"].push(d);
+    else if (state === "TX" && lat < 30 && lng < -97) clusters["San Antonio / South Texas"].push(d);
+    else if (state === "TX" && lng < -100) clusters["West Texas / El Paso"].push(d);
+    else if (state === "TX" && lat > 32.5) clusters["Dallas / Fort Worth Metroplex"].push(d);
+    else if (state === "TX" && lat > 29.5 && lng < -97) clusters["Austin / Central Texas"].push(d);
+    else if (state === "OK") clusters["Oklahoma"].push(d);
+    else if (state === "AR") clusters["Arkansas"].push(d);
+    else if (state === "LA" && lng < -92.5) clusters["Louisiana - Shreveport / Monroe"].push(d);
+    else if (state === "LA" && lng > -90.5) clusters["Louisiana - New Orleans / Northshore"].push(d);
+    else if (state === "LA") clusters["Louisiana - Baton Rouge / Lafayette"].push(d);
+    else if (state === "MS" && lat > 33.5) clusters["Mississippi - North"].push(d);
+    else if (state === "MS") clusters["Mississippi - Central / South"].push(d);
+    else if (state === "TX") clusters["East Texas / Beaumont Corridor"].push(d);
+  });
+  return clusters;
+}
+
+// ============ ROUTE ORDERING ============
+function orderByProximity(dealers, startPoint) {
+  if (dealers.length === 0) return [];
+  const remaining = [...dealers];
+  const ordered = [];
+  let current = startPoint;
+  while (remaining.length > 0) {
+    let bestIdx = 0, bestDist = Infinity;
+    remaining.forEach((d, i) => {
+      const dist = distanceMiles(current, { lat: d.lat, lng: d.lng });
+      if (dist < bestDist) { bestDist = dist; bestIdx = i; }
+    });
+    const picked = remaining.splice(bestIdx, 1)[0];
+    ordered.push(picked);
+    current = { lat: picked.lat, lng: picked.lng };
+  }
+  return ordered;
+}
+function packIntoDays(orderedDealers, maxPerDay = 3) {
+  const days = [];
+  let i = 0;
+  while (i < orderedDealers.length) {
+    const remaining = orderedDealers.length - i;
+    let take;
+    if (remaining <= maxPerDay) take = remaining;
+    else if (remaining === maxPerDay + 1) take = 2;
+    else take = maxPerDay;
+    days.push(orderedDealers.slice(i, i + take));
+    i += take;
+  }
+  return days;
+}
+function assignTimes(dayVisits) {
+  const slots = { 3: ["10:00", "13:00", "15:00"], 2: ["10:00", "13:00"], 1: ["10:00"] };
+  const s = slots[dayVisits.length] || slots[3];
+  return dayVisits.map((d, i) => ({ dealer: d, time: s[i] }));
+}
+function fmtDate(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+// Convert 24-hour "HH:MM" -> 12-hour "h:MM AM/PM" for display
+function fmt12(t) {
+  if (!t || typeof t !== "string") return t || "";
+  const m = t.match(/^(\d{1,2}):(\d{2})/);
+  if (!m) return t;
+  let h = parseInt(m[1], 10);
+  const min = m[2];
+  const period = h >= 12 ? "PM" : "AM";
+  if (h === 0) h = 12;
+  else if (h > 12) h -= 12;
+  return `${h}:${min} ${period}`;
+}
+function mondayOf(date) {
+  const d = new Date(date);
+  const dow = d.getDay();
+  const diff = d.getDate() - dow + (dow === 0 ? -6 : 1);
+  d.setDate(diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+// ============ WEEK PLANNING ============
+function selectWeekTarget(clusters, availableDealers) {
+  const scored = Object.entries(clusters)
+    .filter(([name]) => name !== "Houston Metro")
+    .map(([name, dealers]) => {
+      const avail = dealers.filter((d) => availableDealers.has(d.dealer_num) && !d.isLeader);
+      const inPerson = avail.filter((d) => d.visitMode === "In-Person");
+      if (inPerson.length === 0) return null;
+      const t1 = inPerson.filter((d) => d.tier === "Tier 1").length;
+      const t2 = inPerson.filter((d) => d.tier === "Tier 2").length;
+      const t3 = inPerson.filter((d) => d.tier === "Tier 3").length;
+      const t4 = inPerson.filter((d) => d.tier === "Tier 4").length;
+      const score = t1 * 3 + t2 * 2 + t3 * 1.5 + t4 * 1;
+      return { name, dealers, inPerson, score, tier1: t1, tier2: t2, tier3: t3, tier4: t4 };
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.score - a.score);
+  return scored;
+}
+
+function planWeek(startDate, clusters, availableDealers) {
+  const monday = mondayOf(new Date(startDate + "T00:00:00"));
+  const days = [0, 1, 2, 3, 4].map((o) => { const d = new Date(monday); d.setDate(d.getDate() + o); return d; });
+  const [mon, tue, wed, thu, fri] = days;
+
+  const candidates = selectWeekTarget(clusters, availableDealers);
+  if (candidates.length === 0) return { weekOf: fmtDate(monday), empty: true, reason: "No regions have unscheduled priority dealers remaining." };
+
+  const target = candidates[0];
+  const sample = target.inPerson[0];
+  const isOutOfState = sample.outOfState;
+  const distFromHou = sample.distToHouston || 0;
+  const driveHours = estimateDriveHours(distFromHou);
+  const mustFly = driveHours > 4 || isOutOfState;
+
+  const startPoint = mustFly ? { lat: sample.lat, lng: sample.lng } : HOUSTON;
+  const tierOrder = { "Tier 1": 0, "Tier 2": 1, "Tier 3": 2, "Tier 4": 3 };
+  const sortedInPerson = [...target.inPerson].sort((a, b) => {
+    if (a.tier !== b.tier) return tierOrder[a.tier] - tierOrder[b.tier];
+    return b.priority_score - a.priority_score;
+  });
+  const maxForWeek = isOutOfState ? 9 : 12;
+  const weekDealers = sortedInPerson.slice(0, maxForWeek);
+  const ordered = orderByProximity(weekDealers, startPoint);
+  const packedDays = packIntoDays(ordered, 3);
+
+  const visitDays = isOutOfState ? [mon, tue, wed] : [mon, tue, wed, thu];
+  const dayPlan = [];
+  packedDays.slice(0, visitDays.length).forEach((dv, idx) => {
+    const assigned = assignTimes(dv);
+    dayPlan.push({
+      date: fmtDate(visitDays[idx]),
+      label: visitDays[idx].toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" }),
+      visits: assigned.map((a) => ({ ...a, mode: "In-Person", region: target.name })),
+      type: "visit"
+    });
+  });
+  if (isOutOfState) {
+    dayPlan.push({
+      date: fmtDate(thu),
+      label: thu.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" }),
+      visits: [], type: "travel",
+      note: "Fly / drive back to Houston. Arrive by Friday morning."
+    });
+  }
+  dayPlan.push(planFriday(fri, clusters, availableDealers, !isOutOfState));
+
+  return {
+    weekOf: fmtDate(monday), region: target.name, mustFly, isOutOfState,
+    driveHours: driveHours.toFixed(1), days: dayPlan,
+    summary: {
+      totalVisits: dayPlan.reduce((s, d) => s + d.visits.length, 0),
+      tier1: weekDealers.filter((d) => d.tier === "Tier 1").length,
+      tier2: weekDealers.filter((d) => d.tier === "Tier 2").length,
+      tier3: weekDealers.filter((d) => d.tier === "Tier 3").length,
+      tier4: weekDealers.filter((d) => d.tier === "Tier 4").length
+    }
+  };
+}
+
+function planFriday(friDate, clusters, availableDealers, canDoHouston) {
+  const houston = clusters["Houston Metro"] || [];
+  const avail = houston.filter((d) => availableDealers.has(d.dealer_num) && !d.isLeader && d.visitMode === "In-Person");
+  if (canDoHouston && avail.length >= 2) {
+    const picked = [...avail].sort((a, b) => b.priority_score - a.priority_score).slice(0, 2);
+    const ordered = orderByProximity(picked, HOUSTON);
+    return {
+      date: fmtDate(friDate),
+      label: friDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" }),
+      visits: ordered.map((d, i) => ({ dealer: d, time: ["10:00", "13:00"][i], mode: "In-Person", region: "Houston Metro" })),
+      type: "visit",
+      note: "Houston metro day. Visits end by 2 PM to close the week early."
+    };
+  }
+  const all = Object.values(clusters).flat();
+  const teams = all.filter((d) => availableDealers.has(d.dealer_num) && !d.isLeader && d.visitMode === "Teams");
+  const picked = [...teams].sort((a, b) => b.priority_score - a.priority_score).slice(0, 2);
+  return {
+    date: fmtDate(friDate),
+    label: friDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" }),
+    visits: picked.map((d, i) => ({ dealer: d, time: ["10:00", "11:00"][i], mode: "Teams", region: "Teams Calls" })),
+    type: "teams",
+    note: "Friday Teams window (10 AM - 12 PM). Wraps up the week."
+  };
+}
+
+function planMultipleWeeks(startDate, numWeeks, clusters, completedIds, scheduledIds, recentTouches, cooldownDays) {
+  // Cooldown: dealers touched (visit/Teams) within cooldownDays get skipped
+  const cooledDown = new Set();
+  if (recentTouches && cooldownDays > 0) {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - cooldownDays);
+    Object.entries(recentTouches).forEach(([num, info]) => {
+      if (!info || !info.lastTouchDate) return;
+      const td = new Date(info.lastTouchDate);
+      if (!isNaN(td) && td >= cutoff) cooledDown.add(Number(num));
+    });
+  }
+
+  const available = new Set();
+  Object.values(clusters).flat().forEach((d) => {
+    if (completedIds.has(d.dealer_num)) return;
+    if (scheduledIds.has(d.dealer_num)) return;
+    if (cooledDown.has(d.dealer_num)) return;
+    if (d.isLeader) return;
+    available.add(d.dealer_num);
+  });
+
+  const weeks = [];
+  let currentStart = new Date(startDate + "T00:00:00");
+  for (let w = 0; w < numWeeks; w++) {
+    const plan = planWeek(fmtDate(currentStart), clusters, available);
+    if (plan.empty) break;
+    weeks.push(plan);
+    plan.days.forEach((d) => d.visits.forEach((v) => available.delete(v.dealer.dealer_num)));
+    currentStart.setDate(currentStart.getDate() + 7);
+  }
+  return weeks;
+}
+
+// ============ EMAIL TEMPLATES ============
+function generateEmail(dealer, date, time, mode, senderName) {
+  const sn = senderName || "[Your Name]";
+  const greeting = dealer.gm_first ? `${dealer.salutation || "Mr."} ${dealer.gm_last}` : "General Manager";
+  const recipientName = dealer.gm_first ? `${dealer.gm_first} ${dealer.gm_last}` : "General Manager";
+  const dateStr = date ? new Date(date + "T00:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }) : "[proposed date]";
+  const timeStr = time ? fmt12(time) : "[time]";
+
+  if (mode === "Teams") {
+    return {
+      subject: `TCUV / GSFS Consultation - Microsoft Teams Meeting Request`,
+      body: `Dear ${greeting},
+
+I hope this message finds you well. I am reaching out to schedule a consultation with you and your team at ${dealer.name} to review current TCUV and GSFS performance, discuss opportunities, and align on support needs for the remainder of the year.
+
+Given the location of your store, I would like to propose a Microsoft Teams meeting rather than an in-person visit. This will allow us to cover the same material efficiently and respect everyone's time.
+
+Proposed meeting details:
+  Date: ${dateStr}
+  Time: ${timeStr} (Central Time)
+  Format: Microsoft Teams video call
+  Estimated duration: 60 to 90 minutes
+
+Topics I would like to cover:
+  - Year-to-date TCUV sales performance and opportunity areas
+  - Used vehicle sales trends and the TCUV percentage of used mix
+  - GSFS product penetration and F&I opportunities
+  - Any current challenges, staffing changes, or training needs
+  - Our support priorities for the upcoming quarter
+
+Please let me know if the proposed date and time works for your schedule, or suggest a time that is more convenient. I am happy to work around your availability, and if you would prefer to include additional team members such as your F&I director or used car manager, please feel free to extend the invitation.
+
+I will send a calendar invitation with the Teams link once we confirm the time.
+
+Thank you for your partnership, and I look forward to speaking with you soon.
+
+Best regards,
+${sn}
+TCUV / GSFS Field Consultant
+Area 3`,
+      recipient: dealer.gm_email || dealer.dp_email,
+      recipientName,
+      cc: dealer.gm_email && dealer.dp_email && dealer.gm_email !== dealer.dp_email ? dealer.dp_email : ""
+    };
+  }
+  return {
+    subject: `TCUV / GSFS Consultation Visit Request - ${dealer.name}`,
+    body: `Dear ${greeting},
+
+I hope you are doing well. I am planning a field visit to the ${dealer.city} area and would like to schedule a consultation with you and your team at ${dealer.name}.
+
+The purpose of the visit is to review your current TCUV and GSFS performance, discuss opportunities specific to your store, and align on how we can best support your goals for the balance of the year.
+
+Proposed visit details:
+  Date: ${dateStr}
+  Time: ${timeStr} (Central Time, arrival)
+  Estimated duration: 90 minutes to 2 hours
+  Location: ${dealer.address}, ${dealer.city}, ${dealer.state} ${dealer.zip}
+
+Topics I would like to cover during the visit:
+  - Year-to-date TCUV sales review and performance against plan
+  - Used vehicle sales trends and TCUV penetration of the used mix
+  - GSFS product performance, F&I opportunity areas, and training needs
+  - A walk of the used lot and certification process, time permitting
+  - Current staffing, operational challenges, and support requests
+
+If the proposed time does not work, please suggest an alternative that fits your schedule. I am also happy to include any members of your team who would benefit from being part of the conversation, such as your used car manager, F&I director, or sales leadership.
+
+Please confirm at your earliest convenience so I can finalize my travel plans. You can reach me by reply email, and I will send a calendar invitation once the date is confirmed.
+
+Thank you for your time and partnership. I look forward to visiting your store.
+
+Best regards,
+${sn}
+TCUV / GSFS Field Consultant
+Area 3`,
+    recipient: dealer.gm_email || dealer.dp_email,
+    recipientName,
+    cc: dealer.gm_email && dealer.dp_email && dealer.gm_email !== dealer.dp_email ? dealer.dp_email : ""
+  };
+}
+
+// ============ STATE ============
+let state = {
+  activeTab: "plan",
+  completedIds: new Set(),
+  scheduledVisits: [],
+  selectedCluster: null,
+  filterTier: "All",
+  filterMode: "All",
+  filterDes: "All",
+  searchTerm: "",
+  senderName: "",
+  // Plan My Week state
+  startDate: "",
+  numWeeks: 4,
+  plan: null,
+  approvedWeeks: new Set(),
+  // Visit history import (from dashboard)
+  recentTouches: {},
+  cooldownDays: 90,
+  importMsg: ""
+};
+const clusters = clusterDealers(ALL_DEALERS);
+
+// Default start date: next Monday
+function defaultStart() {
+  const today = new Date();
+  const monday = mondayOf(today);
+  if (today.getDay() === 6 || today.getDay() === 0 || (today.getDay() === 5 && today.getHours() >= 12)) monday.setDate(monday.getDate() + 7);
+  else if (today > monday) monday.setDate(monday.getDate() + 7);
+  return fmtDate(monday);
+}
+state.startDate = defaultStart();
+
+// Persist to localStorage so refreshes keep the schedule
+function saveState() {
+  try {
+    const persist = {
+      completedIds: [...state.completedIds],
+      scheduledVisits: state.scheduledVisits,
+      senderName: state.senderName,
+      recentTouches: state.recentTouches,
+      cooldownDays: state.cooldownDays
+    };
+    localStorage.setItem("tcuv-agent-state", JSON.stringify(persist));
+  } catch (e) {}
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem("tcuv-agent-state");
+    if (!raw) return;
+    const p = JSON.parse(raw);
+    if (Array.isArray(p.completedIds)) state.completedIds = new Set(p.completedIds);
+    if (Array.isArray(p.scheduledVisits)) state.scheduledVisits = p.scheduledVisits;
+    if (p.senderName) state.senderName = p.senderName;
+    if (p.recentTouches) state.recentTouches = p.recentTouches;
+    if (typeof p.cooldownDays === "number") state.cooldownDays = p.cooldownDays;
+  } catch (e) {}
+}
+
+function showToast(msg, color) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.style.background = color || "#1a1a1a";
+  t.style.opacity = "1";
+  clearTimeout(window._toastT);
+  window._toastT = setTimeout(() => { t.style.opacity = "0"; }, 3200);
+}
+
+// ============ SCHEDULE / COMPLETE ACTIONS ============
+function scheduleVisit(dealer, date, time, mode) {
+  const visit = {
+    id: `${dealer.dealer_num}-${Date.now()}`,
+    dealer_num: dealer.dealer_num,
+    name: dealer.name,
+    address: dealer.address,
+    city: dealer.city,
+    state: dealer.state,
+    zip: dealer.zip,
+    phone: dealer.phone,
+    gm_first: dealer.gm_first,
+    gm_last: dealer.gm_last,
+    gm_email: dealer.gm_email,
+    dp_email: dealer.dp_email,
+    salutation: dealer.salutation,
+    tier: dealer.tier,
+    designation: dealer.designation,
+    date, time, mode,
+    emailSent: false,
+    warnings: []
+  };
+  state.scheduledVisits.push(visit);
+  saveState();
+}
+function unscheduleVisit(id) {
+  state.scheduledVisits = state.scheduledVisits.filter(v => v.id !== id);
+  saveState();
+}
+function completeVisit(id) {
+  const v = state.scheduledVisits.find(x => x.id === id);
+  if (v) state.completedIds.add(v.dealer_num);
+  state.scheduledVisits = state.scheduledVisits.filter(x => x.id !== id);
+  saveState();
+}
+function uncompleteDealer(num) {
+  state.completedIds.delete(num);
+  saveState();
+}
+function markEmailSent(id) {
+  const v = state.scheduledVisits.find(x => x.id === id);
+  if (v) { v.emailSent = true; saveState(); }
+}
+
+// ============ EXPORT CSV ============
+function exportCSV() {
+  if (state.scheduledVisits.length === 0) return;
+  const header = "Date,Time,Dealer #,Dealer Name,Address,City,State,ZIP,Phone,GM,GM Email,Tier,Designation,Mode,Email Sent\n";
+  const rows = state.scheduledVisits
+    .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time))
+    .map(v => {
+      const gm = `${v.gm_first || ""} ${v.gm_last || ""}`.trim();
+      return [v.date, v.time, v.dealer_num, `"${v.name}"`, `"${v.address}"`, v.city, v.state, v.zip, `"${v.phone}"`, `"${gm}"`, v.gm_email || "", v.tier, v.designation, v.mode, v.emailSent ? "Yes" : "No"].join(",");
+    }).join("\n");
+  const blob = new Blob([header + rows], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "dealer_schedule.csv"; a.click();
+  URL.revokeObjectURL(url);
+  showToast("✓ Schedule exported", "#0A7C3A");
+}
+
+// ============ TOP-LEVEL RENDER ============
+function render() {
+  renderStats();
+  renderNav();
+  const main = document.getElementById("main");
+  if (state.activeTab === "plan") renderPlan(main);
+  else if (state.activeTab === "trips") renderTrips(main);
+  else if (state.activeTab === "schedule") renderSchedule(main);
+  else if (state.activeTab === "directory") renderDirectory(main);
+  // Update export button
+  document.getElementById("exportBtn").disabled = state.scheduledVisits.length === 0;
+}
+
+function renderStats() {
+  const total = ALL_DEALERS.length;
+  const inPerson = ALL_DEALERS.filter(d => d.visitMode === "In-Person").length;
+  const teams = ALL_DEALERS.filter(d => d.visitMode === "Teams").length;
+  const leaders = ALL_DEALERS.filter(d => d.isLeader).length;
+  const completed = state.completedIds.size;
+  const scheduled = state.scheduledVisits.length;
+  const scheduledIds = new Set(state.scheduledVisits.map(v => v.dealer_num));
+  const tier1Open = ALL_DEALERS.filter(d => !d.isLeader && d.tier === "Tier 1" && !state.completedIds.has(d.dealer_num) && !scheduledIds.has(d.dealer_num)).length;
+
+  document.getElementById("statsGrid").innerHTML = `
+    <div class="stat"><div class="stat-lbl">Total Dealers</div><div class="stat-val">${total}</div></div>
+    <div class="stat"><div class="stat-lbl">In-Person</div><div class="stat-val" style="color:#1558B0">${inPerson}</div></div>
+    <div class="stat"><div class="stat-lbl">Teams Calls</div><div class="stat-val" style="color:#57534e">${teams}</div></div>
+    <div class="stat"><div class="stat-lbl">Leaders (lower priority)</div><div class="stat-val" style="color:#a8a29e">${leaders}</div></div>
+    <div class="stat"><div class="stat-lbl">Tier 1 Open</div><div class="stat-val" style="color:#C8102E">${tier1Open}</div></div>
+    <div class="stat"><div class="stat-lbl">Scheduled / Done</div><div class="stat-val" style="color:#0A7C3A">${scheduled} / ${completed}</div></div>
+  `;
+}
+
+function renderNav() {
+  const tabs = [
+    { id: "plan", label: "Plan My Week" },
+    { id: "trips", label: "Trip Suggestions" },
+    { id: "schedule", label: "My Schedule" },
+    { id: "directory", label: "Dealer Directory" }
+  ];
+  document.getElementById("navRow").innerHTML = tabs.map(t =>
+    `<button class="${state.activeTab === t.id ? "active" : ""}" onclick="setTab('${t.id}')">${t.label}</button>`
+  ).join("");
+}
+function setTab(id) { state.activeTab = id; render(); window.scrollTo(0, 0); }
+
+// ============ PLAN MY WEEK ============
+function renderPlan(main) {
+  const scheduledIds = new Set(state.scheduledVisits.map(v => v.dealer_num));
+  const cooledCount = Object.entries(state.recentTouches || {}).filter(([, info]) => {
+    if (!info || !info.lastTouchDate) return false;
+    const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - state.cooldownDays);
+    return new Date(info.lastTouchDate) >= cutoff;
+  }).length;
+
+  let html = `
+    <div class="card" style="border-left:3px solid #1558B0">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+        <div style="flex:1;min-width:280px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1558B0;margin-bottom:6px">Visit History From Dashboard</div>
+          <div style="font-size:13px;color:#57534e;line-height:1.5">
+            Paste the JSON exported from the TCUV CRM dashboard so the scheduler skips dealers you've already visited or had a Teams call with recently.
+            ${cooledCount > 0 ? `<strong style="color:#1558B0">${cooledCount} dealer(s) currently within cooldown.</strong>` : ""}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <label style="font-size:12px;color:#57534e">Cooldown (days):</label>
+          <input type="number" min="0" max="365" value="${state.cooldownDays}" onchange="state.cooldownDays = parseInt(this.value)||0; saveState();" style="width:80px" class="fi">
+        </div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <textarea id="historyPaste" placeholder='Paste JSON from dashboard, e.g. [{"dealer_num":42087,"name":"DON MCGILL TOYOTA","lastTouchDate":"2026-03-14","lastTouchType":"Visit"}, ...]' style="flex:1;min-width:280px;min-height:60px;padding:8px 10px;border:1px solid #d4d4d4;border-radius:6px;font-family:'SF Mono',Menlo,monospace;font-size:12px"></textarea>
+        <button class="btn btn-blue" onclick="importHistory()">Import</button>
+        ${Object.keys(state.recentTouches).length > 0 ? `<button class="btn btn-ghost" onclick="clearHistory()">Clear</button>` : ""}
+      </div>
+      ${state.importMsg ? `<div style="margin-top:10px;font-size:12px;color:#0A7C3A">${state.importMsg}</div>` : ""}
+    </div>
+
+    <div class="card">
+      <div class="card-title">Plan My Week</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end">
+        <div><label class="fl">Start Date (Monday)</label><input type="date" id="startDate" value="${state.startDate}" class="fi" style="width:180px" onchange="state.startDate = this.value;"></div>
+        <div><label class="fl">Number of Weeks</label><input type="number" id="numWeeks" value="${state.numWeeks}" min="1" max="12" class="fi" style="width:100px" onchange="state.numWeeks = parseInt(this.value)||4;"></div>
+        <button class="btn btn-red" onclick="generatePlan()">Generate Plan</button>
+        ${state.plan && state.plan.length > 0 ? `<button class="btn btn-ghost" onclick="state.plan=null; state.approvedWeeks=new Set(); render();">Clear Plan</button>` : ""}
+      </div>
+      <div style="font-size:12px;color:#57534e;margin-top:10px;line-height:1.5">
+        Each week proposes <strong>one regional cluster</strong> for Mon-Thu (or Mon-Wed + travel back if out of state), with Friday reserved for Houston metro visits or Teams calls. Approved weeks add visits to your schedule.
+      </div>
+    </div>
+  `;
+
+  if (state.plan && state.plan.length > 0) {
+    html += `<div style="margin-top:18px">`;
+    state.plan.forEach((week, idx) => {
+      html += renderWeekCard(week, idx);
+    });
+    html += `</div>`;
+  }
+  main.innerHTML = html;
+}
+
+function generatePlan() {
+  const sd = document.getElementById("startDate").value || state.startDate;
+  const nw = parseInt(document.getElementById("numWeeks").value) || 4;
+  state.startDate = sd; state.numWeeks = nw;
+  const scheduledIds = new Set(state.scheduledVisits.map(v => v.dealer_num));
+  state.plan = planMultipleWeeks(sd, nw, clusters, state.completedIds, scheduledIds, state.recentTouches, state.cooldownDays);
+  state.approvedWeeks = new Set();
+  render();
+  if (state.plan.length === 0) {
+    showToast("No weeks could be planned. All eligible dealers may be scheduled or in cooldown.", "#C8102E");
+  }
+}
+
+function renderWeekCard(week, idx) {
+  const isApproved = state.approvedWeeks.has(idx);
+  const totalVisits = week.summary.totalVisits;
+  return `
+    <div class="week-card">
+      <div class="week-hdr" style="${isApproved ? 'background:rgba(10,124,58,.08);border-bottom-color:rgba(10,124,58,.25)' : ''}">
+        <div>
+          <div class="week-ttl">Week of ${week.weekOf} &middot; ${week.region || "Multi-region"}</div>
+          <div class="week-meta">
+            ${totalVisits} visits &middot;
+            ${week.mustFly ? "✈ Flight required" : "🚗 Drive"} &middot;
+            ~${week.driveHours}h drive from Houston
+            ${week.summary.tier1 > 0 ? ` &middot; <span style="color:#C8102E;font-weight:600">${week.summary.tier1} Tier 1</span>` : ""}
+            ${week.summary.tier2 > 0 ? ` &middot; ${week.summary.tier2} Tier 2` : ""}
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          ${isApproved
+            ? `<span class="badge pill-green">✓ Approved</span>`
+            : `<button class="btn btn-green btn-sm" onclick="approveWeek(${idx})">Approve Week</button><button class="btn btn-ghost btn-sm" onclick="rejectWeek(${idx})">Reject</button>`}
+        </div>
+      </div>
+      <div class="week-days">
+        ${week.days.map(day => renderDay(day, week, idx)).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderDay(day, week, weekIdx) {
+  let body = "";
+  if (day.type === "travel") {
+    body = `<div style="font-size:11px;color:#57534e;font-style:italic;padding:14px 6px;text-align:center">✈ Travel day</div>`;
+  } else if (day.visits.length === 0) {
+    body = `<div style="font-size:11px;color:#a8a29e;font-style:italic;padding:14px 6px;text-align:center">Open</div>`;
+  } else {
+    body = day.visits.map(v => `
+      <div class="visit">
+        <div class="visit-time">${fmt12(v.time)} ${v.mode === "Teams" ? "📹" : "📍"}</div>
+        <div class="visit-name">${v.dealer.name}</div>
+        <div class="visit-meta">${v.dealer.city}, ${v.dealer.state} &middot; ${v.dealer.tier}</div>
+      </div>
+    `).join("");
+  }
+  if (day.note) body += `<div class="day-note">${day.note}</div>`;
+  return `
+    <div class="day">
+      <div class="day-hdr">${day.label}</div>
+      ${body}
+    </div>
+  `;
+}
+
+function approveWeek(idx) {
+  const week = state.plan[idx];
+  week.days.forEach(day => day.visits.forEach(v => scheduleVisit(v.dealer, day.date, v.time, v.mode)));
+  state.approvedWeeks.add(idx);
+  showToast(`✓ Week of ${week.weekOf} approved (${week.summary.totalVisits} visits added)`, "#0A7C3A");
+  render();
+}
+function rejectWeek(idx) {
+  state.plan = state.plan.filter((_, i) => i !== idx);
+  // Re-key approvedWeeks
+  const newApproved = new Set();
+  state.approvedWeeks.forEach(i => { if (i < idx) newApproved.add(i); else if (i > idx) newApproved.add(i - 1); });
+  state.approvedWeeks = newApproved;
+  render();
+}
+
+// ============ TRIP SUGGESTIONS ============
+function renderTrips(main) {
+  const scheduledIds = new Set(state.scheduledVisits.map(v => v.dealer_num));
+  const trips = Object.entries(clusters).map(([name, dealers]) => {
+    const avail = dealers.filter(d => !state.completedIds.has(d.dealer_num) && !scheduledIds.has(d.dealer_num));
+    const inPerson = avail.filter(d => d.visitMode === "In-Person" && !d.isLeader);
+    const teams = avail.filter(d => d.visitMode === "Teams" && !d.isLeader);
+    const tier1 = inPerson.filter(d => d.tier === "Tier 1").length;
+    const tier2 = inPerson.filter(d => d.tier === "Tier 2").length;
+    const tier3 = inPerson.filter(d => d.tier === "Tier 3").length;
+    const tier4 = inPerson.filter(d => d.tier === "Tier 4").length;
+    const sample = inPerson[0] || teams[0];
+    const dist = sample ? sample.distToHouston : 0;
+    return { name, dealers, avail, inPerson, teams, tier1, tier2, tier3, tier4, dist, score: tier1 * 3 + tier2 * 2 + tier3 * 1.5 + tier4 };
+  }).filter(t => t.avail.length > 0).sort((a, b) => b.score - a.score);
+
+  let html = `
+    <div class="card-title" style="margin-bottom:14px">Regional Trip Suggestions &middot; Sorted by Priority</div>
+    <div class="g3" style="grid-template-columns:repeat(auto-fill,minmax(320px,1fr))">
+  `;
+  trips.forEach(t => {
+    html += `
+      <div class="trip-card" onclick="selectCluster('${t.name.replace(/'/g, "\\'")}')">
+        <div class="trip-name">${t.name}</div>
+        <div class="trip-stats">
+          ${t.inPerson.length} in-person &middot; ${t.teams.length} Teams
+          ${t.dist > 0 ? ` &middot; ~${Math.round(t.dist)}mi from Houston` : " &middot; Houston anchor"}
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+          ${t.tier1 > 0 ? `<span class="badge pill-red">${t.tier1} Tier 1</span>` : ""}
+          ${t.tier2 > 0 ? `<span class="badge pill-gold">${t.tier2} Tier 2</span>` : ""}
+          ${t.tier3 > 0 ? `<span class="badge pill-gray">${t.tier3} Tier 3</span>` : ""}
+          ${t.tier4 > 0 ? `<span class="badge pill-gray">${t.tier4} Tier 4</span>` : ""}
+        </div>
+        <div style="font-size:12px;color:#57534e">Click to view dealer list</div>
+      </div>
+    `;
+  });
+  html += `</div>`;
+
+  if (state.selectedCluster) {
+    const cluster = trips.find(t => t.name === state.selectedCluster);
+    if (cluster) {
+      html += `
+        <div class="card" style="margin-top:18px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <div class="card-title" style="margin:0">${cluster.name} &middot; ${cluster.avail.length} available</div>
+            <button class="btn btn-ghost btn-sm" onclick="state.selectedCluster=null;render();">Close</button>
+          </div>
+          <table>
+            <thead><tr><th>Dealer</th><th>City</th><th class="c">Tier</th><th class="c">Mode</th><th class="r">Priority</th><th></th></tr></thead>
+            <tbody>
+              ${cluster.avail.sort((a, b) => b.priority_score - a.priority_score).map(d => `
+                <tr>
+                  <td><strong>${d.name}</strong>${d.isLeader ? ' <span class="badge pill-gray" style="margin-left:6px">Leader</span>' : ''}</td>
+                  <td>${d.city}, ${d.state}</td>
+                  <td class="c"><span class="badge ${tierBadge(d.tier)}">${d.tier}</span></td>
+                  <td class="c">${d.visitMode === "Teams" ? "📹 Teams" : "📍 In-Person"}</td>
+                  <td class="r">${(d.priority_score * 100).toFixed(0)}%</td>
+                  <td><button class="btn btn-sm" onclick="openSchedule(${d.dealer_num})">Schedule</button></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+  }
+
+  main.innerHTML = html;
+}
+function selectCluster(name) {
+  state.selectedCluster = state.selectedCluster === name ? null : name;
+  render();
+}
+function tierBadge(tier) {
+  if (tier === "Tier 1") return "pill-red";
+  if (tier === "Tier 2") return "pill-gold";
+  if (tier === "Tier 3") return "pill-gray";
+  return "pill-gray";
+}
+
+// ============ MY SCHEDULE ============
+function renderSchedule(main) {
+  if (state.scheduledVisits.length === 0) {
+    main.innerHTML = `
+      <div class="card" style="text-align:center;padding:50px 20px">
+        <div style="font-size:36px;margin-bottom:10px;opacity:.4">📅</div>
+        <div style="font-size:16px;font-weight:600;margin-bottom:6px">No visits scheduled yet</div>
+        <div style="font-size:13px;color:#57534e">Use <strong>Plan My Week</strong> to generate a multi-week plan, or pick from <strong>Trip Suggestions</strong> or the <strong>Dealer Directory</strong>.</div>
+      </div>
+    `;
+    return;
+  }
+  const sorted = [...state.scheduledVisits].sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  // Group by week
+  const groups = {};
+  sorted.forEach(v => {
+    const monday = mondayOf(new Date(v.date + "T00:00:00"));
+    const wk = fmtDate(monday);
+    if (!groups[wk]) groups[wk] = [];
+    groups[wk].push(v);
+  });
+
+  let html = `<div class="card-title" style="margin-bottom:14px">My Schedule &middot; ${sorted.length} visits</div>`;
+  Object.entries(groups).forEach(([wk, visits]) => {
+    html += `
+      <div class="card">
+        <div class="card-title">Week of ${wk}</div>
+        <table>
+          <thead><tr><th>Date</th><th>Time</th><th>Dealer</th><th>City</th><th class="c">Tier</th><th class="c">Mode</th><th>Email</th><th></th></tr></thead>
+          <tbody>
+            ${visits.map(v => `
+              <tr>
+                <td>${v.date}</td>
+                <td><strong>${fmt12(v.time)}</strong></td>
+                <td><strong>${v.name}</strong></td>
+                <td>${v.city}, ${v.state}</td>
+                <td class="c"><span class="badge ${tierBadge(v.tier)}">${v.tier}</span></td>
+                <td class="c">${v.mode === "Teams" ? "📹" : "📍"} ${v.mode}</td>
+                <td>${v.emailSent ? '<span class="badge pill-green">✓ Sent</span>' : '<span class="badge pill-gray">Not sent</span>'}</td>
+                <td>
+                  <button class="btn btn-sm btn-blue" onclick="openEmail('${v.id}')">Email</button>
+                  <button class="btn btn-sm btn-green" onclick="completeVisit('${v.id}'); render(); showToast('✓ Marked complete','#0A7C3A');">Done</button>
+                  <button class="btn btn-sm btn-ghost" onclick="if(confirm('Remove this visit?')){unscheduleVisit('${v.id}'); render();}">✕</button>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+  });
+
+  // Completed dealers section
+  if (state.completedIds.size > 0) {
+    html += `
+      <div class="card">
+        <div class="card-title">Completed (${state.completedIds.size})</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          ${[...state.completedIds].map(num => {
+            const d = ALL_DEALERS.find(x => x.dealer_num === num);
+            if (!d) return "";
+            return `<span class="badge pill-green" style="padding:6px 12px;cursor:pointer" onclick="if(confirm('Mark ${d.name} as not yet visited?')){uncompleteDealer(${num}); render();}">${d.name} ✕</span>`;
+          }).join("")}
+        </div>
+        <div style="font-size:11px;color:#a8a29e;margin-top:8px">Click a dealer to mark as not yet visited.</div>
+      </div>
+    `;
+  }
+  main.innerHTML = html;
+}
+
+// ============ DEALER DIRECTORY ============
+function renderDirectory(main) {
+  const scheduledIds = new Set(state.scheduledVisits.map(v => v.dealer_num));
+  const filtered = ALL_DEALERS.filter(d => {
+    if (state.filterTier !== "All" && d.tier !== state.filterTier) return false;
+    if (state.filterMode !== "All" && d.visitMode !== state.filterMode) return false;
+    if (state.filterDes === "Non-Leaders Only" && d.isLeader) return false;
+    if (state.filterDes === "Leaders Only" && !d.isLeader) return false;
+    if (state.searchTerm) {
+      const q = state.searchTerm.toLowerCase();
+      if (!d.name.toLowerCase().includes(q) && !String(d.dealer_num).includes(q) && !d.city.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  }).sort((a, b) => b.effectivePriority - a.effectivePriority);
+
+  main.innerHTML = `
+    <div class="card">
+      <div class="filter-row">
+        <div class="f"><label class="fl">Search</label><input type="text" class="fi" id="searchTerm" value="${state.searchTerm}" placeholder="Name, city, dealer #" oninput="state.searchTerm=this.value; renderDirectoryOnly();"></div>
+        <div class="f"><label class="fl">Tier</label><select class="fi" onchange="state.filterTier=this.value; render();"><option ${state.filterTier === "All" ? "selected" : ""}>All</option><option ${state.filterTier === "Tier 1" ? "selected" : ""}>Tier 1</option><option ${state.filterTier === "Tier 2" ? "selected" : ""}>Tier 2</option><option ${state.filterTier === "Tier 3" ? "selected" : ""}>Tier 3</option><option ${state.filterTier === "Tier 4" ? "selected" : ""}>Tier 4</option></select></div>
+        <div class="f"><label class="fl">Mode</label><select class="fi" onchange="state.filterMode=this.value; render();"><option ${state.filterMode === "All" ? "selected" : ""}>All</option><option ${state.filterMode === "In-Person" ? "selected" : ""}>In-Person</option><option ${state.filterMode === "Teams" ? "selected" : ""}>Teams</option></select></div>
+        <div class="f"><label class="fl">Designation</label><select class="fi" onchange="state.filterDes=this.value; render();"><option ${state.filterDes === "All" ? "selected" : ""}>All</option><option ${state.filterDes === "Non-Leaders Only" ? "selected" : ""}>Non-Leaders Only</option><option ${state.filterDes === "Leaders Only" ? "selected" : ""}>Leaders Only</option></select></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Dealers (${filtered.length} of ${ALL_DEALERS.length})</div>
+      <table>
+        <thead><tr><th>Dealer</th><th>City</th><th>State</th><th class="c">Tier</th><th class="c">Mode</th><th>Designation</th><th class="r">Priority</th><th class="r">TCUV YTD</th><th></th></tr></thead>
+        <tbody>
+          ${filtered.map(d => {
+            const isCompleted = state.completedIds.has(d.dealer_num);
+            const isScheduled = scheduledIds.has(d.dealer_num);
+            return `
+              <tr style="${isCompleted ? 'opacity:.55' : ''}${isScheduled ? 'background:rgba(21,88,176,.05)' : ''}">
+                <td><strong>${d.name}</strong> <span style="color:#a8a29e;font-size:11px">#${d.dealer_num}</span>${d.isLeader ? ' <span class="badge pill-gray" style="margin-left:4px">Leader</span>' : ''}</td>
+                <td>${d.city}</td>
+                <td>${d.state}</td>
+                <td class="c"><span class="badge ${tierBadge(d.tier)}">${d.tier}</span></td>
+                <td class="c">${d.visitMode === "Teams" ? "📹" : "📍"}</td>
+                <td style="font-size:12px;color:#57534e">${d.designation}</td>
+                <td class="r">${(d.priority_score * 100).toFixed(0)}%</td>
+                <td class="r">${d.tcuv_ytd}</td>
+                <td>
+                  ${isCompleted
+                    ? `<button class="btn btn-sm btn-ghost" onclick="uncompleteDealer(${d.dealer_num}); render();">Reopen</button>`
+                    : isScheduled
+                      ? `<span class="badge pill-blue">Scheduled</span>`
+                      : `<button class="btn btn-sm" onclick="openSchedule(${d.dealer_num})">Schedule</button>`}
+                </td>
+              </tr>
+            `;
+          }).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+function renderDirectoryOnly() {
+  // For search input, re-render only the directory portion to preserve focus
+  const main = document.getElementById("main");
+  const searchVal = document.getElementById("searchTerm").value;
+  state.searchTerm = searchVal;
+  renderDirectory(main);
+  const inp = document.getElementById("searchTerm");
+  if (inp) { inp.focus(); inp.setSelectionRange(searchVal.length, searchVal.length); }
+}
+
+// ============ SCHEDULING MODAL ============
+function openSchedule(dealerNum) {
+  const dealer = ALL_DEALERS.find(d => d.dealer_num === dealerNum);
+  if (!dealer) return;
+  const today = new Date(); const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate() + 7).padStart(2, "0");
+  const defaultDate = `${yyyy}-${mm}-${dd}`;
+
+  const modal = document.createElement("div");
+  modal.className = "modal-bg";
+  modal.id = "schedModal";
+  modal.innerHTML = `
+    <div class="modal">
+      <div class="modal-hdr">
+        <div class="modal-ttl">Schedule Visit &middot; ${dealer.name}</div>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('schedModal').remove()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="font-size:13px;color:#57534e;margin-bottom:14px">${dealer.address}, ${dealer.city}, ${dealer.state} ${dealer.zip}</div>
+        <div class="g3" style="margin-bottom:14px">
+          <div><label class="fl">Date</label><input type="date" id="schedDate" class="fi" value="${defaultDate}"></div>
+          <div><label class="fl">Time</label><input type="time" id="schedTime" class="fi" value="10:00"></div>
+          <div><label class="fl">Mode</label><select id="schedMode" class="fi"><option ${dealer.visitMode === "In-Person" ? "selected" : ""}>In-Person</option><option ${dealer.visitMode === "Teams" ? "selected" : ""}>Teams</option></select></div>
+        </div>
+        <div style="font-size:12px;color:#57534e;background:#fafaf9;border:1px solid #e7e5e4;border-radius:6px;padding:10px;line-height:1.5">
+          <strong>Default mode:</strong> ${dealer.visitMode}. Designation: <strong>${dealer.designation}</strong>.
+          ${dealer.outOfState ? `<br>Out-of-state dealer (${dealer.state}). Plan for travel.` : ""}
+          ${dealer.distToHouston > 0 ? `<br>Distance from Houston: ~${Math.round(dealer.distToHouston)} mi.` : ""}
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" onclick="document.getElementById('schedModal').remove()">Cancel</button>
+        <button class="btn btn-red" onclick="confirmSchedule(${dealer.dealer_num})">Schedule Visit</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+function confirmSchedule(dealerNum) {
+  const dealer = ALL_DEALERS.find(d => d.dealer_num === dealerNum);
+  const date = document.getElementById("schedDate").value;
+  const time = document.getElementById("schedTime").value;
+  const mode = document.getElementById("schedMode").value;
+  if (!date || !time) { alert("Date and time required."); return; }
+  scheduleVisit(dealer, date, time, mode);
+  document.getElementById("schedModal").remove();
+  showToast(`✓ Scheduled: ${dealer.name} on ${date} at ${fmt12(time)}`, "#0A7C3A");
+  render();
+}
+
+// ============ EMAIL MODAL ============
+function openEmail(visitId) {
+  const v = state.scheduledVisits.find(x => x.id === visitId);
+  if (!v) return;
+  const dealer = ALL_DEALERS.find(d => d.dealer_num === v.dealer_num);
+  const email = generateEmail(dealer, v.date, v.time, v.mode, state.senderName);
+
+  const modal = document.createElement("div");
+  modal.className = "modal-bg";
+  modal.id = "emailModal";
+  modal.innerHTML = `
+    <div class="modal" style="max-width:760px">
+      <div class="modal-hdr">
+        <div class="modal-ttl">Email Draft &middot; ${dealer.name}</div>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('emailModal').remove()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="g2" style="margin-bottom:10px">
+          <div><label class="fl">To</label><input class="fi" id="emTo" value="${email.recipient || ""}"></div>
+          <div><label class="fl">CC</label><input class="fi" id="emCc" value="${email.cc || ""}"></div>
+        </div>
+        <div style="margin-bottom:10px"><label class="fl">Subject</label><input class="fi" id="emSubj" value="${email.subject.replace(/"/g, "&quot;")}"></div>
+        <div><label class="fl">Body</label><textarea id="emBody" style="width:100%;min-height:340px;padding:12px;border:1px solid #d4d4d4;border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;line-height:1.6">${email.body}</textarea></div>
+        ${!state.senderName ? `<div style="margin-top:8px;font-size:12px;color:#C8102E">⚠ Set your name in the header so the signature line populates.</div>` : ""}
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" onclick="document.getElementById('emailModal').remove()">Cancel</button>
+        <button class="btn btn-blue" onclick="copyEmail()">Copy</button>
+        <button class="btn btn-red" onclick="sendEmail('${visitId}')">Open in Mail Client</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+function copyEmail() {
+  const subj = document.getElementById("emSubj").value;
+  const body = document.getElementById("emBody").value;
+  navigator.clipboard.writeText(`Subject: ${subj}\n\n${body}`).then(() => showToast("✓ Email copied to clipboard", "#0A7C3A"));
+}
+function sendEmail(visitId) {
+  const to = document.getElementById("emTo").value;
+  const cc = document.getElementById("emCc").value;
+  const subj = document.getElementById("emSubj").value;
+  const body = document.getElementById("emBody").value;
+  const url = `mailto:${encodeURIComponent(to)}?cc=${encodeURIComponent(cc)}&subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+  window.location.href = url;
+  markEmailSent(visitId);
+  document.getElementById("emailModal").remove();
+  showToast("✓ Email opened in mail client (marked sent)", "#0A7C3A");
+  render();
+}
+
+// ============ HISTORY IMPORT ============
+function importHistory() {
+  const raw = document.getElementById("historyPaste").value;
+  if (!raw.trim()) return;
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) throw new Error("Expected an array");
+    const map = {};
+    let imported = 0, skipped = 0;
+    parsed.forEach(row => {
+      if (!row || typeof row !== "object") { skipped++; return; }
+      let agentDealer = null;
+      if (row.dealer_num != null) agentDealer = ALL_DEALERS.find(d => d.dealer_num === Number(row.dealer_num));
+      if (!agentDealer && row.name) {
+        const want = String(row.name).toUpperCase().replace(/[^A-Z0-9]/g, "");
+        agentDealer = ALL_DEALERS.find(d => d.name.toUpperCase().replace(/[^A-Z0-9]/g, "") === want);
+      }
+      if (!agentDealer && row.name) {
+        const wantTokens = String(row.name).toUpperCase().split(/\s+/).filter(t => t.length >= 4 && t !== "TOYOTA");
+        if (wantTokens.length) {
+          agentDealer = ALL_DEALERS.find(d => {
+            const dt = d.name.toUpperCase().split(/\s+/);
+            return wantTokens.some(t => dt.includes(t));
+          });
+        }
+      }
+      if (!agentDealer) { skipped++; return; }
+      map[agentDealer.dealer_num] = {
+        lastTouchDate: row.lastTouchDate || row.lastVisitDate || null,
+        lastTouchType: row.lastTouchType || row.lastVisitType || "Unknown",
+        dealerName: agentDealer.name
+      };
+      imported++;
+    });
+    state.recentTouches = map;
+    state.importMsg = `Imported ${imported} dealers (${skipped} unmatched). Cooldown: ${state.cooldownDays} days.`;
+    saveState();
+    render();
+  } catch (e) {
+    state.importMsg = `Import failed: ${e.message}`;
+    render();
+  }
+}
+function clearHistory() {
+  state.recentTouches = {};
+  state.importMsg = "";
+  saveState();
+  render();
+}
+
+// ============ RULES MODAL ============
+function showRules() {
+  const modal = document.createElement("div");
+  modal.className = "modal-bg";
+  modal.id = "rulesModal";
+  modal.innerHTML = `
+    <div class="modal">
+      <div class="modal-hdr"><div class="modal-ttl">Scheduling Rules</div><button class="btn btn-ghost btn-sm" onclick="document.getElementById('rulesModal').remove()">✕</button></div>
+      <div class="modal-body" style="font-size:13px;line-height:1.7;color:#3A4252">
+        <strong>Time slots:</strong> 10:00 AM, 1:00 PM, 3:00 PM (3 visits/day) or 10:00 AM, 1:00 PM (2 visits/day). Friday Houston days end by 2 PM.<br><br>
+        <strong>Tier priority:</strong> Tier 1 first, then Tier 2, then Tier 3, then Tier 4. Within tier, sorted by priority score.<br><br>
+        <strong>Leaders deprioritized:</strong> Dealers with "LEADERS" or "LEADERS + RT OPP" designation are skipped from auto-planning (they're already performing). You can still schedule them manually from the Directory.<br><br>
+        <strong>Out-of-state weeks:</strong> Mon-Wed visits, Thursday is a return travel day, Friday is a Houston metro day.<br><br>
+        <strong>In-state road-trip weeks:</strong> Mon-Thu visits (12 dealers max), Friday is Houston metro.<br><br>
+        <strong>Friday default:</strong> Houston metro in-person visits if 2+ are available, otherwise Teams calls 10 AM - 12 PM.<br><br>
+        <strong>Visit mode:</strong> Auto-set based on designation. Dealers in "Not Participating" or "RT Only" status that are more than 60 miles from Houston default to Teams calls.<br><br>
+        <strong>Cooldown:</strong> Dealers with a recent touch (visit, Teams, training, or scheduled follow-up from your dashboard) within the cooldown window (default 90 days) are excluded from auto-planning.
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+
+// ============ INIT ============
+loadState();
+// Hook up sender input
+document.getElementById("senderName").value = state.senderName;
+document.getElementById("senderName").addEventListener("input", (e) => {
+  state.senderName = e.target.value;
+  saveState();
+});
+render();
+</script>
+</body>
+</html>
