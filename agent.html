@@ -291,6 +291,18 @@ function fmtDate(d) {
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
 }
+// Convert 24-hour "HH:MM" -> 12-hour "h:MM AM/PM" for display
+function fmt12(t) {
+  if (!t || typeof t !== "string") return t || "";
+  const m = t.match(/^(\d{1,2}):(\d{2})/);
+  if (!m) return t;
+  let h = parseInt(m[1], 10);
+  const min = m[2];
+  const period = h >= 12 ? "PM" : "AM";
+  if (h === 0) h = 12;
+  else if (h > 12) h -= 12;
+  return `${h}:${min} ${period}`;
+}
 function mondayOf(date) {
   const d = new Date(date);
   const dow = d.getDay();
@@ -446,7 +458,7 @@ function generateEmail(dealer, date, time, mode, senderName) {
   const greeting = dealer.gm_first ? `${dealer.salutation || "Mr."} ${dealer.gm_last}` : "General Manager";
   const recipientName = dealer.gm_first ? `${dealer.gm_first} ${dealer.gm_last}` : "General Manager";
   const dateStr = date ? new Date(date + "T00:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }) : "[proposed date]";
-  const timeStr = time || "[time]";
+  const timeStr = time ? fmt12(time) : "[time]";
 
   if (mode === "Teams") {
     return {
@@ -805,7 +817,7 @@ function renderDay(day, week, weekIdx) {
   } else {
     body = day.visits.map(v => `
       <div class="visit">
-        <div class="visit-time">${v.time} ${v.mode === "Teams" ? "📹" : "📍"}</div>
+        <div class="visit-time">${fmt12(v.time)} ${v.mode === "Teams" ? "📹" : "📍"}</div>
         <div class="visit-name">${v.dealer.name}</div>
         <div class="visit-meta">${v.dealer.city}, ${v.dealer.state} &middot; ${v.dealer.tier}</div>
       </div>
@@ -951,7 +963,7 @@ function renderSchedule(main) {
             ${visits.map(v => `
               <tr>
                 <td>${v.date}</td>
-                <td><strong>${v.time}</strong></td>
+                <td><strong>${fmt12(v.time)}</strong></td>
                 <td><strong>${v.name}</strong></td>
                 <td>${v.city}, ${v.state}</td>
                 <td class="c"><span class="badge ${tierBadge(v.tier)}">${v.tier}</span></td>
@@ -1103,7 +1115,7 @@ function confirmSchedule(dealerNum) {
   if (!date || !time) { alert("Date and time required."); return; }
   scheduleVisit(dealer, date, time, mode);
   document.getElementById("schedModal").remove();
-  showToast(`✓ Scheduled: ${dealer.name} on ${date} at ${time}`, "#0A7C3A");
+  showToast(`✓ Scheduled: ${dealer.name} on ${date} at ${fmt12(time)}`, "#0A7C3A");
   render();
 }
 
