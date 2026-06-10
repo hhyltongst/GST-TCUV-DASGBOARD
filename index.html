@@ -4408,7 +4408,7 @@ function dLog(msg, color){
 async function callAI(prompt, maxTokens=1000, systemPrompt=''){
   // Try Vercel proxy first
   try{
-    const body={model:'claude-sonnet-4-20250514',max_tokens:maxTokens,messages:[{role:'user',content:prompt}]};
+    const body={model:'claude-sonnet-4-5',max_tokens:maxTokens,messages:[{role:'user',content:prompt}]};
     if(systemPrompt) body.system=systemPrompt;
     const resp=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     if(resp.ok){
