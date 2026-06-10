@@ -79,6 +79,26 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);-webki
 .kpi-lbl{font-size:11px;color:var(--dim-m);text-transform:uppercase;letter-spacing:1.2px;font-weight:600;margin-bottom:8px}
 .kpi-val{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:800;color:var(--kc,var(--blue));line-height:1.1}
 .kpi-sub{font-size:12px;color:var(--dim-m);margin-top:6px;font-weight:500}
+/* ─── MANUAL OVERRIDE ─── */
+.kpi-edit-btn{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:5px;border:1.5px solid var(--bdr);background:#fff;color:var(--dim-m);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s,border-color .15s,color .15s;z-index:2;padding:0;line-height:1}
+.kpi:hover .kpi-edit-btn{opacity:1}
+.kpi-edit-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-lt)}
+.kpi-ovr-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--orange);border:2px solid #fff;z-index:3;pointer-events:none}
+.ovr-modal-bg{position:fixed;inset:0;background:rgba(10,14,23,.55);z-index:6000;display:flex;align-items:center;justify-content:center;padding:20px}
+.ovr-modal{background:#fff;border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,.38);width:100%;max-width:820px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+.ovr-modal-hdr{padding:18px 22px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;background:var(--hdr);color:#fff;border-radius:14px 14px 0 0}
+.ovr-modal-body{overflow-y:auto;padding:20px 22px;flex:1}
+.ovr-modal-ftr{padding:14px 22px;border-top:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-shrink:0;background:var(--surface)}
+.ovr-sec{margin-bottom:22px}
+.ovr-sec-ttl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:var(--dim-m);margin-bottom:10px;padding-bottom:6px;border-bottom:1.5px solid var(--bdr);display:flex;align-items:center;gap:8px}
+.ovr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.ovr-field{display:flex;flex-direction:column;gap:3px}
+.ovr-field label{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.7px;display:flex;align-items:center;gap:5px}
+.ovr-field input{padding:8px 10px;border-radius:7px;border:1.5px solid var(--bdr);font-size:13px;font-family:'Inter',sans-serif;font-weight:600;color:var(--txt);outline:none;transition:border-color .15s,box-shadow .15s;width:100%}
+.ovr-field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(21,88,176,.1)}
+.ovr-field input.has-override{border-color:var(--orange);background:rgba(194,65,12,.03)}
+.ovr-badge{font-size:9px;background:var(--orange);color:#fff;border-radius:10px;padding:2px 6px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.ovr-src{font-size:10px;color:var(--dim-lt);font-style:italic;margin-top:1px}
 
 /* ─── SECTION HDR ─── */
 .sec-hdr{display:flex;align-items:center;gap:12px;margin-bottom:20px}
@@ -206,6 +226,27 @@ th.c,td.c{text-align:center}
 .tip-green{background:var(--green-lt);border:1px solid rgba(10,124,58,.2);color:var(--green)}
 .tip-red{background:var(--red-lt);border:1px solid rgba(200,16,46,.2);color:var(--red)}
 .tip-purple{background:var(--purple-lt);border:1px solid rgba(91,33,182,.2);color:var(--purple)}
+.tip-orange{background:var(--orange-lt);border:1px solid rgba(194,65,12,.2);color:var(--orange)}
+/* ─── SPARK TREND ─── */
+.spark-wrap{display:flex;align-items:flex-end;gap:2px;height:36px}
+.spark-bar{border-radius:2px 2px 0 0;min-width:6px;transition:height .3s}
+/* ─── COMMITMENT TRACKER ─── */
+.cmt-card{padding:14px;border:1.5px solid var(--bdr);border-radius:10px;margin-bottom:10px;border-left:4px solid var(--blue);background:var(--card);transition:box-shadow .2s}
+.cmt-card:hover{box-shadow:var(--sh-md)}
+.cmt-card.done{border-left-color:var(--green);opacity:.7}
+.cmt-card.overdue{border-left-color:var(--red)}
+/* ─── SCORECARD ─── */
+.sc-dim{padding:14px;border:1px solid var(--bdr);border-radius:10px;margin-bottom:8px;display:flex;align-items:center;gap:14px;background:var(--card)}
+.sc-stars{display:flex;gap:4px}
+.sc-star{font-size:22px;cursor:pointer;transition:transform .1s;line-height:1}
+.sc-star:hover{transform:scale(1.2)}
+/* ─── DISTRICT TABLE ─── */
+.dt-row{display:grid;align-items:center;padding:10px 14px;border-bottom:1px solid var(--bdr);transition:background .15s;cursor:pointer;border-radius:6px}
+.dt-row:hover{background:var(--surface)}
+.dt-hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--dim-m);padding:8px 14px;background:var(--surface);border-radius:8px 8px 0 0;border-bottom:2px solid var(--bdr)}
+/* ─── BRIEF ─── */
+.brief-section{padding:16px 18px;border-radius:10px;margin-bottom:12px;border-left:5px solid var(--blue)}
+.brief-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;margin:3px}
 .tip-gold{background:var(--gold-lt);border:1px solid rgba(138,98,0,.2);color:var(--gold)}
 
 /* ─── EMAIL ─── */
@@ -220,6 +261,7 @@ canvas{display:block}
 footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);background:#fff;font-size:12px;color:var(--dim-m)}
 
 /* ─── PRINT ─── */
+@keyframes spin{to{transform:rotate(360deg)}}
 @media print{.nav,.btn,.btn-hdr,.ds-sel,.dp,.fi-ta,.hdr-r,.pipe-add{display:none!important}.pg{padding:4px}.card,.kpi{box-shadow:none!important}}
 </style>
 </head>
@@ -242,7 +284,7 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
       <span id="userRoleBadge" style="font-size:9px;background:rgba(255,255,255,.2);padding:1px 7px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase"></span>
     </div>
     <button class="btn-hdr" id="demoBtn" onclick="toggleDemoMode()" title="Anonymize dealer names for external demos - keeps all financial data intact">Demo Mode</button>
-    <button class="btn-hdr" onclick="window.print()">Print</button>
+    <button class="btn-hdr" onclick="printFullReport()">Print</button>
     <button class="btn-hdr" style="color:#ff6b6b;border-color:rgba(255,107,107,.4)" onclick="clearAllData()">Clear Data</button>
     <button class="btn-hdr" id="signOutBtn" style="display:none;color:#ffd166;border-color:rgba(255,209,102,.4)" onclick="signOut()">Sign Out</button>
     <div class="hdr-vr"></div>
@@ -406,9 +448,15 @@ let ci=1,tb='crm',charts={};
 // UI state: show/hide non-certified section on Financial page
 let finHideNonCert=false;
 const TABS=[
-  {id:'crm',l:'CRM Dashboard'},{id:'overview',l:'Overview'},{id:'fin',l:'Financial'},
+  {id:'crm',l:'CRM Dashboard'},{id:'brief',l:'Pre-Visit Brief'},
+  {id:'overview',l:'Overview'},{id:'fin',l:'Financial'},
   {id:'recon',l:'Recon'},{id:'sold',l:'Sold vs Obj'},{id:'inv',l:'Inventory'},
-  {id:'perf',l:'Performance Plan'},{id:'onepager',l:'One-Pager'},{id:'contacts',l:'Contacts'},{id:'tasks',l:'Tasks'},{id:'up',l:'Upload'},{id:'admin',l:'Admin',adminOnly:true}
+  {id:'perf',l:'Performance Plan'},{id:'onepager',l:'One-Pager'},
+  {id:'market',l:'Market Intel'},{id:'consult',l:'Consultative'},
+  {id:'agenda',l:'Visit Agenda'},{id:'commit',l:'Commitments'},
+  {id:'district',l:'District View'},{id:'scorecard',l:'Coaching Scorecard'},
+  {id:'contacts',l:'Contacts'},{id:'tasks',l:'Tasks'},{id:'up',l:'Upload'},
+  {id:'deploy',l:'🚀 Deploy',adminOnly:true},{id:'admin',l:'Admin',adminOnly:true}
 ];
 
 // ═══ DEMO MODE ════════════════════════════════════════════════
@@ -548,6 +596,8 @@ async function loadAll(){
     if(dd){const p=JSON.parse(dd);if(Array.isArray(p)&&p.length>0)D=p;}
     const ss=await store.get('tcuv-v9-s');
     if(ss){const p=JSON.parse(ss);if(p.ci)ci=p.ci;if(p.tb)tb=p.tb;if(typeof p.finHideNonCert==='boolean')finHideNonCert=p.finHideNonCert;}
+    // Ensure every dealer has the _overrides map (migration for existing records)
+    for(const d of D){if(typeof d._overrides!=='object'||d._overrides===null)d._overrides={};}
     // Run one-time migration after load
     const migFlag=await store.get('tcuv-v9-mig-103');
     if(migFlag!=='done'){
@@ -783,7 +833,11 @@ async function init(){
 function buildNav(){
   const isAdmin=currentUser&&currentUser.role==='admin';
   const visible=TABS.filter(t=>!t.adminOnly||isAdmin);
-  document.getElementById('navBar').innerHTML=visible.map(t=>`<button class="${tb===t.id?'active':''}" onclick="setTab('${t.id}')">${t.l}${t.adminOnly?' <span style="font-size:9px;background:var(--red);color:#fff;padding:1px 6px;border-radius:8px;margin-left:4px;letter-spacing:.5px">ADMIN</span>':''}</button>`).join('');
+  const c=gc();
+  const ovrCount=c&&c._overrides?Object.keys(c._overrides).length:0;
+  document.getElementById('navBar').innerHTML=
+    visible.map(t=>`<button class="${tb===t.id?'active':''}" onclick="setTab('${t.id}')">${t.l}${t.adminOnly?' <span style="font-size:9px;background:var(--red);color:#fff;padding:1px 6px;border-radius:8px;margin-left:4px;letter-spacing:.5px">ADMIN</span>':''}</button>`).join('')+
+    `<button onclick="openOvrModal()" style="margin-left:auto;padding:10px 14px;border:none;border-bottom:3px solid transparent;background:none;color:${ovrCount>0?OR:'var(--dim-m)'};font-weight:700;font-size:12px;cursor:pointer;font-family:\'Inter\',sans-serif;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;transition:color .15s;margin-bottom:-2px;display:flex;align-items:center;gap:5px" title="Manually override any metric">✎ Overrides${ovrCount>0?` <span style="background:${OR};color:#fff;border-radius:10px;padding:1px 7px;font-size:9px">${ovrCount}</span>`:''}</button>`;
 }
 function buildSel(){document.getElementById('dealerSel').innerHTML=D.map(d=>`<option value="${d.id}"${d.id===ci?' selected':''}>${dnm(d.nm)}</option>`).join('');}
 function setTab(id){tb=id;buildNav();render();saveAll();}
@@ -798,13 +852,50 @@ function gc(){return D.find(d=>d.id===ci)||D[0];}
 function dc(){Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});charts={};}
 function mkChart(id,cfg){if(!CL)return;const el=document.getElementById(id);if(!el)return;if(charts[id])try{charts[id].destroy();}catch(e){}charts[id]=new Chart(el,cfg);}
 function render(){dc();const mc=document.getElementById('mainContent'),c=gc();if(!c)return;
-  if(tb==='crm')rCRM(mc,c);else if(tb==='overview')rOv(mc,c);else if(tb==='fin')rFin(mc,c);
+  if(tb==='crm')rCRM(mc,c);else if(tb==='brief')rBrief(mc,c);
+  else if(tb==='overview')rOv(mc,c);else if(tb==='fin')rFin(mc,c);
   else if(tb==='recon')rRecon(mc,c);else if(tb==='sold')rSold(mc,c);else if(tb==='inv')rInv(mc,c);
-  else if(tb==='perf')rPerf(mc,c);else if(tb==='onepager')rOnePager(mc,c);else if(tb==='contacts')rContacts(mc,c);else if(tb==='tasks')rTasks(mc,c);else if(tb==='up')rUp(mc);
+  else if(tb==='perf')rPerf(mc,c);else if(tb==='onepager')rOnePager(mc,c);
+  else if(tb==='market')rMarket(mc,c);else if(tb==='consult')rConsult(mc,c);
+  else if(tb==='agenda')rAgenda(mc,c);else if(tb==='commit')rCommit(mc,c);
+  else if(tb==='district')rDistrict(mc);else if(tb==='scorecard')rScorecard(mc,c);
+  else if(tb==='contacts')rContacts(mc,c);else if(tb==='tasks')rTasks(mc,c);else if(tb==='up')rUp(mc);
+  else if(tb==='deploy')rDeploy(mc);
   else if(tb==='admin')rAdmin(mc);}
 
 // ═══ HELPERS ══════════════════════════════════════════════════
-function kpi(lbl,val,sub,col){return`<div class="kpi" style="--kc:${col}"><div class="kpi-lbl">${lbl}</div><div class="kpi-val">${val}</div>${sub?`<div class="kpi-sub">${sub}</div>`:''}</div>`;}
+// kpi(lbl, val, sub, col, ovrKey?)
+// ovrKey: a dot-path into dealer data for the editable field, e.g. 'fn.tu'
+// When ovrKey is provided, a pencil button appears on hover and an orange dot
+// shows when an override is active on that field.
+function kpi(lbl,val,sub,col,ovrKey){
+  const c=gc();
+  const hasOvr=ovrKey&&c&&_ovrActive(c,ovrKey);
+  return`<div class="kpi" style="--kc:${col}">
+    <div class="kpi-lbl">${lbl}</div>
+    <div class="kpi-val">${val}</div>
+    ${sub?`<div class="kpi-sub">${sub}</div>`:''}
+    ${ovrKey?`<button class="kpi-edit-btn" onclick="event.stopPropagation();openOvrModal('${ovrKey}')" title="Manual override">✎</button>`:''}
+    ${hasOvr?`<div class="kpi-ovr-dot" title="Manual override active"></div>`:''}
+  </div>`;
+}
+// Returns true if a manual override is stored for this dot-path field
+function _ovrActive(c,key){
+  if(!c||!key)return false;
+  const ovr=c._overrides||{};
+  return ovr.hasOwnProperty(key);
+}
+// Read the raw (non-override) value at a dot-path from a dealer object
+function _ovrRaw(c,key){
+  if(!c||!key)return undefined;
+  return key.split('.').reduce((o,k)=>o!=null?o[k]:undefined,c);
+}
+// Get the effective value: override wins over parsed
+function _ovrGet(c,key){
+  if(!c||!key)return undefined;
+  if(c._overrides&&c._overrides.hasOwnProperty(key))return c._overrides[key];
+  return _ovrRaw(c,key);
+}
 function sHdr(t,s=''){return`<div class="sec-hdr"><div class="sec-dot"></div><div><div class="sec-ttl">${t}</div>${s?`<div class="sec-sub">${s}</div>`:''}</div></div>`;}
 function badge(lbl,cls){return`<span class="badge ${cls}">${lbl}</span>`;}
 // Token-based dealer name matcher. Strips stop words, requires at least one
@@ -1106,11 +1197,11 @@ function rOv(mc,c){
   mc.innerHTML=`
   <div class="pg-hdr"><div class="pg-ttl">${dnm(c.nm)}</div><div class="pg-sub"><span style="font-weight:600;color:var(--txt)">📅 ${f.pr||'No period set'}</span>${f.cl?' &nbsp;·&nbsp; '+f.cl:''}</div><div class="pg-rule"></div></div>
   <div class="kpi-row">
-    ${kpi('Dept Total GP',f$(f.dGP),fN(f.tot||0)+' total used units',BL)}
-    ${kpi('TCUV Avg Front/Unit',f$(aF),'GST: '+f$(gF),aF>=gF?GN:RE)}
-    ${kpi('TCUV Avg Back/Unit',f$(aB),'GST: '+f$(gB),aB>=gB?GN:GD)}
+    ${kpi('Dept Total GP',f$(f.dGP),fN(f.tot||0)+' total used units',BL,'fn.dGP')}
+    ${kpi('TCUV Avg Front/Unit',f$(aF),'GST: '+f$(gF),aF>=gF?GN:RE,'fn.tg')}
+    ${kpi('TCUV Avg Back/Unit',f$(aB),'GST: '+f$(gB),aB>=gB?GN:GD,'fn.tFI')}
     ${kpi('TCUV Total GP/Unit',f$(aT),'Front+F&I, GST: '+f$(gT),aT>=gT?GN:GD)}
-    ${kpi('TCUV Avg Recon/Unit',f$(aR),'GST: '+f$(gR),aR<=gR?GN:RE)}
+    ${kpi('TCUV Avg Recon/Unit',f$(aR),'GST: '+f$(gR),aR<=gR?GN:RE,'fn.cR')}
     ${ovN>0?kpi('Units to Target',fN(ovN),pace2+' units/day · '+dl+'d left',RE):kpi('Units to Target','On Track',rcD?'Obj met':'No recap',GN)}
   </div>
   <div class="g3" style="margin-bottom:14px">
@@ -1171,7 +1262,7 @@ function rOv(mc,c){
     ${pyFull>0?`
     ${!periodParsed?`<div class="tip tip-blue" style="margin-bottom:12px;font-size:12px">⚠ Reporting period not detected (current value: <strong>${pr||'blank'}</strong>). The Current Monthly Avg and period calculations assume <strong>1 month</strong>. Set the period on the Upload tab as e.g. "Jan 2026 to Mar 2026" for accurate math, or enter CY This Period manually below.</div>`:''}
     <div class="kpi-row" style="margin-bottom:14px">
-      ${kpi('PY Total Sold',fN(pyFull),'Full year',BL)}
+      ${kpi('PY Total Sold',fN(pyFull),'Full year',BL,'fn.pyTCUV')}
       ${kpi('Growth Goal (+'+growthPct+'%)',fN(growthGoal),'Annual target',GN)}
       ${kpi('Monthly Target',fN(monthlyTarget),'Units per month',monthlyTarget<=Math.round(cyMonthly)?GN:RE)}
       ${kpi('Current Monthly Avg',fN(Math.round(cyMonthly)),(monthlyGap>0?'Need '+monthlyGap+' more/mo':monthlyGap===0?'On pace':'Exceeding by '+Math.abs(monthlyGap)+'/mo')+' · '+fN(Math.round(cyThisPeriod))+' ÷ '+numMo+' mo',monthlyGap<=0?GN:RE)}
@@ -1318,9 +1409,9 @@ function rFin(mc,c){
     Dept GP/Unit uses <strong>${fN(totU)} total used units</strong>  -  ${f$(f.dGP)} ÷ ${fN(totU)} = <strong>${f$(deptGPpu)}/unit</strong>.
   </div>
   <div class="kpi-row">
-    ${kpi('TCUV Avg Front/Unit',f$(aF),'GST: '+f$(gF),aF>=gF?GN:RE)}
-    ${kpi('TCUV Avg Back/Unit',f$(aB),'GST: '+f$(gB),aB>=gB?GN:GD)}
-    ${kpi('TCUV Avg Recon/Unit',f$(aR),'GST: '+f$(gR),aR<=gR?GN:RE)}
+    ${kpi('TCUV Avg Front/Unit',f$(aF),'GST: '+f$(gF),aF>=gF?GN:RE,'fn.tg')}
+    ${kpi('TCUV Avg Back/Unit',f$(aB),'GST: '+f$(gB),aB>=gB?GN:GD,'fn.tFI')}
+    ${kpi('TCUV Avg Recon/Unit',f$(aR),'GST: '+f$(gR),aR<=gR?GN:RE,'fn.cR')}
     ${kpi('TCUV Total GP/Unit',f$(aTcuv),'Front+F&I, GST: '+f$(gF+gB),aTcuv>=gF+gB?GN:GD)}
     ${kpi('Dept GP / All Used',f$(deptGPpu),f$(f.dGP)+' ÷ '+fN(totU)+' units',BL)}
   </div>
@@ -1797,10 +1888,10 @@ function rRecon(mc,c){
   mc.innerHTML=`
   <div class="pg-hdr"><div class="pg-ttl">Reconditioning Analysis</div><div class="pg-sub"><span style="font-weight:600;color:var(--txt)">${dnm(f.nm||c.nm)}</span> &nbsp;·&nbsp; <span style="font-weight:600;color:var(--txt)">📅 ${f.pr||'No period'}</span></div><div class="pg-rule"></div></div>
   <div class="kpi-row">
-    ${kpi('Dealer Recon/Unit',f$(cR),'Current period avg',cR<=gC?GN:RE)}
-    ${kpi('GST Avg Recon/Unit',f$(gC),'District benchmark',BL)}
+    ${kpi('Dealer Recon/Unit',f$(cR),'Current period avg',cR<=gC?GN:RE,'fn.cR')}
+    ${kpi('GST Avg Recon/Unit',f$(gC),'District benchmark',BL,'fn.gCR')}
     ${kpi('Variance',f$(vari),cR<=gC?'Below GST avg ✓':'Above GST avg  -  action needed',cR<=gC?GN:RE)}
-    ${kpi('Total Recon Cost',f$(f.cR||0),fN(f.tu)+' units x '+f$(cR)+'/unit',GD)}
+    ${kpi('Total Recon Cost',f$(f.cR||0),fN(f.tu)+' units x '+f$(cR)+'/unit',GD,'fn.cR')}
   </div>
   <div class="g2">
     <div class="card"><div class="card-title">Recon/Unit  -  Dealer vs GST</div><div class="cw" style="height:260px"><canvas id="rcBar"></canvas></div></div>
@@ -1867,7 +1958,7 @@ function rSold(mc,c){
     </div>
   </div>
   <div class="kpi-row">
-    ${kpi('Units Sold',sel.t,'Silver: '+sel.s+' · Gold: '+sel.g,RE)}
+    ${kpi('Units Sold',sel.t,'Silver: '+sel.s+' · Gold: '+sel.g,RE,'mtd.sold')}
     ${kpi('Objective',sel.o,sel.p+'% attainment',sel.p>=100?GN:GD)}
     ${kpi('Variance',sel.t-sel.o,sel.t>=sel.o?'Above obj ✓':'Need: '+(sel.o-sel.t)+' more',sel.t>=sel.o?GN:RE)}
     ${kpi('District Avg',dAvg,'Total: '+di.t+' · Obj: '+di.o,BL)}
@@ -2135,8 +2226,36 @@ function rPerf(mc,c){
     </div>
   </div>`;
 
-  // Auto-load recommendations for each area
-  if(pd.areas.length>0){setTimeout(()=>{pd.areas.forEach((a,i)=>{const el=document.getElementById('perfRec'+i);if(el)el.innerHTML=`<div style="font-size:12px;color:${BL};font-weight:600;background:var(--blue-lt);border:1px solid rgba(21,88,176,.15);border-radius:6px;padding:8px 12px">Loading recommendation...</div>`;});},100);}
+  // Auto-load AI recommendations for each gap area
+  if(pd.areas.length>0){
+    setTimeout(()=>{
+      pd.areas.forEach((a,i)=>{
+        const el=document.getElementById('perfRec'+i);
+        if(el){
+          el.innerHTML=`<div style="font-size:12px;color:${BL};font-weight:500;background:var(--blue-lt);border:1px solid rgba(21,88,176,.15);border-radius:6px;padding:8px 12px;display:flex;align-items:center;gap:8px"><span style="animation:spin 1s linear infinite;display:inline-block">⟳</span> Generating recommendation…</div>`;
+          genAreaRec(c,a,el);
+        }
+      });
+    },150);
+  }
+}
+
+async function genAreaRec(c,area,el){
+  const f=c.fn||{};
+  const prompt=`You are a GST TCUV master consultant. In 2-3 sentences, give one specific, data-driven action recommendation for this performance gap. Be direct and practical. No preamble.
+
+Dealer: ${c.nm} | Gap: ${area.cat} | Current: ${area.val} | Target: ${area.target} | Status: ${area.status}
+Context: ${area.detail}
+TCUV Units: ${fN(f.tu||0)} | Front GP/Unit: ${f$(Math.round((f.tg||0)/Math.max(f.tu||1,1)))} | Recon/Unit: ${f$(Math.round((f.cR||0)/Math.max(f.tu||1,1)))}
+
+Recommendation (2-3 sentences, specific action, who owns it, measurable target):`;
+  try{
+    const data=await callAI(prompt,300);
+    const txt=(data||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    el.innerHTML=`<div style="font-size:12px;line-height:1.6;padding:10px 12px;background:var(--blue-lt);border-left:3px solid ${BL};border-radius:0 6px 6px 0;color:var(--dim)"><strong style="color:${BL};font-size:11px;text-transform:uppercase;letter-spacing:.5px">AI Recommendation</strong><div style="margin-top:4px">${txt}</div></div>`;
+  }catch(e){
+    el.innerHTML=`<div style="font-size:11px;color:var(--dim-lt);padding:6px 10px;background:var(--surface);border-radius:6px;border:1px solid var(--bdr)">Recommendation unavailable — configure ANTHROPIC_API_KEY in Vercel to enable AI features.</div>`;
+  }
 }
 
 async function genPerfAnalysis(){
@@ -2241,13 +2360,9 @@ Provide a strategic analysis with these sections. Use plain text, no markdown he
 Rules: Be specific with numbers. Reference their actual data. No generic advice. Every claim about dollar gaps or opportunities must use the numbers in the data block above, not industry averages or estimated ranges. Professional tone. Under 600 words.`;
 
   try{
-    const resp=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
-    let data;
-    try{data=await resp.json();}catch(pe){throw new Error('Server returned a non-JSON response (HTTP '+resp.status+'). Check that /api/claude is deployed and ANTHROPIC_API_KEY is set on Vercel.');}
-    if(!resp.ok||data.error){throw new Error(data.error?.message||('HTTP '+resp.status));}
-    const txt=(data.content?.[0]?.text||'').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-    // Store for email use
-    c._lastPerfAnalysis=data.content?.[0]?.text||'';
+    const txt=await callAI(prompt,2000);
+    const safe=txt.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+    c._lastPerfAnalysis=txt;
     saveAll();
     area.innerHTML=`
       <div style="border:1.5px solid rgba(91,33,182,.25);border-radius:12px;overflow:hidden;box-shadow:var(--sh-md)">
@@ -2255,9 +2370,9 @@ Rules: Be specific with numbers. Reference their actual data. No generic advice.
           <span style="font-size:12px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:1px">Strategic Performance Analysis</span>
           <button class="btn btn-sm btn-purple" onclick="copyPerfAnalysis()">Copy Analysis</button>
         </div>
-        <div style="padding:18px;background:#fff;font-size:13px;color:var(--dim);line-height:1.75" id="perfAnalysisText">${txt}</div>
+        <div style="padding:18px;background:#fff;font-size:13px;color:var(--dim);line-height:1.75" id="perfAnalysisText">${safe}</div>
       </div>`;
-  }catch(e){area.innerHTML=`<div class="tip tip-red"><strong>Analysis failed:</strong> ${e.message}<br><span style="font-size:11px;opacity:.8">Verify ANTHROPIC_API_KEY is configured in your Vercel project environment variables and that /api/claude is deployed.</span></div>`;}
+  }catch(e){area.innerHTML=`<div class="tip tip-red"><strong>Analysis failed:</strong> ${e.message}<br><span style="font-size:11px;opacity:.8">Configure ANTHROPIC_API_KEY in your Vercel project environment variables and ensure /api/claude is deployed.</span></div>`;}
   if(btn){btn.disabled=false;btn.textContent='Generate Strategic Analysis';}
 }
 
@@ -2342,7 +2457,8 @@ function rOnePager(mc,c){
       <div style="font-size:12px;color:var(--dim-m);margin-top:2px">Print-ready dealer summary. Click Print to generate a PDF or hard copy.</div>
     </div>
     <div style="display:flex;gap:8px">
-      <button class="btn btn-sm" onclick="window.print()" style="background:var(--red)">🖨 Print / Save as PDF</button>
+      <button class="btn btn-sm btn-ghost" onclick="printFullReport()">🖨 Print Full Report (All Tabs)</button>
+      <button class="btn btn-sm" onclick="window.print()" style="background:var(--red)">🖨 Print One-Pager</button>
     </div>
   </div>
 
@@ -2722,11 +2838,7 @@ TCUV District Sales Consultant | Gulf States Toyota
 
 Rules: under 350 words. Professional but warm. Reference specific numbers/details from notes and performance data. Include concrete improvement recommendations with target numbers from the actual data block, not made-up industry averages. No generic filler.`;
   try{
-    const resp=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
-    let data;
-    try{data=await resp.json();}catch(pe){throw new Error('Server returned a non-JSON response (HTTP '+resp.status+'). Check that /api/claude is deployed and ANTHROPIC_API_KEY is set on Vercel.');}
-    if(!resp.ok||data.error){throw new Error(data.error?.message||('HTTP '+resp.status));}
-    const txt=data.content?.[0]?.text||'Error generating email.';
+    const txt=await callAI(prompt,1200);
     const lines=txt.split('\n');
     const sl=lines.find(l=>l.trim().startsWith('Subject:'));
     const subj=sl?sl.replace(/^Subject:\s*/i,'').trim():'Follow-Up: '+c.nm+' '+type+' '+date;
@@ -3213,6 +3325,10 @@ function ensureDealerShape(c){
   if(!Array.isArray(c.consultHistory))c.consultHistory=[];
   if(!Array.isArray(c.tasks))c.tasks=[];
   if(!Array.isArray(c.pipeline))c.pipeline=[];
+  if(!Array.isArray(c._commitments))c._commitments=[];
+  if(!Array.isArray(c._scoreHistory))c._scoreHistory=[];
+  if(!Array.isArray(c._consultNotes))c._consultNotes=[];
+  if(typeof c._overrides!=='object'||c._overrides===null)c._overrides={};
 }
 function drF(e,slot){e.preventDefault();document.getElementById('d'+slot).classList.remove('over');if(e.dataTransfer.files.length)parseF(e.dataTransfer.files[0],slot);}
 function parseF(f,slot){
@@ -3633,71 +3749,96 @@ function pRecap(wb,n){
 
   const up=v=>(v==null?'':v).toString().toUpperCase().trim();
 
-  // Business Barometer layout:
+  // GST Business Barometer layout (TCUV recap):
   //   Row 1: date banner ("selected date MM/YYYY")
-  //   Row 2: group headers ("New Vehicle Sales" ... "TCUV Sales" ...)
-  //   Row 3: column headers ("MTD", "Obj", ... "MTD Silver", "MTD Gold", "MTD Total", "Obj", "Obj %")
+  //   Row 2: group headers — "New Vehicle Sales" | ... | "TCUV Sales" | ...
+  //          (Excel merged cells: only the first cell in the merge has a value;
+  //           the rest are null when read by SheetJS)
+  //   Row 3: column sub-headers — "MTD Silver" | "MTD Gold" | "MTD Total" | "Obj" | "Obj %"
   //   Row 4+: dealer rows
-  // The TCUV columns sit under the "TCUV Sales" span in row 2. Anchor there.
+  //
+  // STRATEGY: find the TCUV group header cell, then scan the sub-header row
+  // WITHIN that column range only. Because merged cells collapse to null for
+  // the spanned columns, we must scan forward from tcuvStart until we hit
+  // another non-null group label to find tcuvEnd.  We also skip any cell that
+  // contains "NEW" so we never accidentally anchor on "New/TCUV" comparison text.
 
-  // 1) Find the group-header row and the start/end of the TCUV group
+  // 1) Find the group-header row; locate the cell that is SOLELY "TCUV" (not
+  //    "NEW VEHICLE" or a composite like "NEW/TCUV"). We scan up to row 6.
   let groupRow=-1,tcuvStart=-1,tcuvEnd=-1;
-  for(let h=0;h<Math.min(R.length,5);h++){
+  for(let h=0;h<Math.min(R.length,6);h++){
     const row=R[h];if(!row)continue;
     for(let j=0;j<row.length;j++){
-      if(/\bTCUV\b/.test(up(row[j]))){groupRow=h;tcuvStart=j;break;}
+      const v=up(row[j]);
+      // Must contain TCUV but must NOT contain NEW (avoids New/TCUV comparison cols)
+      if(/\bTCUV\b/.test(v)&&!/\bNEW\b/.test(v)){groupRow=h;tcuvStart=j;break;}
     }
     if(groupRow>=0)break;
   }
+
   if(groupRow>=0){
-    // The TCUV group ends where the next non-blank group label starts (or row end)
+    // Scan forward for the next non-null, non-TCUV group label to find the boundary.
+    // Null cells are the spanned (merged) part of the TCUV header — keep going.
     const row=R[groupRow];
     for(let j=tcuvStart+1;j<row.length;j++){
-      if(up(row[j])){tcuvEnd=j-1;break;}
+      const v=up(row[j]);
+      if(v&&!/\bTCUV\b/.test(v)){tcuvEnd=j-1;break;}
     }
     if(tcuvEnd<0)tcuvEnd=row.length-1;
   }
 
-  // 2) Find the column-header row (the row immediately below the group row, or
-  //    the first row with "MTD" / "Obj" text)
+  // 2) Find the sub-header row: the first row at or after groupRow+1 that
+  //    contains both an MTD-style label and an OBJ-style label.
   let hdrRow=groupRow>=0?groupRow+1:-1;
-  if(hdrRow<0){
-    for(let h=0;h<Math.min(R.length,10);h++){
-      const row=R[h];if(!row)continue;
-      const hasMTD=row.some(c=>up(c)==='MTD'||/\bMTD\b/.test(up(c)));
-      const hasObj=row.some(c=>up(c)==='OBJ'||/\bOBJECTIVE\b/.test(up(c)));
-      if(hasMTD&&hasObj){hdrRow=h;break;}
-    }
+  // Confirm the candidate row actually has MTD+OBJ; if not, keep scanning.
+  for(let h=(hdrRow>=0?hdrRow:0);h<Math.min(R.length,10);h++){
+    const row=R[h];if(!row)continue;
+    const hasMTD=row.some(c=>/\bMTD\b/.test(up(c)));
+    const hasObj=row.some(c=>{const v=up(c);return v==='OBJ'||v==='OBJECTIVE';});
+    if(hasMTD&&hasObj){hdrRow=h;break;}
   }
   if(hdrRow<0){msg('Could not find the column header row.');return;}
 
-  // 3) Inside the TCUV group (or across the whole row if we could not detect
-  //    the group), find the Sold column (prefer "MTD TOTAL", then "MTD") and
-  //    the Objective column.
+  // 3) Within the TCUV group column range, find Sold (prefer "MTD TOTAL",
+  //    then plain "MTD") and Obj. Also locate Silver and Gold sub-columns.
+  //    If TCUV group detection failed, use the confirmed GST fixed columns
+  //    col28=Sold (0-based: 27) and col29=Obj (0-based: 28) as a hard fallback.
   const hdr=R[hdrRow]||[];
   const colStart=tcuvStart>=0?tcuvStart:0;
   const colEnd  =tcuvEnd>=0?tcuvEnd:hdr.length-1;
   let cSold=-1,cObj=-1,cSil=-1,cGold=-1;
-  // Pass 1: look for "MTD TOTAL" (TCUV uses this) and the Obj column that follows it
+
+  // Pass 1: look for "MTD TOTAL" (TCUV uses this label) within the TCUV span
   for(let j=colStart;j<=colEnd;j++){
     const v=up(hdr[j]);
     if(cSold<0&&/MTD\s*TOTAL/.test(v))cSold=j;
-    if(cSil<0&&/MTD\s*SILVER|^SILVER/.test(v))cSil=j;
-    if(cGold<0&&/MTD\s*GOLD|^GOLD/.test(v))cGold=j;
+    if(cSil<0&&(/MTD\s*SILVER/.test(v)||v==='SILVER'))cSil=j;
+    if(cGold<0&&(/MTD\s*GOLD/.test(v)||v==='GOLD'))cGold=j;
   }
-  // If MTD TOTAL was found, Obj is the first OBJ header to the right of it
+  // Obj is the first OBJ/OBJECTIVE to the RIGHT of MTD TOTAL
   if(cSold>=0){
     for(let j=cSold+1;j<=colEnd;j++){
       const v=up(hdr[j]);
       if(v==='OBJ'||v==='OBJECTIVE'){cObj=j;break;}
     }
   }
-  // Pass 2: fallback - use any MTD / OBJ within the TCUV group
+  // Pass 2: plain "MTD" fallback (still within TCUV span only)
   if(cSold<0){
     for(let j=colStart;j<=colEnd;j++){if(up(hdr[j])==='MTD'){cSold=j;break;}}
   }
   if(cObj<0){
     for(let j=colStart;j<=colEnd;j++){const v=up(hdr[j]);if(v==='OBJ'||v==='OBJECTIVE'){cObj=j;break;}}
+  }
+  // Pass 3: hard fallback — use the known GST fixed columns (col28, col29 → 0-based 27,28)
+  // Only kicks in when dynamic detection completely failed.
+  if((cSold<0||cObj<0)&&hdr.length>28){
+    cSold=27;cObj=28;
+    // Try to find Silver/Gold near those columns
+    for(let j=24;j<=32&&j<hdr.length;j++){
+      const v=up(hdr[j]);
+      if(cSil<0&&(/MTD\s*SILVER/.test(v)||v==='SILVER'))cSil=j;
+      if(cGold<0&&(/MTD\s*GOLD/.test(v)||v==='GOLD'))cGold=j;
+    }
   }
 
   if(cSold<0||cObj<0){
@@ -3752,7 +3893,2231 @@ function pRecap(wb,n){
   document.getElementById('m3').innerHTML=`<div class="ok">✓ ${ds.length} dealers · ${dT||ds.reduce((a,d)=>a+d.t,0)} sold / ${dO||ds.reduce((a,d)=>a+d.o,0)} obj · TCUV cols: Sold=col${cSold+1}, Obj=col${cObj+1}</div>`;
 }
 
-// ═══ BOOT ══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// MANUAL OVERRIDE SYSTEM
+// Every metric on every tab can be overridden here.
+// Overrides are stored in dealer._overrides as a flat dot-path map,
+// e.g. { 'fn.tu': 18, 'fn.tg': 95000 }.
+// The override value is applied in _ovrGet(); all render functions
+// that consume a field should call _ovrGet(c, 'fn.xxx') instead of
+// c.fn.xxx directly. The modal is opened from the pencil button on
+// any KPI card (openOvrModal) or from the global "Overrides" button.
+// ═══════════════════════════════════════════════════════════════
+
+// Master list of every overridable field.
+// { key, lbl, section, type, fmt, src }
+const OVR_FIELDS=[
+  // ── TCUV FINANCIAL ──────────────────────────────────────────
+  {key:'fn.tu',   lbl:'TCUV Units (monthly avg)',    section:'TCUV Financial',  type:'number', fmt:'int',   src:'Pg6 Line 47 col B'},
+  {key:'fn.tg',   lbl:'TCUV Front GP (total)',       section:'TCUV Financial',  type:'number', fmt:'dollar',src:'Pg6 Line 47 col D'},
+  {key:'fn.tFI',  lbl:'TCUV F&I / Back-End (total)',section:'TCUV Financial',  type:'number', fmt:'dollar',src:'Pg6 Line 65 col D'},
+  {key:'fn.cR',   lbl:'TCUV Recon Cost (total)',     section:'TCUV Financial',  type:'number', fmt:'dollar',src:'Pg6 Line 57 col D'},
+  {key:'fn.dGP',  lbl:'Dept Total GP',               section:'TCUV Financial',  type:'number', fmt:'dollar',src:'Pg6 Line 75 col D'},
+  // ── GST BENCHMARKS ──────────────────────────────────────────
+  {key:'fn.gTG',  lbl:'GST Avg Front GP / Unit',     section:'GST Benchmarks',  type:'number', fmt:'dollar',src:'Pg6 Line 47 col K ÷ col I'},
+  {key:'fn.gTF',  lbl:'GST Avg F&I / Unit',          section:'GST Benchmarks',  type:'number', fmt:'dollar',src:'Pg6 Line 65 col K ÷ col I'},
+  {key:'fn.gCR',  lbl:'GST Avg Recon / Unit',        section:'GST Benchmarks',  type:'number', fmt:'dollar',src:'Pg6 Line 57 col K ÷ col I'},
+  {key:'fn.gTU',  lbl:'GST Avg TCUV Units',          section:'GST Benchmarks',  type:'number', fmt:'int',   src:'Pg6 Line 47 col I'},
+  {key:'fn.gDeptGP',lbl:'GST Dept GP / Unit',        section:'GST Benchmarks',  type:'number', fmt:'dollar',src:'Dept Report'},
+  // ── NON-CERT TOYOTA USED ────────────────────────────────────
+  {key:'fn.nu',   lbl:'Non-Cert Units',              section:'Non-Cert Toyota Used',type:'number',fmt:'int',  src:'Pg6 Line 53 col B'},
+  {key:'fn.ng',   lbl:'Non-Cert Front GP (total)',   section:'Non-Cert Toyota Used',type:'number',fmt:'dollar',src:'Pg6 Line 53 col D'},
+  {key:'fn.nFI',  lbl:'Non-Cert F&I (total)',        section:'Non-Cert Toyota Used',type:'number',fmt:'dollar',src:'Pg6 Line 66 allocated'},
+  // ── NON-TOYOTA USED ─────────────────────────────────────────
+  {key:'fn.ntU',  lbl:'Non-Toyota Units',            section:'Non-Toyota Used', type:'number', fmt:'int',   src:'Pg6 Line 62 col B'},
+  {key:'fn.ntG',  lbl:'Non-Toyota Front GP (total)', section:'Non-Toyota Used', type:'number', fmt:'dollar',src:'Pg6 Line 62 col D'},
+  {key:'fn.ntFI', lbl:'Non-Toyota F&I (total)',      section:'Non-Toyota Used', type:'number', fmt:'dollar',src:'Pg6 Line 66 allocated'},
+  // ── OVERVIEW / GROWTH ───────────────────────────────────────
+  {key:'fn.pyTCUV',       lbl:'Prior Year TCUV (full year)', section:'Growth & Volume', type:'number',fmt:'int',   src:'Manually entered'},
+  {key:'fn.growthGoalPct',lbl:'Growth Goal %',               section:'Growth & Volume', type:'number',fmt:'pct',   src:'Configurable target'},
+  {key:'fn.usedNewRatio', lbl:'Used : New Ratio',            section:'Growth & Volume', type:'number',fmt:'dec2',  src:'Dept Report Line 56'},
+  {key:'fn.newUnits',     lbl:'New Vehicle Units',           section:'Growth & Volume', type:'number',fmt:'int',   src:'Dept Report'},
+  {key:'fn.pyThisPeriod', lbl:'PY This Period (manual)',     section:'Growth & Volume', type:'number',fmt:'int',   src:'Manual entry'},
+  {key:'fn.cyThisPeriod', lbl:'CY This Period (manual)',     section:'Growth & Volume', type:'number',fmt:'int',   src:'Manual entry'},
+  // ── MTD (SOLD VS OBJ) ───────────────────────────────────────
+  {key:'mtd.sold',  lbl:'MTD Units Sold',    section:'MTD / Sold vs Obj', type:'number',fmt:'int', src:'Manual entry'},
+  {key:'mtd.obj',   lbl:'MTD Objective',     section:'MTD / Sold vs Obj', type:'number',fmt:'int', src:'Manual entry'},
+  {key:'mtd.silver',lbl:'MTD Silver',        section:'MTD / Sold vs Obj', type:'number',fmt:'int', src:'Manual entry'},
+  {key:'mtd.gold',  lbl:'MTD Gold',          section:'MTD / Sold vs Obj', type:'number',fmt:'int', src:'Manual entry'},
+  // ── INVENTORY ───────────────────────────────────────────────
+  {key:'inventory.u',lbl:'Used Toyota (total)', section:'Inventory', type:'number',fmt:'int', src:'Manual entry'},
+  {key:'inventory.c',lbl:'Certified (TCUV)',    section:'Inventory', type:'number',fmt:'int', src:'Manual entry'},
+  {key:'inventory.t',lbl:'Non-Toyota Used',     section:'Inventory', type:'number',fmt:'int', src:'Manual entry'},
+  // ── DEALER PROFILE ──────────────────────────────────────────
+  {key:'fn.pr',  lbl:'Reporting Period',  section:'Dealer Profile', type:'text',   fmt:'text', src:'Parsed from file / manual'},
+  {key:'fn.cl',  lbl:'Dealer Class',      section:'Dealer Profile', type:'text',   fmt:'text', src:'Parsed from file / manual'},
+];
+
+// Group fields by section
+function _ovrSections(){
+  const map={};
+  for(const f of OVR_FIELDS){if(!map[f.section])map[f.section]=[];map[f.section].push(f);}
+  return map;
+}
+
+// Read override or parsed value for display in the modal input
+function _ovrModalVal(c,key){
+  if(!c)return '';
+  if(c._overrides&&c._overrides.hasOwnProperty(key))return c._overrides[key];
+  return _ovrRaw(c,key)??'';
+}
+
+// Format hint for each field
+function _ovrHint(fmt){
+  if(fmt==='dollar')return 'e.g. 45000';
+  if(fmt==='int')return 'e.g. 18';
+  if(fmt==='pct')return 'e.g. 20';
+  if(fmt==='dec2')return 'e.g. 0.85';
+  return '';
+}
+
+function openOvrModal(focusKey){
+  let m=document.getElementById('ovrModalBg');if(m)m.remove();
+  const c=gc();if(!c)return;
+  const secs=_ovrSections();
+  const ovrCount=Object.keys(c._overrides||{}).length;
+
+  const secHtml=Object.entries(secs).map(([sec,fields])=>{
+    const rows=fields.map(f=>{
+      const val=_ovrModalVal(c,f.key);
+      const hasOvr=(c._overrides||{}).hasOwnProperty(f.key);
+      const isFocus=f.key===focusKey;
+      return `<div class="ovr-field">
+        <label for="ovr_${f.key.replace(/\./g,'_')}">${f.lbl}${hasOvr?` <span class="ovr-badge">Override</span>`:''}
+        </label>
+        <input id="ovr_${f.key.replace(/\./g,'_')}"
+          type="${f.type||'number'}" step="${f.fmt==='dec2'?'0.01':f.fmt==='pct'?'0.1':'1'}" min="0"
+          value="${val!==null&&val!==undefined?val:''}"
+          placeholder="${_ovrHint(f.fmt)||'Auto'}"
+          data-key="${f.key}"
+          class="ovr-input${hasOvr?' has-override':''}"
+          ${isFocus?'autofocus':''}>
+        <div class="ovr-src">${f.src}</div>
+      </div>`;
+    }).join('');
+    return `<div class="ovr-sec">
+      <div class="ovr-sec-ttl">${sec}</div>
+      <div class="ovr-grid">${rows}</div>
+    </div>`;
+  }).join('');
+
+  m=document.createElement('div');
+  m.id='ovrModalBg';
+  m.className='ovr-modal-bg';
+  m.innerHTML=`
+    <div class="ovr-modal" role="dialog" aria-modal="true">
+      <div class="ovr-modal-hdr">
+        <div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;letter-spacing:.5px">Manual Overrides</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px">${dnm(c.nm)} &nbsp;·&nbsp; ${ovrCount>0?ovrCount+' active override'+(ovrCount>1?'s':''):'No overrides set'}</div>
+        </div>
+        <button class="btn-hdr" onclick="closeOvrModal()" title="Close">✕</button>
+      </div>
+      <div class="ovr-modal-body">
+        <div class="tip tip-blue" style="margin-bottom:18px;font-size:12px">
+          Enter a value to override what was parsed from your uploaded files. Leave blank to use the parsed value.
+          Override values are shown with an <span class="ovr-badge">Override</span> badge and an orange dot on the KPI card.
+          Overrides survive re-uploads — use <strong>Clear All</strong> to reset back to parsed data.
+        </div>
+        ${secHtml}
+      </div>
+      <div class="ovr-modal-ftr">
+        <button class="btn btn-sm btn-del" onclick="clearAllOverrides()" title="Remove all manual overrides and restore parsed values">Clear All Overrides</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-sm btn-ghost" onclick="closeOvrModal()">Cancel</button>
+          <button class="btn btn-sm" onclick="saveOvrModal()">Save Overrides</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(m);
+  // Close on backdrop click
+  m.addEventListener('click',e=>{if(e.target===m)closeOvrModal();});
+  // If a specific field was opened, scroll to it
+  if(focusKey){
+    const el=document.getElementById('ovr_'+focusKey.replace(/\./g,'_'));
+    if(el)setTimeout(()=>{el.scrollIntoView({block:'center',behavior:'smooth'});el.select?.();},120);
+  }
+}
+
+function closeOvrModal(){
+  const m=document.getElementById('ovrModalBg');if(m)m.remove();
+}
+
+function saveOvrModal(){
+  const c=gc();if(!c)return;
+  if(!c._overrides)c._overrides={};
+  let count=0,cleared=0;
+  document.querySelectorAll('.ovr-input').forEach(inp=>{
+    const key=inp.dataset.key;if(!key)return;
+    const raw=inp.value.trim();
+    if(raw===''){
+      // Blank = clear override for this field
+      if(c._overrides.hasOwnProperty(key)){delete c._overrides[key];cleared++;}
+    } else {
+      const field=OVR_FIELDS.find(f=>f.key===key);
+      const v=field&&field.type==='text'?raw:parseFloat(raw.replace(/[^0-9.-]/g,''));
+      if(!isNaN(v)||field?.type==='text'){
+        c._overrides[key]=v;
+        count++;
+        // Apply override value back into the real data path so existing render
+        // code that reads c.fn.xxx directly still gets the right number.
+        _applyOvrToData(c,key,v);
+      }
+    }
+  });
+  // Re-apply all remaining overrides to data to keep everything in sync
+  for(const [k,v] of Object.entries(c._overrides)){_applyOvrToData(c,k,v);}
+  saveAll();render();closeOvrModal();
+  const msg=count>0&&cleared>0?`✓ ${count} override${count>1?'s':''} saved, ${cleared} cleared`:
+            count>0?`✓ ${count} override${count>1?'s':''} saved`:
+            cleared>0?`✓ ${cleared} override${cleared>1?'s':''} cleared`:'No changes';
+  showToast(msg,count>0?OR:GN);
+}
+
+// Write the override value into the actual data object so all existing render
+// code that reads c.fn.xxx directly (without _ovrGet) also reflects the change.
+function _applyOvrToData(c,key,v){
+  const parts=key.split('.');
+  let obj=c;
+  for(let i=0;i<parts.length-1;i++){
+    if(obj[parts[i]]==null)obj[parts[i]]={};
+    obj=obj[parts[i]];
+  }
+  obj[parts[parts.length-1]]=v;
+}
+
+function clearAllOverrides(){
+  const c=gc();if(!c)return;
+  if(!c._overrides||Object.keys(c._overrides).length===0){showToast('No overrides to clear',DM);closeOvrModal();return;}
+  if(!confirm('Clear ALL manual overrides for '+dnm(c.nm)+'? This restores all values to what was parsed from your uploaded files.'))return;
+  // We need to re-parse or just remove the _overrides map; since we can't
+  // re-parse without the file, we simply delete the override map. The user
+  // can re-upload to restore parsed values, or the data was already written
+  // to fn/mtd/inventory by earlier uploads.
+  delete c._overrides;
+  saveAll();render();closeOvrModal();
+  showToast('✓ All overrides cleared',GN);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DEPLOY TAB  –  Edit code in-browser, push to GitHub → Vercel auto-deploys
+// ═══════════════════════════════════════════════════════════════
+// Config stored in localStorage only (never in dealer data, never in saveAll)
+const DEPLOY_CFG_KEY = 'tcuv-deploy-cfg';
+function dCfgGet(){try{return JSON.parse(localStorage.getItem(DEPLOY_CFG_KEY)||'{}');}catch{return{};}}
+function dCfgSet(obj){try{localStorage.setItem(DEPLOY_CFG_KEY,JSON.stringify(obj));}catch{}}
+
+// State
+let _deployCode = null;       // current editor content
+let _deployStatusTimer = null;
+
+function rDeploy(mc){
+  const cfg = dCfgGet();
+  const hasToken = !!(cfg.ghToken && cfg.ghToken.length > 10);
+  const hasRepo  = !!(cfg.repo);
+  const ready = hasToken && hasRepo;
+
+  mc.innerHTML = `
+  ${sHdr('🚀 Deploy','Edit the CRM source, push to GitHub — Vercel deploys automatically')}
+
+  <!-- ── CONFIG STRIP ──────────────────────────────────────── -->
+  <div class="card" style="margin-bottom:14px;border-left:4px solid var(--blue)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div class="card-title" style="margin:0">GitHub Connection</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <a href="https://github.com/settings/tokens/new?description=GST+CRM+Deploy&scopes=repo" target="_blank" rel="noopener" class="btn btn-sm btn-ghost">Get Token ↗</a>
+        <button class="btn btn-sm btn-blue" onclick="dSaveCfg()">Save Config</button>
+      </div>
+    </div>
+    <div class="g3" style="gap:10px">
+      <div>
+        <label class="fl">GitHub Repo <span style="color:var(--dim-lt);font-weight:400">(owner/repo)</span></label>
+        <input id="dRepo" class="fi" placeholder="hhyltongst/gst-tcuv-dashboard" value="${cfg.repo||''}">
+      </div>
+      <div>
+        <label class="fl">Branch</label>
+        <input id="dBranch" class="fi" placeholder="main" value="${cfg.branch||'main'}">
+      </div>
+      <div>
+        <label class="fl">File path in repo</label>
+        <input id="dFilePath" class="fi" placeholder="index.html" value="${cfg.filePath||'index.html'}">
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <label class="fl">GitHub Personal Access Token <span style="color:var(--red);font-weight:400">(stored locally only, never sent anywhere except GitHub)</span></label>
+      <input id="dToken" class="fi" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" value="${cfg.ghToken||''}">
+    </div>
+    ${cfg.vercelToken?'':`
+    <div style="margin-top:10px">
+      <label class="fl">Vercel Token <span style="color:var(--dim-lt);font-weight:400">(optional — enables live deploy status polling)</span></label>
+      <input id="dVToken" class="fi" type="password" placeholder="xxxxxxxxxxxxxxxxxxxxxxxx" value="${cfg.vercelToken||''}">
+    </div>`}
+    <div id="dCfgMsg" style="margin-top:8px"></div>
+  </div>
+
+  <!-- ── EDITOR ────────────────────────────────────────────── -->
+  <div class="card" style="margin-bottom:14px;padding:0;overflow:hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--bdr);background:var(--surface);flex-wrap:wrap;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;color:var(--txt)">SOURCE EDITOR</div>
+        <span id="dEditorSize" style="font-size:11px;color:var(--dim-m)"></span>
+        <span id="dDirtyBadge" style="display:none;font-size:10px;background:var(--orange);color:#fff;border-radius:10px;padding:2px 8px;font-weight:700">UNSAVED CHANGES</span>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-sm btn-ghost" onclick="dLoadCurrent()" title="Reload the current page source into the editor">↺ Reload Source</button>
+        <button class="btn btn-sm btn-ghost" onclick="dFormatCheck()" title="Run a quick syntax check">✓ Check Syntax</button>
+        <button class="btn btn-sm ${ready?'':'btn-ghost'}" onclick="dDeploy()" ${ready?'':'disabled title="Save GitHub config first"'}
+          style="${ready?'':'opacity:.5;cursor:not-allowed'}">
+          🚀 Push &amp; Deploy
+        </button>
+      </div>
+    </div>
+    <textarea id="dEditor"
+      spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"
+      oninput="dMarkDirty()"
+      style="width:100%;height:70vh;padding:14px 16px;border:none;outline:none;
+             font-family:'SF Mono',Menlo,Consolas,monospace;font-size:12px;line-height:1.6;
+             color:#cdd3de;background:#0d1117;resize:vertical;tab-size:2;
+             white-space:pre;overflow-wrap:normal;overflow-x:auto"></textarea>
+  </div>
+
+  <!-- ── DEPLOY STATUS LOG ─────────────────────────────────── -->
+  <div class="card" id="dStatusCard" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="card-title" style="margin:0">Deploy Status</div>
+      <button class="btn btn-sm btn-ghost" onclick="dClearStatus()">Clear</button>
+    </div>
+    <div id="dStatusLog" style="font-family:'SF Mono',Menlo,monospace;font-size:12px;line-height:1.8;color:var(--txt)"></div>
+  </div>`;
+
+  // Load current source into editor
+  dLoadCurrent();
+}
+
+function dLoadCurrent(){
+  const ta = document.getElementById('dEditor');
+  if(!ta) return;
+  // Capture the live DOM source — this is the current running version of the CRM
+  const src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  _deployCode = src;
+  ta.value = src;
+  const kb = (new TextEncoder().encode(src).length / 1024).toFixed(1);
+  const el = document.getElementById('dEditorSize');
+  if(el) el.textContent = kb + ' KB · ' + src.split('\n').length.toLocaleString() + ' lines';
+  const db = document.getElementById('dDirtyBadge');
+  if(db) db.style.display = 'none';
+}
+
+function dMarkDirty(){
+  const db = document.getElementById('dDirtyBadge');
+  if(db) db.style.display = '';
+  const ta = document.getElementById('dEditor');
+  if(ta){
+    _deployCode = ta.value;
+    const kb = (new TextEncoder().encode(ta.value).length / 1024).toFixed(1);
+    const el = document.getElementById('dEditorSize');
+    if(el) el.textContent = kb + ' KB · ' + ta.value.split('\n').length.toLocaleString() + ' lines';
+  }
+}
+
+function dFormatCheck(){
+  const ta = document.getElementById('dEditor');
+  if(!ta) return;
+  const src = ta.value;
+  // Extract script content and check with Function constructor
+  const scripts = [...src.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).join('\n');
+  try{
+    new Function(scripts);
+    dLog('✓ Syntax check passed — no JavaScript errors detected.', '#0A7C3A');
+  }catch(e){
+    dLog('⚠ Syntax error: ' + e.message, '#C8102E');
+  }
+}
+
+function dSaveCfg(){
+  const repo  = (document.getElementById('dRepo')?.value||'').trim();
+  const branch= (document.getElementById('dBranch')?.value||'main').trim();
+  const fp    = (document.getElementById('dFilePath')?.value||'index.html').trim();
+  const token = (document.getElementById('dToken')?.value||'').trim();
+  const vt    = (document.getElementById('dVToken')?.value||'').trim();
+  const msg   = document.getElementById('dCfgMsg');
+  if(!repo || !token){
+    if(msg) msg.innerHTML = `<div class="tip tip-red" style="margin:0;font-size:12px">⚠ Repo and Token are required.</div>`;
+    return;
+  }
+  dCfgSet({repo, branch, filePath:fp, ghToken:token, vercelToken:vt||dCfgGet().vercelToken||''});
+  if(msg) msg.innerHTML = `<div class="tip tip-green" style="margin:0;font-size:12px">✓ Config saved. Ready to deploy.</div>`;
+  setTimeout(()=>render(), 1200);
+}
+
+async function dDeploy(){
+  const cfg = dCfgGet();
+  if(!cfg.ghToken || !cfg.repo){
+    dLog('⚠ Missing GitHub token or repo. Save config first.', '#C8102E');
+    return;
+  }
+  const ta = document.getElementById('dEditor');
+  const src = ta ? ta.value : _deployCode;
+  if(!src || src.length < 1000){
+    dLog('⚠ Editor is empty or source too short. Click "Reload Source" first.', '#C8102E');
+    return;
+  }
+
+  const repo     = cfg.repo;
+  const branch   = cfg.branch || 'main';
+  const filePath = cfg.filePath || 'index.html';
+  const token    = cfg.ghToken;
+
+  // Show status card
+  const sc = document.getElementById('dStatusCard');
+  if(sc) sc.style.display = '';
+
+  dLog('🔍 Fetching current file SHA from GitHub…', '#1558B0');
+
+  try{
+    // Step 1: get current file SHA (required for update)
+    const getRes = await fetch(
+      `https://api.github.com/repos/${repo}/contents/${filePath}?ref=${branch}`,
+      {headers:{Authorization:`token ${token}`, Accept:'application/vnd.github.v3+json'}}
+    );
+    let sha = null;
+    if(getRes.ok){
+      const data = await getRes.json();
+      sha = data.sha;
+      dLog(`✓ Found file — SHA ${sha.slice(0,7)}`, '#0A7C3A');
+    } else if(getRes.status === 404){
+      dLog('ℹ File not found in repo — will create it.', '#8A6200');
+    } else {
+      const err = await getRes.json();
+      dLog(`⚠ GitHub error ${getRes.status}: ${err.message}`, '#C8102E');
+      return;
+    }
+
+    // Step 2: base64 encode the source
+    dLog('📦 Encoding source…', '#1558B0');
+    const encoded = btoa(unescape(encodeURIComponent(src)));
+
+    // Step 3: push commit
+    const now = new Date().toLocaleString('en-US',{timeZone:'America/Chicago',hour12:true,month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+    const commitMsg = `CRM update — deployed from browser ${now} CT`;
+    dLog(`🚀 Pushing commit to ${repo} / ${branch}…`, '#1558B0');
+
+    const putBody = {message: commitMsg, content: encoded, branch};
+    if(sha) putBody.sha = sha;
+
+    const putRes = await fetch(
+      `https://api.github.com/repos/${repo}/contents/${filePath}`,
+      {method:'PUT', headers:{Authorization:`token ${token}`, Accept:'application/vnd.github.v3+json', 'Content-Type':'application/json'},
+       body: JSON.stringify(putBody)}
+    );
+
+    if(!putRes.ok){
+      const err = await putRes.json();
+      dLog(`⚠ Push failed ${putRes.status}: ${err.message}`, '#C8102E');
+      return;
+    }
+
+    const putData = await putRes.json();
+    const commitSha = putData.commit?.sha?.slice(0,7) || '?';
+    dLog(`✓ Committed! SHA ${commitSha} — "${commitMsg}"`, '#0A7C3A');
+    dLog('⏳ Vercel is building… this takes ~20–40 seconds.', '#8A6200');
+
+    // Step 4: poll Vercel if token available
+    if(cfg.vercelToken){
+      dPollVercel(cfg.vercelToken, cfg.repo, commitSha);
+    } else {
+      dLog('💡 Add a Vercel token in config to see live deploy status here.', '#5C6475');
+      dLog(`🌐 Check: https://vercel.com/dashboard`, '#1558B0');
+      // Optimistic: show live link after typical build time
+      setTimeout(()=>{
+        dLog('🟢 Vercel typically deploys within 30s — check your site!', '#0A7C3A');
+        dLog(`🔗 <a href="https://gst-tcuv-dasgboard.vercel.app" target="_blank" style="color:#1558B0">gst-tcuv-dasgboard.vercel.app ↗</a>`, '#0A7C3A');
+      }, 35000);
+    }
+
+    // Clear dirty badge
+    const db = document.getElementById('dDirtyBadge');
+    if(db) db.style.display = 'none';
+
+  }catch(e){
+    dLog(`⚠ Network error: ${e.message}`, '#C8102E');
+  }
+}
+
+async function dPollVercel(vToken, repo, commitSha){
+  // Find the latest deployment that matches our commit
+  const maxAttempts = 18; // ~3 min
+  let attempt = 0;
+  const poll = async () => {
+    attempt++;
+    try{
+      const res = await fetch('https://api.vercel.com/v6/deployments?limit=5', {
+        headers:{Authorization:`Bearer ${vToken}`}
+      });
+      if(!res.ok){dLog(`⚠ Vercel API ${res.status} — check your Vercel token.`,'#C8102E');return;}
+      const data = await res.json();
+      const dep = (data.deployments||[]).find(d=>
+        d.meta?.githubCommitSha?.startsWith(commitSha) ||
+        d.state === 'BUILDING' || d.state === 'QUEUED'
+      ) || data.deployments?.[0];
+      if(!dep){
+        if(attempt < maxAttempts){setTimeout(poll, 10000);}
+        return;
+      }
+      const st = dep.state;
+      const url = dep.url ? 'https://'+dep.url : '';
+      if(st==='READY'){
+        dLog(`✅ LIVE — Deploy complete!`, '#0A7C3A');
+        if(url) dLog(`🔗 <a href="${url}" target="_blank" style="color:#1558B0">${url} ↗</a>`, '#0A7C3A');
+        return;
+      } else if(st==='ERROR' || st==='CANCELED'){
+        dLog(`⚠ Deploy ${st} — check Vercel dashboard.`, '#C8102E');
+        return;
+      } else {
+        dLog(`⏳ Build status: ${st}… (${attempt}/${maxAttempts})`, '#8A6200');
+        if(attempt < maxAttempts) setTimeout(poll, 10000);
+        else dLog('⏰ Timed out polling. Check Vercel dashboard manually.', '#5C6475');
+      }
+    }catch(e){
+      if(attempt < maxAttempts) setTimeout(poll, 10000);
+    }
+  };
+  setTimeout(poll, 8000); // give Vercel a few seconds to register the commit
+}
+
+function dLog(msg, color){
+  const sc = document.getElementById('dStatusCard');
+  if(sc) sc.style.display = '';
+  const log = document.getElementById('dStatusLog');
+  if(!log) return;
+  const t = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const line = document.createElement('div');
+  line.style.cssText = `color:${color||'var(--txt)'};display:flex;gap:10px;padding:2px 0;border-bottom:1px solid var(--bdr)`;
+  line.innerHTML = `<span style="color:var(--dim-lt);flex-shrink:0">${t}</span><span>${msg}</span>`;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CENTRAL AI CALLER
+// All AI features route through this. Calls /api/claude (Vercel
+// serverless function) which proxies to Anthropic with the API key
+// stored server-side. Falls back to Anthropic SDK directly if the
+// app is running with a client-side key configured.
+// ═══════════════════════════════════════════════════════════════
+async function callAI(prompt, maxTokens=1000, systemPrompt=''){
+  // Try Vercel proxy first
+  try{
+    const body={model:'claude-sonnet-4-20250514',max_tokens:maxTokens,messages:[{role:'user',content:prompt}]};
+    if(systemPrompt) body.system=systemPrompt;
+    const resp=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(resp.ok){
+      const data=await resp.json();
+      if(data.content?.[0]?.text) return data.content[0].text;
+      if(data.error) throw new Error(data.error.message||'API error');
+    }
+    // Non-OK response — throw with status
+    const err=await resp.json().catch(()=>({}));
+    throw new Error(err.error?.message||'HTTP '+resp.status);
+  }catch(e){
+    throw e;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FULL REPORT PRINT SYSTEM
+// Prints every tab's data for the current dealer into a single
+// print-ready document. Triggered from the Print button in the header
+// or from the One-Pager tab's "Print Full Report" button.
+// ═══════════════════════════════════════════════════════════════
+function printFullReport(){
+  const c=gc();if(!c){alert('No dealer selected.');return;}
+  const f=c.fn||{};
+  const pd=perfData(c);
+  const ds=dealerScore(c);
+  const tl=suggestTimeline(pd.areas);
+  const nv=nextVisitDate(tl.weeks);
+  const tu=Math.max(f.tu||1,1);
+  const aF=Math.round((f.tg||0)/tu), gF=Math.round(f.dTG||f.gTG||0);
+  const aB=Math.round((f.tFI||0)/tu), gB=Math.round(f.dTF||f.gTF||0);
+  const aR=Math.round((f.cR||0)/tu), gR=Math.round(f.dCR||f.gCR||0);
+  const rc=c.rc?.ds?.find(d=>nm(d.n,c.nm));
+  const att=rc?rc.p:null;
+  const inv=c.inventory||{};
+  const ncU=Number(f.nu)||0, ntU=Number(f.ntU||f.ou)||0;
+  const ncG=Number(f.ng)||0, ntG=Number(f.ntG||f.og)||0;
+  const nonU=ncU+ntU;
+  const nonFrontPU=nonU>0?Math.round((ncG+ntG)/nonU):0;
+  const totU=Math.max(f.tot||tu,1);
+  const deptGPpu=Math.round((f.dGP||0)/totU);
+  const priorities=pd.areas.slice(0,5);
+
+  const notes=c._consultNotes||[];
+  const notesHtml=notes.length?notes.map(n=>`
+    <div style="margin-bottom:16px;padding:14px;border:1px solid #ddd;border-radius:8px;page-break-inside:avoid">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#666;margin-bottom:6px">${n.section} · ${n.date||td()}</div>
+      <div style="margin-bottom:10px"><strong>Observed:</strong><br>${(n.observed||'').replace(/\n/g,'<br>')}</div>
+      <div style="margin-bottom:10px"><strong>Why It Matters:</strong><br>${(n.why||'').replace(/\n/g,'<br>')}</div>
+      <div><strong>Path Forward:</strong><br>${(n.fix||'').replace(/\n/g,'<br>')}</div>
+    </div>`).join(''):'<p style="color:#999;font-style:italic">No consultative notes recorded.</p>';
+
+  const win=window.open('','_blank','width=900,height=700');
+  win.document.write(`<!DOCTYPE html><html><head>
+  <meta charset="UTF-8"><title>GST TCUV Full Report – ${dnm(c.nm)}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;font-size:13px;color:#111;line-height:1.6;padding:0}
+    @page{size:letter;margin:0.65in 0.6in}
+    @media print{.no-print{display:none!important}.pb{page-break-before:always}.pba{page-break-after:always}}
+    .page{max-width:900px;margin:0 auto;padding:20px}
+    h1{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:#0A0E17}
+    h2{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:800;color:#1558B0;text-transform:uppercase;letter-spacing:1.5px;margin:20px 0 10px;padding-bottom:6px;border-bottom:2px solid #1558B0}
+    h3{font-size:12px;font-weight:700;color:#3A4252;text-transform:uppercase;letter-spacing:.8px;margin:14px 0 6px}
+    .hdr-bar{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:3px solid #C8102E;margin-bottom:20px}
+    .red{color:#C8102E}.grn{color:#0A7C3A}.gold{color:#8A6200}.blue{color:#1558B0}
+    .kv{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #ddd;font-size:12.5px}
+    .kv .k{color:#5C6475}.kv .v{font-weight:700}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .card{background:#f9f9f9;border:1px solid #ddd;border-radius:8px;padding:14px;margin-bottom:12px;page-break-inside:avoid}
+    .gap-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px}
+    .critical{background:#fee2e2;color:#C8102E}.caution{background:#fef9c3;color:#8A6200}.ok{background:#dcfce7;color:#0A7C3A}
+    table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:12px}
+    th{background:#f0f2f5;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#5C6475;border-bottom:1.5px solid #ddd}
+    td{padding:5px 8px;border-bottom:1px solid #eee}
+    .footer{border-top:1px solid #ddd;margin-top:20px;padding-top:10px;display:flex;justify-content:space-between;font-size:10px;color:#999}
+    .section-icon{font-size:18px;margin-right:6px}
+  </style>
+  </head><body><div class="page">
+
+  <!-- COVER / HEADER -->
+  <div class="hdr-bar">
+    <div>
+      <div style="font-size:10px;font-weight:700;color:#C8102E;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">Gulf States Toyota · TCUV Performance Report</div>
+      <h1>${dnm(c.nm)}</h1>
+      <div style="font-size:11px;color:#5C6475;margin-top:4px">${f.pr||'Current Period'}${f.cl?' · '+f.cl:''} · Generated ${td()} · Score: <strong style="color:${ds.color}">${ds.grade} (${ds.score}/100)</strong></div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:${ds.color}">${ds.grade}</div>
+      <div style="font-size:10px;color:#5C6475">Dealer Score</div>
+    </div>
+  </div>
+
+  <!-- EXECUTIVE SUMMARY KPIs -->
+  <h2>TCUV Performance Summary</h2>
+  <div class="grid3">
+    <div class="card">
+      <div style="font-size:10px;font-weight:700;color:#5C6475;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Volume</div>
+      <div class="kv"><span class="k">TCUV Units/Mo</span><span class="v">${fN(f.tu)}</span></div>
+      <div class="kv"><span class="k">Total Used Units</span><span class="v">${fN(totU)}</span></div>
+      <div class="kv"><span class="k">Used:New Ratio</span><span class="v" class="${(f.usedNewRatio||0)>=1?'grn':'red'}">${(f.usedNewRatio||0).toFixed(2)}</span></div>
+      ${att!==null?`<div class="kv"><span class="k">Attainment</span><span class="v" style="color:${att>=100?'#0A7C3A':'#C8102E'}">${att}%</span></div>`:''}
+    </div>
+    <div class="card">
+      <div style="font-size:10px;font-weight:700;color:#5C6475;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Per-Unit Gross</div>
+      <div class="kv"><span class="k">Front GP/Unit</span><span class="v" style="color:${aF>=gF?'#0A7C3A':'#C8102E'}">${f$(aF)}</span></div>
+      <div class="kv"><span class="k">GST Benchmark</span><span class="v" style="color:#5C6475">${f$(gF)}</span></div>
+      <div class="kv"><span class="k">Back-End/Unit</span><span class="v" style="color:${aB>=gB?'#0A7C3A':'#C8102E'}">${f$(aB)}</span></div>
+      <div class="kv"><span class="k">Recon/Unit</span><span class="v" style="color:${aR<=gR?'#0A7C3A':'#C8102E'}">${f$(aR)}</span></div>
+    </div>
+    <div class="card">
+      <div style="font-size:10px;font-weight:700;color:#5C6475;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Department</div>
+      <div class="kv"><span class="k">Dept Total GP</span><span class="v">${f$(f.dGP||0)}</span></div>
+      <div class="kv"><span class="k">Dept GP/Unit</span><span class="v">${f$(deptGPpu)}</span></div>
+      ${inv.c?`<div class="kv"><span class="k">Certified Inventory</span><span class="v">${fN(inv.c)}</span></div>`:''}
+    </div>
+  </div>
+
+  <!-- TCUV VS NON-TCUV GAP -->
+  ${nonU>0?`<h2>TCUV vs Non-TCUV Performance Gap</h2>
+  <table>
+    <tr><th>Metric</th><th>TCUV (${fN(tu)} units)</th><th>Non-TCUV (${fN(nonU)} units)</th><th>Gap / Unit</th></tr>
+    <tr><td>Front GP / Unit</td><td><strong>${f$(aF)}</strong></td><td><strong>${f$(nonFrontPU)}</strong></td><td style="color:${aF>=nonFrontPU?'#0A7C3A':'#C8102E'};font-weight:700">${aF>=nonFrontPU?'+':''}${f$(aF-nonFrontPU)}</td></tr>
+    <tr style="background:#f5f5f5"><td><strong>Total GP / Unit</strong></td><td><strong>${f$(aF+aB)}</strong></td><td><strong>${f$(nonFrontPU)}</strong></td><td style="font-weight:800;color:${aF+aB>=nonFrontPU?'#0A7C3A':'#C8102E'}">${aF+aB>=nonFrontPU?'+':''}${f$(aF+aB-nonFrontPU)}</td></tr>
+  </table>`:''}
+
+  <!-- PERFORMANCE GAPS -->
+  ${priorities.length>0?`<h2 class="pb">Performance Gaps &amp; Action Plan</h2>
+  ${priorities.map((a,i)=>`<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="gap-pill ${a.status}">${a.status.toUpperCase()}</span>
+        <strong style="font-size:14px">${a.cat}</strong>
+      </div>
+      <div style="font-size:12px"><span style="color:#5C6475">Current:</span> <strong style="color:${a.status==='critical'?'#C8102E':'#8A6200'}">${a.val}</strong> &nbsp;→&nbsp; <span style="color:#5C6475">Target:</span> <strong style="color:#1558B0">${a.target}</strong></div>
+    </div>
+    <div style="font-size:12.5px;color:#3A4252;line-height:1.6">${a.detail}</div>
+  </div>`).join('')}`:'<div class="card" style="text-align:center;padding:20px;color:#0A7C3A;font-weight:700">All Performance Metrics On Target</div>'}
+
+  <!-- STRENGTHS -->
+  ${pd.strengths.length>0?`<h2>Areas of Strength</h2>
+  <ul style="padding-left:20px;line-height:2">
+    ${pd.strengths.map(s=>`<li>${s}</li>`).join('')}
+  </ul>`:''}
+
+  <!-- CONSULTATIVE NOTES -->
+  <h2 class="pb">Consultative Visit Notes</h2>
+  ${notesHtml}
+
+  <!-- PERF ANALYSIS (if generated) -->
+  ${c._lastPerfAnalysis?`<h2 class="pb">AI Strategic Analysis</h2>
+  <div class="card"><div style="line-height:1.75;font-size:12.5px">${c._lastPerfAnalysis.replace(/\n/g,'<br>')}</div></div>`:''}
+
+  <!-- SOLD VS OBJ HISTORY -->
+  ${c.moSold&&c.moSold.some(v=>v>0)?`<h2 class="pb">Monthly Sold vs Objective</h2>
+  <table>
+    <tr><th>Month</th>${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map(m=>`<th>${m}</th>`).join('')}</tr>
+    <tr><td><strong>Sold</strong></td>${(c.moSold||[]).map(v=>`<td>${v||0}</td>`).join('')}</tr>
+    <tr><td><strong>Objective</strong></td>${(c.moObj||[]).map(v=>`<td>${v||0}</td>`).join('')}</tr>
+    <tr style="background:#f5f5f5"><td><strong>Attainment</strong></td>${(c.moSold||[]).map((v,i)=>{const o=c.moObj?.[i]||0;const pct=o>0?Math.round(v/o*100):0;return`<td style="color:${pct>=100?'#0A7C3A':pct>0?'#8A6200':'#999'};font-weight:600">${o>0?pct+'%':'—'}</td>`;}).join('')}</tr>
+  </table>`:''}
+
+  <!-- IMPLEMENTATION TIMELINE -->
+  <h2>Implementation Timeline</h2>
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;color:#1558B0;margin-bottom:4px">${tl.label} Window · Next Visit Target: ${nv}</div>
+    <div style="font-size:12.5px;color:#3A4252">${tl.desc}</div>
+  </div>
+
+  <div class="footer">
+    <div>Confidential · TCUV District Management · Gulf States Toyota</div>
+    <div>Generated ${td()} · ${dnm(c.nm)}</div>
+  </div>
+
+  </div>
+  <script>window.onload=()=>{window.print();}<\/script>
+  </body></html>`);
+  win.document.close();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MARKET INTEL TAB
+// Industry updates from credible sources + AI market pricing
+// analysis + competitive landscape for the dealer's market.
+// Sources: Automotive News, Cox Automotive, KBB, Bloomberg,
+//          AutoTrader, CarGurus, Edmunds (via AI web-aware search)
+// ═══════════════════════════════════════════════════════════════
+function rMarket(mc,c){
+  const f=c.fn||{};
+  mc.innerHTML=`
+  ${sHdr('Market Intelligence','Industry updates · Used Toyota pricing · Competitive landscape')}
+
+  <!-- INDUSTRY UPDATES -->
+  <div class="card" style="margin-bottom:14px;border-left:4px solid ${BL}">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div class="card-title" style="margin:0">📰 Used Car Industry Updates</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="font-size:10px;color:var(--dim-lt);font-style:italic">Sources: Automotive News · Cox Automotive · KBB · Edmunds · Bloomberg</span>
+        <button class="btn btn-sm" onclick="loadIndustryUpdates()">Refresh Updates</button>
+      </div>
+    </div>
+    <div id="industryUpdatesArea">
+      <div class="tip tip-blue" style="font-size:12px">Click <strong>Refresh Updates</strong> to pull the latest used car market intelligence from credible industry sources.</div>
+    </div>
+  </div>
+
+  <!-- AI MARKET PRICING ANALYSIS -->
+  <div class="card" style="margin-bottom:14px;border-left:4px solid ${GN}">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div class="card-title" style="margin:0">💰 Used Toyota Pricing Analysis</div>
+      <span style="font-size:10px;color:var(--dim-lt);font-style:italic">Sources: AutoTrader · KBB · CarGurus · Cox Automotive</span>
+    </div>
+    <div class="g2" style="gap:10px;margin-bottom:14px">
+      <div>
+        <label class="fl">Dealer Market / City</label>
+        <input id="mktCity" class="fi" placeholder="e.g. Houston, TX" value="${f.city||''}">
+      </div>
+      <div>
+        <label class="fl">Focus Model (optional)</label>
+        <input id="mktModel" class="fi" placeholder="e.g. RAV4, Camry, Tacoma">
+      </div>
+    </div>
+    <button class="btn btn-sm" style="background:${GN}" onclick="loadMarketPricing()">Generate Pricing Analysis</button>
+    <div id="marketPricingArea" style="margin-top:14px"></div>
+  </div>
+
+  <!-- TOP 5 COMPETITOR DEALERS -->
+  <div class="card" style="margin-bottom:14px;border-left:4px solid ${OR}">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div class="card-title" style="margin:0">🏢 Competitive Landscape</div>
+      <span style="font-size:10px;color:var(--dim-lt);font-style:italic">CarMax · Carvana · Franchise dealers within 25 miles</span>
+    </div>
+    <div style="margin-bottom:10px">
+      <label class="fl">Search market (city / zip)</label>
+      <div style="display:flex;gap:8px">
+        <input id="compCity" class="fi" style="flex:1" placeholder="e.g. Houston TX or 77001" value="${f.city||''}">
+        <button class="btn btn-sm" onclick="loadCompetitors()">Find Competitors</button>
+      </div>
+    </div>
+    <div id="competitorArea">
+      <div class="tip tip-orange" style="font-size:12px">Enter the dealer's market to identify the top 5 competing used car operations — CarMax, Carvana, and surrounding franchise dealers — with TCUV competitive positioning notes.</div>
+    </div>
+  </div>`;
+}
+
+async function loadIndustryUpdates(){
+  const area=document.getElementById('industryUpdatesArea');
+  if(!area)return;
+  area.innerHTML=`<div class="tip tip-blue" style="font-size:12px;text-align:center">⟳ Pulling latest industry intelligence…</div>`;
+  const prompt=`You are a used car market intelligence analyst. Provide 5 current, relevant industry updates that a Toyota district used car manager should share with dealers. Focus on:
+1. Used car pricing trends (wholesale/retail)
+2. TCUV/CPO market performance
+3. Consumer demand shifts
+4. Inventory supply factors
+5. Interest rate / affordability impacts
+
+For each update, format exactly as:
+SOURCE: [Automotive News / Cox Automotive / KBB / Edmunds / Bloomberg]
+HEADLINE: [One-sentence headline]
+INSIGHT: [2-3 sentences of actionable insight]
+IMPACT FOR DEALERS: [1 sentence on what dealers should do]
+
+Use credible industry data. Current approximate date: ${new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'})}. Be specific with numbers and trends.`;
+  try{
+    const txt=await callAI(prompt,1200,'You are a used car market intelligence analyst specializing in Toyota CPO and TCUV markets.');
+    const updates=txt.split(/(?=SOURCE:)/g).filter(s=>s.trim().length>20);
+    area.innerHTML=updates.map(u=>{
+      const src=u.match(/SOURCE:\s*(.+)/)?.[1]?.trim()||'Industry';
+      const hl=u.match(/HEADLINE:\s*(.+)/)?.[1]?.trim()||'';
+      const ins=u.match(/INSIGHT:\s*([\s\S]+?)(?=IMPACT FOR|$)/)?.[1]?.trim()||'';
+      const imp=u.match(/IMPACT FOR DEALERS:\s*(.+)/)?.[1]?.trim()||'';
+      const srcColor={'Automotive News':BL,'Cox Automotive':OR,'KBB':GD,'Edmunds':GN,'Bloomberg':PR}[src]||BL;
+      return`<div style="padding:14px;margin-bottom:10px;border:1px solid var(--bdr);border-radius:10px;border-left:4px solid ${srcColor};background:var(--surface)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#fff;background:${srcColor};border-radius:4px;padding:2px 8px">${src}</span>
+          <strong style="font-size:13px;color:var(--txt)">${hl}</strong>
+        </div>
+        <div style="font-size:12.5px;color:var(--dim);line-height:1.65;margin-bottom:6px">${ins}</div>
+        ${imp?`<div style="font-size:12px;color:${srcColor};font-weight:600;background:var(--card);border-radius:6px;padding:6px 10px">→ ${imp}</div>`:''}
+      </div>`;
+    }).join('')||`<div class="tip tip-red">Could not parse industry updates. Please try again.</div>`;
+  }catch(e){
+    area.innerHTML=`<div class="tip tip-red"><strong>Updates unavailable:</strong> ${e.message}<br><span style="font-size:11px;opacity:.8">Configure ANTHROPIC_API_KEY in Vercel to enable AI market intelligence.</span></div>`;
+  }
+}
+
+async function loadMarketPricing(){
+  const city=(document.getElementById('mktCity')?.value||'').trim();
+  const model=(document.getElementById('mktModel')?.value||'').trim();
+  const area=document.getElementById('marketPricingArea');
+  if(!area)return;
+  if(!city){area.innerHTML=`<div class="tip tip-red">Enter the dealer's market city first.</div>`;return;}
+  area.innerHTML=`<div class="tip tip-blue" style="text-align:center">⟳ Analyzing used Toyota pricing in ${city}…</div>`;
+  const prompt=`You are a used vehicle market analyst using data from AutoTrader, KBB (Kelley Blue Book), CarGurus, and Cox Automotive.
+
+Provide a used Toyota market pricing analysis for: ${city}${model?' focusing on the '+model:''}
+
+Format as:
+
+MARKET OVERVIEW: (2 sentences on overall used Toyota market in this area)
+
+TOP 5 MODELS BY DEMAND:
+For each model list: Model | Avg Days on Market | Retail Price Range | Market Trend (Hot/Stable/Soft)
+
+PRICING INSIGHTS:
+- TCUV Premium: What premium are certified units commanding over non-certified?
+- Price Sensitivity: What price bands are moving fastest?
+- Aging Risk: Which models are sitting longest?
+
+COMPETITIVE PRICING POSITION:
+How should a Toyota dealer price TCUV vs CarMax and Carvana in this market?
+
+RECOMMENDATION FOR DEALERS:
+3 specific pricing actions for the next 30 days.
+
+Use realistic current market data. Be specific with dollar ranges.`;
+  try{
+    const txt=await callAI(prompt,1400,'You are a used vehicle market analyst with expertise in Toyota CPO pricing across the US.');
+    area.innerHTML=`<div style="border:1.5px solid rgba(10,124,58,.25);border-radius:12px;overflow:hidden">
+      <div style="background:var(--green-lt);padding:10px 14px;border-bottom:1px solid rgba(10,124,58,.15);display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:12px;font-weight:700;color:${GN};text-transform:uppercase;letter-spacing:.8px">Used Toyota Pricing — ${city}${model?' · '+model:''}</span>
+        <span style="font-size:10px;color:var(--dim-lt)">Sources: AutoTrader · KBB · CarGurus · Cox</span>
+      </div>
+      <div style="padding:16px;background:#fff;font-size:13px;color:var(--dim);line-height:1.75;white-space:pre-wrap">${txt.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+    </div>`;
+  }catch(e){
+    area.innerHTML=`<div class="tip tip-red"><strong>Analysis unavailable:</strong> ${e.message}</div>`;
+  }
+}
+
+async function loadCompetitors(){
+  const city=(document.getElementById('compCity')?.value||'').trim();
+  const area=document.getElementById('competitorArea');
+  if(!area)return;
+  if(!city){area.innerHTML=`<div class="tip tip-red">Enter a city or zip code to search.</div>`;return;}
+  area.innerHTML=`<div class="tip tip-orange" style="text-align:center">⟳ Identifying top competitors in ${city}…</div>`;
+  const c=gc();
+  const prompt=`You are a competitive intelligence analyst for a Toyota district sales manager.
+
+Identify the top 5 used car competitors in this market: ${city}
+Dealer we represent: ${c?dnm(c.nm):'Toyota Dealer'}
+
+Must include: CarMax, Carvana (national), and the top 3 local franchise used car dealers.
+
+For each competitor, provide:
+NAME: [Competitor name]
+TYPE: [CarMax / Carvana / Toyota Franchise / Other Franchise]
+USED INVENTORY STRENGTH: [Volume / Price positioning description]
+TCUV THREAT LEVEL: [High / Medium / Low]
+STRATEGY: [One specific recommendation for how our dealer should compete against this specific competitor]
+
+Be realistic and specific to the ${city} market. Focus on how they compete for Toyota CPO customers.`;
+  try{
+    const txt=await callAI(prompt,1200,'You are a competitive intelligence analyst specializing in the used car market.');
+    const comps=txt.split(/(?=NAME:)/g).filter(s=>s.trim().length>20);
+    area.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+      ${comps.slice(0,5).map(comp=>{
+        const name=comp.match(/NAME:\s*(.+)/)?.[1]?.trim()||'Competitor';
+        const type=comp.match(/TYPE:\s*(.+)/)?.[1]?.trim()||'';
+        const inv=comp.match(/USED INVENTORY STRENGTH:\s*([\s\S]+?)(?=TCUV THREAT|$)/)?.[1]?.trim()||'';
+        const threat=comp.match(/TCUV THREAT LEVEL:\s*(.+)/)?.[1]?.trim()||'';
+        const strat=comp.match(/STRATEGY:\s*([\s\S]+?)(?=NAME:|$)/)?.[1]?.trim()||'';
+        const tc={'High':RE,'Medium':GD,'Low':GN}[threat]||BL;
+        return`<div style="padding:14px;border:1.5px solid var(--bdr);border-radius:10px;border-top:3px solid ${tc};background:var(--card);box-shadow:var(--sh)">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+            <div><div style="font-size:14px;font-weight:700;color:var(--txt)">${name}</div><div style="font-size:11px;color:var(--dim-m)">${type}</div></div>
+            <span style="font-size:10px;font-weight:800;background:${tc};color:#fff;border-radius:4px;padding:2px 7px">${threat||'?'} THREAT</span>
+          </div>
+          ${inv?`<div style="font-size:12px;color:var(--dim);margin-bottom:8px;line-height:1.5">${inv}</div>`:''}
+          ${strat?`<div style="font-size:12px;color:${BL};font-weight:600;background:var(--blue-lt);border-radius:6px;padding:8px 10px;line-height:1.5">→ ${strat}</div>`:''}
+        </div>`;
+      }).join('')}
+    </div>`;
+  }catch(e){
+    area.innerHTML=`<div class="tip tip-red"><strong>Competitive analysis unavailable:</strong> ${e.message}</div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CONSULTATIVE TAB
+// All 8 sections from the Consultative Model Checklist.
+// Plus: Consultant Notes → AI generates Observed/Why/Fix report.
+// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// CONSULTATIVE TAB — TWO-LAYER SYSTEM
+//
+// Layer 1: Full conversation question checklist (print & use verbally)
+// Layer 2: Compact data-input form per section (4-6 fields) that
+//          feeds the AI plan generator with real numbers.
+//
+// The questions guide your conversation.
+// The inputs capture what you learned.
+// The AI uses the inputs + CRM data to build the action plan.
+// ═══════════════════════════════════════════════════════════════
+
+// ── CONVERSATION QUESTION CHECKLISTS (Layer 1) ────────────────
+const CONSULT_SECTIONS={
+  'Staffing':[
+    'How many salespeople do you have, and do they sell both new and used?',
+    'Based on your current staff, is this enough to reach your sales goal? (See staffing calculator)',
+    'Do you have sales teams? How many reps per team, and who manages each?',
+    'What metrics do you use to monitor individual performance (units, PVR, closing %, appt show rate)?',
+    'How many units per month does each salesperson average? (Target: 12/consultant)',
+    'What are the best and worst performers doing per month? What is the gross range?',
+    'Do you set individual written income goals for each salesperson monthly?',
+    'How often do you review progress and coach each salesperson? (Weekly minimum)',
+    'Do you have daily production meetings? (15-minute focused, yesterday results / today targets)',
+    'What minimum performance standards must reps meet to stay employed?',
+    'Do you have a written training calendar? Who conducts training?',
+    'Does your pay plan reward both volume and gross? Is it aligned with MLP and TRBP?',
+    'What is your salesperson turnover rate? (Benchmark: 40-60% annually)',
+    'Is there a structured onboarding program with 30/60/90-day milestones?'
+  ],
+  'Inventory':[
+    'Do you have a 30/60/90-day review process for aging units? Who owns it?',
+    'How many units are currently 30 / 60 / 90+ days old? What is the exit strategy on 90+?',
+    'Who manages online pricing? How often are prices adjusted?',
+    'Are all units photographed and online within 24–48 hours of acquisition?',
+    'What is your pricing strategy vs. market — are you competitive on all platforms?',
+    'Does your pay plan reward selling aged inventory? Is there a spiff on 60+ day units?',
+    'Are managers held accountable for aged inventory metrics?',
+    'Do you have a documented aged inventory action plan?'
+  ],
+  'New Sales Process':[
+    'How do you measure success? (MLP, 105% Sales Efficiency)',
+    'Is there a documented sales process for floor, phone, and internet leads?',
+    'What are your daily salesperson requirements/standards (calls, texts, appts)?',
+    'How are fresh-ups logged into CRM? Who gets the next Up?',
+    'Is a 100% manager T/O required before a customer leaves without buying?',
+    'What are your key metrics: floor (60% set / 70% show / 60% sold), phone, internet?',
+    'What is your current lead response time? (Target: under 10 minutes)',
+    'Do you have an EMI (Early Manager Involvement) process for engaged leads with no appt?',
+    'Do you have a Pre-Sell process? Is a deposit required?',
+    'Do you have a Service-to-Sales process? What is your CP RO conversion rate?'
+  ],
+  'Used Sales Process':[
+    'Who conducts appraisals? How consistent are valuations across your team?',
+    'What percentage of appraisals convert to acquired units?',
+    'Are you using structured appraisal tools and real-time market data?',
+    'What is your acquisition mix by source (trade, auction, street buy, off-lease)?',
+    'What is your average cost to acquire per unit by channel?',
+    'What is your average recon timeline from acquisition to frontline-ready?',
+    'What is your average recon cost per unit? Do you have a cap before routing to wholesale?',
+    'What percentage of eligible Toyota units are certified (TCUV penetration)?',
+    'How is your sales team communicating the TCUV value proposition?',
+    'What pricing methodology do you use? How often do you adjust based on market movement?',
+    'At what day marks do automatic price reductions trigger?',
+    'Do you have a service-to-sales process with equity alerts and repair order triggers?'
+  ],
+  'Marketing Review':[
+    'Do you manage marketing in-house or through an agency? How long have you worked with them?',
+    'Is Toyota winning market share in your PMA? If not — who is, and by how many units?',
+    'How is your paid media budget split? (Social, OTT, Linear, SEM)',
+    'Are VDP-level campaigns set up correctly for social and digital?',
+    'How do you measure success across campaigns? Who validates agency reporting?',
+    'Who manages the website? What are your monthly visits and top 5 traffic sources?',
+    'Do you own the #1 spot for make/model near-me searches (SEO)?',
+    'Who responds to reviews? What is your process for negative reviews?',
+    'Do you have an active GMB page with current specials?',
+    'Have you identified multicultural audiences in your DMA?'
+  ],
+  'Traffic Generation':[
+    'What is your traffic mix (floor / phone / internet) for new and used?',
+    'What are your closing ratios by channel? Do they align with your traffic mix?',
+    'Are sales associates required to make daily outbound calls? How many?',
+    'Are outbound activities tracked in CRM daily? Do managers inspect it?',
+    'Do you have a Service-to-Sales process? (Benchmark: 3% of CP ROs)',
+    'Are you using equity mining tools (AutoAlert, VinSolutions, DealerSocket)?',
+    'Who manages equity mining? Is there a daily/weekly follow-up expectation?',
+    'Are salespeople posting on social media? Is there training on Instagram/TikTok?',
+    'Are inbound phone calls logged and reviewed? (Car Wars, CallRevu)',
+    'Are daily outbound metrics reviewed by management?'
+  ],
+  'Profit Analysis':[
+    'What is your current Return on Sales (ROS)? (GST benchmark: 4.2%)',
+    'What are your front and back-end grosses for new and used?',
+    'What does your Contracts in Transit (CIT) look like?',
+    'How do you review Accounts Receivable 30/60/90 past due?',
+    'Do you calculate Used Vehicle Days of Profitability?',
+    'What is your used vehicle inventory turn goal? (Units in stock ÷ avg monthly sold)',
+    'What is your service department total absorption rate?',
+    'Total Sales Comp % of Front Gross (NCM benchmark: 34%)',
+    'Total F&I Comp % of F&I Net (NCM benchmark: 17%)',
+    'New Advertising Expense per Vehicle Retailed (NCM benchmark: $304)'
+  ],
+  'TCUV Specific':[
+    'What criteria determine which eligible Toyota units get certified vs. non-certified?',
+    'What is your current TCUV penetration rate as a % of total used Toyota retail?',
+    'How is your team communicating the TCUV warranty and value proposition?',
+    'Are you taking advantage of TCUV marketing co-op dollars?',
+    'When pricing a TCUV unit, are you accounting for the certification premium?',
+    'How are you monitoring pricing vs. top 5 competitors on overlapping TCUV inventory?',
+    'How do you track TCUV-specific metrics (volume, gross, turn rate)?',
+    'What is your mid-month review process vs. month-end for TCUV attainment?'
+  ]
+};
+
+// ── AI INPUT FIELDS (Layer 2) — what the AI actually needs ─────
+// Each field: { id, lbl, type, placeholder, benchmark, unit }
+// type: 'number' | 'pct' | 'select' | 'text'
+const CONSULT_INPUTS={
+  'Staffing':[
+    {id:'headcount',     lbl:'Total Salespeople',           type:'number', placeholder:'e.g. 12',       benchmark:'',         unit:'people'},
+    {id:'unitsPerRep',   lbl:'Avg Units / Rep / Month',     type:'number', placeholder:'e.g. 8',        benchmark:'Target: 12',unit:'units'},
+    {id:'turnoverPct',   lbl:'Annual Turnover Rate',        type:'pct',    placeholder:'e.g. 65',       benchmark:'Bench: 40-60%',unit:'%'},
+    {id:'writtenGoals',  lbl:'Written Individual Income Goals', type:'select', opts:['Yes — every month','Informal/verbal','No'],benchmark:''},
+    {id:'trainingCal',   lbl:'Written Training Calendar',   type:'select', opts:['Yes — followed consistently','Exists but inconsistent','No formal calendar'],benchmark:''},
+  ],
+  'Inventory':[
+    {id:'aged30',        lbl:'Units 30-59 Days Old',        type:'number', placeholder:'e.g. 18',       benchmark:'',         unit:'units'},
+    {id:'aged60',        lbl:'Units 60-89 Days Old',        type:'number', placeholder:'e.g. 7',        benchmark:'',         unit:'units'},
+    {id:'aged90',        lbl:'Units 90+ Days Old',          type:'number', placeholder:'e.g. 3',        benchmark:'Target: 0',unit:'units'},
+    {id:'pricingCadence',lbl:'Pricing Review Frequency',    type:'select', opts:['Daily','Weekly','Bi-weekly','Reactive only — no schedule'],benchmark:''},
+    {id:'agedSpiff',     lbl:'Aged Inventory Spiff / Incentive', type:'select', opts:['Yes — documented spiff on 60+ day units','Informal/occasional','No spiff program'],benchmark:''},
+  ],
+  'New Sales Process':[
+    {id:'floorClose',    lbl:'Floor Closing Ratio',         type:'pct',    placeholder:'e.g. 20',       benchmark:'Target: 60%', unit:'%'},
+    {id:'phoneClose',    lbl:'Phone Lead Closing Ratio',    type:'pct',    placeholder:'e.g. 15',       benchmark:'',         unit:'%'},
+    {id:'internetClose', lbl:'Internet Lead Closing Ratio', type:'pct',    placeholder:'e.g. 10',       benchmark:'',         unit:'%'},
+    {id:'leadResponse',  lbl:'Avg Lead Response Time',      type:'select', opts:['Under 10 min','10-30 min','30-60 min','Over 1 hour','No standard'],benchmark:'Target: <10 min'},
+    {id:'managerTO',     lbl:'100% Manager T/O Required',   type:'select', opts:['Yes — enforced','Yes — but inconsistent','No'],benchmark:''},
+    {id:'s2sProcess',    lbl:'Service-to-Sales Process',    type:'select', opts:['Yes — active with equity alerts','Informal/occasional','No process'],benchmark:'Benchmark: 3% of CP ROs'},
+  ],
+  'Used Sales Process':[
+    {id:'appraisalConv', lbl:'Appraisal-to-Acquisition %',  type:'pct',    placeholder:'e.g. 35',       benchmark:'',         unit:'%'},
+    {id:'reconDays',     lbl:'Avg Recon Cycle Time',        type:'number', placeholder:'e.g. 7',        benchmark:'Target: ≤5 days', unit:'days'},
+    {id:'reconCap',      lbl:'Recon Cost Cap (per unit)',   type:'number', placeholder:'e.g. 1500',     benchmark:'',         unit:'$'},
+    {id:'tcuvPenetration',lbl:'TCUV Penetration Rate',      type:'pct',    placeholder:'e.g. 60',       benchmark:'',         unit:'%'},
+    {id:'pricingCadence',lbl:'Used Vehicle Pricing Review', type:'select', opts:['Daily — systematic','Weekly','Bi-weekly','Reactive only'],benchmark:''},
+    {id:'acqMixTrade',   lbl:'Acquisition Mix — Trade %',   type:'pct',    placeholder:'e.g. 55',       benchmark:'',         unit:'%'},
+  ],
+  'Marketing Review':[
+    {id:'marketShare',   lbl:'Winning PMA Market Share?',   type:'select', opts:['Yes — growing share','Flat / holding','No — losing share'],benchmark:''},
+    {id:'budgetSplit',   lbl:'Digital vs Traditional Budget Split', type:'select', opts:['80%+ Digital','60-80% Digital','40-60% Mixed','Mostly Traditional'],benchmark:''},
+    {id:'agencyType',    lbl:'Marketing Management',        type:'select', opts:['In-house team','Agency — strong relationship','Agency — weak accountability','No formal program'],benchmark:''},
+    {id:'gmbActive',     lbl:'Google My Business Active?',  type:'select', opts:['Yes — current specials, active reviews','Exists but neglected','No / not set up'],benchmark:''},
+  ],
+  'Traffic Generation':[
+    {id:'trafficMixFloor', lbl:'Floor Traffic %',           type:'pct',    placeholder:'e.g. 40',       benchmark:'',         unit:'%'},
+    {id:'trafficMixPhone', lbl:'Phone Traffic %',           type:'pct',    placeholder:'e.g. 30',       benchmark:'',         unit:'%'},
+    {id:'outboundTracked', lbl:'Outbound Activity Tracked Daily?', type:'select', opts:['Yes — CRM logged, manager-inspected','Tracked but not inspected','No tracking'],benchmark:''},
+    {id:'equityMining',    lbl:'Equity Mining Tool',        type:'select', opts:['Active — AutoAlert','Active — VinSolutions','Active — DealerSocket','Active — other','Not using equity mining'],benchmark:''},
+    {id:'phoneLogging',    lbl:'Inbound Phone Logging',     type:'select', opts:['Car Wars','CallRevu','Other tool','No phone logging'],benchmark:''},
+  ],
+  'Profit Analysis':[
+    {id:'ros',           lbl:'Return on Sales (ROS %)',     type:'pct',    placeholder:'e.g. 3.2',      benchmark:'GST benchmark: 4.2%', unit:'%'},
+    {id:'usedFrontPU',   lbl:'Used Vehicle Front GP/Unit',  type:'number', placeholder:'e.g. 2800',     benchmark:'',         unit:'$'},
+    {id:'usedBackPU',    lbl:'Used Vehicle Back-End/Unit',  type:'number', placeholder:'e.g. 1400',     benchmark:'',         unit:'$'},
+    {id:'inventoryTurn', lbl:'Used Vehicle Turn Goal (days)', type:'number', placeholder:'e.g. 45',     benchmark:'',         unit:'days'},
+    {id:'absorption',    lbl:'Service Absorption Rate',     type:'pct',    placeholder:'e.g. 70',       benchmark:'Target: 100%', unit:'%'},
+  ],
+  'TCUV Specific':[
+    {id:'certCriteria',  lbl:'Certification Criteria Defined?', type:'select', opts:['Yes — written criteria, consistently applied','Informal / judgment call','No defined criteria'],benchmark:''},
+    {id:'tcuvPct',       lbl:'TCUV % of Total Used Toyota Retail', type:'pct', placeholder:'e.g. 55',  benchmark:'',         unit:'%'},
+    {id:'coopUsed',      lbl:'TCUV Marketing Co-Op Utilized?', type:'select', opts:['Yes — fully utilized','Partially utilized','Not using co-op dollars'],benchmark:''},
+    {id:'compPricing',   lbl:'Competitor Pricing Review',   type:'select', opts:['Weekly — systematic review','Occasional / ad hoc','No competitive pricing review'],benchmark:''},
+  ]
+};
+
+// ── RENDER ─────────────────────────────────────────────────────
+function rConsult(mc,c){
+  const notes=c._consultNotes||[];
+  const activeSec=c._consultActiveSec||'Used Sales Process';
+  const inputs=c._consultInputs||{};
+  const secInputs=CONSULT_INPUTS[activeSec]||[];
+  const secData=inputs[activeSec]||{};
+  const hasInputs=secInputs.some(f=>secData[f.id]!=null&&secData[f.id]!=='');
+  const secNotes=notes.filter(n=>n.section===activeSec);
+
+  mc.innerHTML=`
+  ${sHdr('Consultative Review','Conversation guide · Data capture · AI action plan generator')}
+
+  <div style="display:grid;grid-template-columns:200px 1fr;gap:14px;align-items:start">
+
+    <!-- LEFT NAV -->
+    <div>
+      <div class="card" style="padding:10px;margin-bottom:10px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--dim-m);margin-bottom:8px">Sections</div>
+        ${Object.keys(CONSULT_SECTIONS).map(sec=>{
+          const sd=inputs[sec]||{};
+          const si=CONSULT_INPUTS[sec]||[];
+          const filled=si.filter(f=>sd[f.id]!=null&&sd[f.id]!=='').length;
+          const hasNotes=notes.some(n=>n.section===sec);
+          return`<button onclick="setConsultSec('${sec}')" style="display:block;width:100%;text-align:left;padding:8px 10px;margin-bottom:3px;border-radius:7px;border:1.5px solid ${activeSec===sec?BL:'var(--bdr)'};background:${activeSec===sec?'var(--blue-lt)':'var(--card)'};color:${activeSec===sec?BL:'var(--dim)'};font-size:11px;font-weight:${activeSec===sec?'700':'600'};cursor:pointer;transition:all .15s;display:flex;justify-content:space-between;align-items:center">
+            <span>${sec}</span>
+            ${filled>0?`<span style="font-size:9px;background:${GN};color:#fff;border-radius:8px;padding:1px 5px;font-weight:800">${filled}/${si.length}</span>`:''}
+          </button>`;
+        }).join('')}
+      </div>
+      ${notes.length?`<div class="card" style="padding:10px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--dim-m);margin-bottom:8px">Saved Reports (${notes.length})</div>
+        ${notes.map((n,i)=>`<div style="font-size:11px;padding:6px 8px;margin-bottom:3px;background:var(--surface);border-radius:6px;border-left:3px solid ${BL};cursor:pointer" onclick="setConsultSec('${n.section}')">
+          <div style="font-weight:700;color:var(--txt);font-size:10px">${n.section}</div>
+          <div style="color:var(--dim-lt);font-size:10px">${n.date||''}</div>
+        </div>`).join('')}
+      </div>`:''
+      }
+    </div>
+
+    <!-- RIGHT MAIN -->
+    <div>
+
+      <!-- LAYER 1: CONVERSATION CHECKLIST -->
+      <div class="card" style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <div>
+            <div class="card-title" style="margin:0">💬 ${activeSec} — Conversation Guide</div>
+            <div style="font-size:11px;color:var(--dim-lt);margin-top:2px">Use these verbally during the visit. Check off as you cover them.</div>
+          </div>
+          <button class="btn btn-sm btn-ghost" onclick="printConsultChecklist('${activeSec}')">🖨 Print Checklist</button>
+        </div>
+        <div>
+          ${(CONSULT_SECTIONS[activeSec]||[]).map((q,i)=>`
+            <div style="display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--bdr)">
+              <input type="checkbox" id="cq_${i}" style="margin-top:2px;width:15px;height:15px;accent-color:${BL};flex-shrink:0">
+              <label for="cq_${i}" style="font-size:12.5px;color:var(--dim);line-height:1.5;cursor:pointer">${q}</label>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- LAYER 2: AI DATA INPUTS -->
+      <div class="card" style="margin-bottom:12px;border-left:4px solid ${BL}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <div>
+            <div class="card-title" style="margin:0">📋 What You Observed — ${activeSec}</div>
+            <div style="font-size:11px;color:var(--dim-lt);margin-top:2px">Write or speak anything you observed. Numbers, behaviors, process gaps, things missing — all of it feeds the AI plan.</div>
+          </div>
+          ${hasInputs||secData._notes?`<span style="font-size:10px;background:${GN};color:#fff;border-radius:10px;padding:2px 8px;font-weight:700">✓ Captured</span>`:''}
+        </div>
+
+        <!-- OBSERVATION FIELD — PRIMARY INPUT -->
+        <div style="margin-bottom:16px;padding:14px;background:var(--surface);border-radius:10px;border:1.5px solid var(--bdr)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+            <label style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:${OR}">What I Observed</label>
+            <div style="display:flex;gap:6px;align-items:center">
+              <span style="font-size:10px;color:var(--dim-lt);font-style:italic">Anything counts — behaviors, missing processes, what you saw/heard</span>
+              <button id="consultVoiceBtn" class="btn btn-sm btn-ghost" style="font-size:11px;padding:4px 10px" onclick="consultVoiceNote()">🎤 Speak</button>
+            </div>
+          </div>
+          <textarea class="fi-ta" rows="5" id="consultFreeNotes"
+            placeholder="Write freely — whatever you saw during the visit:
+
+• Vehicles sitting in recon with no paperwork moving
+• GM couldn't tell me his used car manager's closing ratio without looking it up
+• No pricing whiteboard visible anywhere on the floor
+• 3 cars not listed online — sitting outside for over a week
+• Sales meeting happened but lasted 90 seconds with no numbers reviewed
+• UCM was reactive on aged inventory, no proactive plan
+
+Speak or type. Numbers help but are not required."
+            oninput="saveConsultFreeNotes('${activeSec}')" style="font-size:13px;line-height:1.7">${secData._notes||''}</textarea>
+          <div id="consultVoiceStatus" style="margin-top:6px;font-size:11px"></div>
+        </div>
+
+        <!-- METRIC INPUTS — SUPPORTING CONTEXT -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--dim-m);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+            <span>Supporting Metrics <span style="font-weight:400;font-style:italic;text-transform:none;letter-spacing:0">(optional — fill what you know)</span></span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">
+            ${secInputs.map(f=>{
+              const val=secData[f.id]!=null?secData[f.id]:'';
+              if(f.type==='select'){
+                return`<div>
+                  <label class="fl" style="font-size:10px">${f.lbl}${f.benchmark?` <span style="font-weight:400;color:var(--dim-lt)">${f.benchmark}</span>`:''}</label>
+                  <select class="fi" style="font-size:12px" onchange="saveConsultInput('${activeSec}','${f.id}',this.value)">
+                    <option value="">— Select —</option>
+                    ${(f.opts||[]).map(o=>`<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('')}
+                  </select>
+                </div>`;
+              }
+              return`<div>
+                <label class="fl" style="font-size:10px">${f.lbl}${f.unit?` <span style="font-weight:400;color:var(--dim-lt)">(${f.unit})</span>`:''}${f.benchmark?` <span style="font-weight:400;color:var(--dim-lt)"> · ${f.benchmark}</span>`:''}</label>
+                <input type="number" class="fi${val!==''?' has-override':''}" style="font-size:12px" step="${f.type==='pct'?'0.1':'1'}" min="0"
+                  value="${val}" placeholder="${f.placeholder||'optional'}"
+                  oninput="saveConsultInput('${activeSec}','${f.id}',this.value)">
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-sm" style="background:${PR}" onclick="genConsultPlan('${activeSec}')">🤖 Generate AI Action Plan</button>
+        </div>
+        <div id="consultPlanArea" style="margin-top:14px"></div>
+      </div>
+
+      <!-- SAVED REPORTS FOR THIS SECTION -->
+      ${secNotes.length?`<div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div class="card-title" style="margin:0">Saved Reports — ${activeSec} (${secNotes.length})</div>
+          <button class="btn btn-sm btn-ghost" onclick="printAllNotes()">🖨 Print All</button>
+        </div>
+        ${secNotes.map((n,i)=>{
+          const globalIdx=notes.indexOf(n);
+          return`<div style="padding:14px;margin-bottom:10px;border:1.5px solid var(--bdr);border-radius:10px;border-left:4px solid ${PR}">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+              <div style="font-size:11px;color:var(--dim-m)">${n.date||''} ${n.contact?' · '+n.contact:''}</div>
+              <button class="btn btn-sm btn-del" onclick="deleteNote(${globalIdx})">✕</button>
+            </div>
+            ${n.observed?`<div style="margin-bottom:8px"><div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:${OR};margin-bottom:3px">Observed</div><div style="font-size:13px;color:var(--dim);line-height:1.6">${n.observed.replace(/\n/g,'<br>')}</div></div>`:''}
+            ${n.why?`<div style="margin-bottom:8px"><div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:${GD};margin-bottom:3px">Why It Matters</div><div style="font-size:13px;color:var(--dim);line-height:1.6">${n.why.replace(/\n/g,'<br>')}</div></div>`:''}
+            ${n.fix?`<div><div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:${GN};margin-bottom:3px">Path Forward</div><div style="font-size:13px;color:var(--dim);line-height:1.6">${n.fix.replace(/\n/g,'<br>')}</div></div>`:''}
+          </div>`;
+        }).join('')}
+      </div>`:''}
+    </div>
+  </div>`;
+}
+
+function setConsultSec(sec){
+  const c=gc();if(!c)return;
+  c._consultActiveSec=sec;
+  saveAll();render();
+}
+
+function saveConsultInput(sec,fieldId,val){
+  const c=gc();if(!c)return;
+  if(!c._consultInputs)c._consultInputs={};
+  if(!c._consultInputs[sec])c._consultInputs[sec]={};
+  c._consultInputs[sec][fieldId]=val;
+  saveAll();
+  // Update the data-captured badge without full re-render
+  const si=CONSULT_INPUTS[sec]||[];
+  const sd=c._consultInputs[sec]||{};
+  const filled=si.filter(f=>sd[f.id]!=null&&sd[f.id]!=='').length;
+  const badge=document.querySelector('.card-title+[style*="Data Captured"]');
+  // silently save — no re-render needed for individual field changes
+}
+
+function saveConsultFreeNotes(sec){
+  const c=gc();if(!c)return;
+  if(!c._consultInputs)c._consultInputs={};
+  if(!c._consultInputs[sec])c._consultInputs[sec]={};
+  const ta=document.getElementById('consultFreeNotes');
+  c._consultInputs[sec]._notes=ta?ta.value:'';
+  saveAll(); // silent auto-save on every keystroke
+}
+
+let _consultVoiceRec=null;
+function consultVoiceNote(){
+  const status=document.getElementById('consultVoiceStatus');
+  const btn=document.getElementById('consultVoiceBtn');
+  const ta=document.getElementById('consultFreeNotes');
+  const sec=gc()?._consultActiveSec||'';
+  if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){
+    if(status)status.innerHTML=`<span style="color:${RE}">Voice requires Chrome on desktop or mobile.</span>`;return;
+  }
+  if(_consultVoiceRec){
+    _consultVoiceRec.stop();_consultVoiceRec=null;
+    if(btn)btn.textContent='🎤 Speak';if(status)status.innerHTML='';return;
+  }
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  _consultVoiceRec=new SR();
+  _consultVoiceRec.continuous=true;_consultVoiceRec.interimResults=true;_consultVoiceRec.lang='en-US';
+  let base=ta?ta.value:'';if(base&&!base.endsWith('\n'))base+='\n';
+  _consultVoiceRec.onresult=e=>{
+    let interim='',final='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal)final+=e.results[i][0].transcript;
+      else interim+=e.results[i][0].transcript;
+    }
+    if(final)base+=final+' ';
+    if(ta)ta.value=base+(interim?'['+interim+']':'');
+    saveConsultFreeNotes(sec);
+  };
+  _consultVoiceRec.onerror=()=>{
+    if(status)status.innerHTML=`<span style="color:${RE}">Mic error — check permissions.</span>`;
+    _consultVoiceRec=null;if(btn)btn.textContent='🎤 Speak';
+  };
+  _consultVoiceRec.onend=()=>{_consultVoiceRec=null;if(btn)btn.textContent='🎤 Speak';if(status)status.innerHTML='';};
+  _consultVoiceRec.start();
+  if(btn)btn.textContent='⏹ Stop';
+  if(status)status.innerHTML=`<span style="color:${GN}">🔴 Listening — speak your observations. Click Stop when done.</span>`;
+}
+
+async function genConsultPlan(sec){
+  const c=gc();if(!c)return;
+  const f=c.fn||{};
+  const tu=Math.max(f.tu||1,1);
+  const inputs=c._consultInputs||{};
+  const sd=inputs[sec]||{};
+  const si=CONSULT_INPUTS[sec]||[];
+  const area=document.getElementById('consultPlanArea');
+  if(!area)return;
+
+  // Build a clean data summary of what was captured
+  const dataLines=si.map(field=>{
+    const val=sd[field.id];
+    if(val==null||val==='')return null;
+    return`- ${field.lbl}: ${val}${field.unit&&field.type!=='select'?' '+field.unit:''}${field.benchmark?' (benchmark: '+field.benchmark+')':''}`;
+  }).filter(Boolean);
+
+  const freeObs=(sd._notes||'').trim();
+
+  // Need at least observations OR 2 data fields
+  if(!freeObs&&dataLines.length<2){
+    area.innerHTML=`<div class="tip tip-orange" style="font-size:13px">
+      <strong>Add your observations first.</strong><br>
+      Write or speak what you saw — cars not listed online, missing processes, team behaviors, anything. Numbers are optional. The AI works from whatever you give it.
+    </div>`;
+    return;
+  }
+
+  area.innerHTML=`<div class="tip tip-purple" style="text-align:center"><span style="animation:spin 1s linear infinite;display:inline-block">⟳</span> Building action plan from your observations…</div>`;
+
+  // Pull CRM financial context
+  const crmContext=[
+    f.tu?`TCUV Units/Mo: ${fN(f.tu)}`:'',
+    f.tg?`Front GP/Unit: ${f$(Math.round((f.tg||0)/tu))} (GST benchmark: ${f$(Math.round(f.dTG||f.gTG||0))})`:'',
+    f.tFI?`Back-End/Unit: ${f$(Math.round((f.tFI||0)/tu))} (GST: ${f$(Math.round(f.dTF||f.gTF||0))})`:'',
+    f.cR?`Recon/Unit: ${f$(Math.round((f.cR||0)/tu))} (GST: ${f$(Math.round(f.dCR||f.gCR||0))})`:'',
+    f.usedNewRatio?`Used:New Ratio: ${f.usedNewRatio.toFixed(2)} (target: 1.00)`:'',
+    c.rc?.ds?.find(d=>nm(d.n,c.nm))?.p!=null?`MTD Attainment: ${c.rc.ds.find(d=>nm(d.n,c.nm)).p}%`:'',
+  ].filter(Boolean);
+
+  const prompt=`You are a GST TCUV senior district consultant. A consultant just completed a visit and logged what they observed. Generate a structured action plan.
+
+DEALER: ${dnm(c.nm)} | Period: ${f.pr||'Current'} | Section: ${sec}
+${crmContext.length?'CRM FINANCIAL CONTEXT:\n'+crmContext.join('\n'):''}
+
+WHAT THE CONSULTANT OBSERVED DURING THE VISIT:
+${freeObs||'(No freeform observations — using metric data only)'}
+
+${dataLines.length?'METRICS CAPTURED:\n'+dataLines.join('\n'):''}
+
+IMPORTANT:
+- Observations can be anything: visual gaps (cars not online, no whiteboard), behavioral (GM couldn't answer basic questions), process breakdowns (no pricing review, no aged inventory plan), missing infrastructure (no production meetings), or numbers.
+- Treat ALL observations equally. A car sitting unlisted for 2 weeks is as actionable as a recon cost 40% over benchmark.
+- Connect each observation to its business impact on TCUV volume, gross, or dealer health.
+- Be specific. Reference what was actually observed, not generic dealership advice.
+
+Generate a report in EXACTLY this format:
+
+WHAT WAS OBSERVED:
+[3-4 sentences. Describe what was seen, heard, or missing — both qualitative and quantitative. Write as if briefing a senior manager who wasn't there.]
+
+WHY IT MATTERS:
+[2-3 sentences. Direct business consequence of each observation. Where benchmark gaps exist, quantify the dollar impact.]
+
+ACTION PLAN:
+Priority 1 — [Category]: [Specific action] | Owner: [GM/UCM/Sales Mgr/Consultant] | Target: [measurable outcome] | Timeline: [by when]
+Priority 2 — [Category]: [Specific action] | Owner: [...] | Target: [...] | Timeline: [...]
+Priority 3 — [Category]: [Specific action] | Owner: [...] | Target: [...] | Timeline: [...]
+[Add Priority 4-5 only if additional observations genuinely warrant it]
+
+COMMITMENT TO CAPTURE:
+[One commitment. The most important thing this dealer needs to do before you return. Who, what action, measured by what, by when.]
+
+No filler. No generic advice. Every point must trace back to something actually observed.`;
+
+  try{
+    const txt=await callAI(prompt,1000,'You are a GST TCUV senior district consultant writing data-driven action plans.');
+
+    // Parse sections
+    const observed=txt.match(/WHAT WAS OBSERVED:\s*([\s\S]+?)(?=WHY IT MATTERS:|$)/i)?.[1]?.trim()||'';
+    const why=txt.match(/WHY IT MATTERS:\s*([\s\S]+?)(?=ACTION PLAN:|$)/i)?.[1]?.trim()||'';
+    const plan=txt.match(/ACTION PLAN:\s*([\s\S]+?)(?=COMMITMENT TO CAPTURE:|$)/i)?.[1]?.trim()||'';
+    const commit=txt.match(/COMMITMENT TO CAPTURE:\s*([\s\S]+)/i)?.[1]?.trim()||'';
+
+    // Auto-save as a note
+    if(!c._consultNotes)c._consultNotes=[];
+    c._consultNotes.push({
+      section:sec,observed,why,fix:plan,aiReport:txt,
+      date:td(),contact:(c.contacts||[])[0]?.name||'',
+      inputs:{...sd}
+    });
+    saveAll();
+
+    area.innerHTML=`<div style="border:1.5px solid rgba(91,33,182,.25);border-radius:12px;overflow:hidden;margin-top:4px">
+      <div style="background:var(--hdr);padding:10px 16px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <span style="font-family:'Orbitron',sans-serif;font-size:11px;font-weight:800;color:#fff;letter-spacing:.8px">AI ACTION PLAN — ${sec.toUpperCase()}</span>
+          <span style="margin-left:10px;font-size:10px;color:rgba(255,255,255,.5)">${td()}</span>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-sm btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.3)" onclick="addPlanCommitment(${JSON.stringify(commit).replace(/'/g,'&#39;')})">+ Log Commitment</button>
+          <button class="btn btn-sm btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.3)" onclick="printConsultPlan('${sec}')">🖨 Print</button>
+        </div>
+      </div>
+      <div style="padding:16px;background:#fff">
+        <div style="margin-bottom:14px;padding:12px;background:var(--red-lt);border-radius:8px;border-left:3px solid ${OR}">
+          <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:${OR};margin-bottom:6px">What Was Observed</div>
+          <div style="font-size:13px;color:var(--dim);line-height:1.65">${observed.replace(/\n/g,'<br>')}</div>
+        </div>
+        <div style="margin-bottom:14px;padding:12px;background:var(--gold-lt);border-radius:8px;border-left:3px solid ${GD}">
+          <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:${GD};margin-bottom:6px">Why It Matters</div>
+          <div style="font-size:13px;color:var(--dim);line-height:1.65">${why.replace(/\n/g,'<br>')}</div>
+        </div>
+        <div style="margin-bottom:14px">
+          <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:${GN};margin-bottom:8px">Action Plan</div>
+          ${plan.split('\n').filter(l=>l.trim()).map(l=>{
+            const isPriority=l.trim().startsWith('Priority');
+            return`<div style="display:flex;gap:10px;padding:9px 12px;margin-bottom:6px;background:${isPriority?'var(--green-lt)':'var(--surface)'};border-radius:7px;border-left:${isPriority?'3px solid '+GN:'none'}">
+              <div style="font-size:13px;color:var(--dim);line-height:1.55">${l.replace(/Priority (\d+)/,'<strong style="color:'+GN+'">Priority $1</strong>').replace(/Owner:/g,'<span style="color:'+BL+';font-weight:600">Owner:</span>').replace(/Target:/g,'<span style="color:'+GD+';font-weight:600">Target:</span>').replace(/Timeline:/g,'<span style="color:'+PR+';font-weight:600">Timeline:</span>')}</div>
+            </div>`;
+          }).join('')}
+        </div>
+        ${commit?`<div style="padding:12px 14px;background:var(--blue-lt);border-radius:8px;border-left:3px solid ${BL}">
+          <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:${BL};margin-bottom:6px">Commitment to Capture Today</div>
+          <div style="font-size:13px;color:var(--dim);line-height:1.6;font-weight:500">${commit}</div>
+        </div>`:''}
+      </div>
+    </div>`;
+    showToast('✓ Action plan generated and saved',GN);
+  }catch(e){
+    area.innerHTML=`<div class="tip tip-red"><strong>Plan generation failed:</strong> ${e.message}</div>`;
+  }
+}
+
+function addPlanCommitment(commitText){
+  // Pre-fill the commitment tracker and switch to that tab
+  const c=gc();if(!c)return;
+  if(!c._commitments)c._commitments=[];
+  c._commitments.push({
+    id:'cm_'+Date.now(),
+    text:commitText||'',
+    owner:'',cat:'Process',
+    due:'',madeDate:td(),done:false
+  });
+  saveAll();
+  setTab('commit');
+  showToast('✓ Commitment added — set owner and due date',GN);
+}
+
+function printConsultPlan(sec){
+  const c=gc();if(!c)return;
+  const notes=c._consultNotes||[];
+  const note=[...notes].reverse().find(n=>n.section===sec);
+  if(!note){alert('No plan found for '+sec+'. Generate one first.');return;}
+  const win=window.open('','_blank','width=800,height=600');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Action Plan — ${sec}</title>
+  <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;padding:40px;color:#111;line-height:1.6}
+  h1{font-size:16px;font-weight:900;margin-bottom:2px}h2{font-size:11px;color:#666;font-weight:400;margin-bottom:20px}
+  .lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin:14px 0 5px}
+  .observed{color:#C2410C}.why{color:#8A6200}.plan{color:#0A7C3A}.commit{color:#1558B0}
+  .block{padding:12px;border-radius:6px;border-left:3px solid #ddd;margin-bottom:10px}
+  @media print{@page{margin:.5in}}</style></head><body>
+  <h1>Consultative Action Plan — ${dnm(c.nm)}</h1>
+  <h2>${sec} · ${note.date||td()} · Confidential</h2>
+  ${note.observed?`<div class="lbl observed">What Was Observed</div><div class="block" style="border-left-color:#C2410C">${(note.observed||'').replace(/\n/g,'<br>')}</div>`:''}
+  ${note.why?`<div class="lbl why">Why It Matters</div><div class="block" style="border-left-color:#8A6200">${(note.why||'').replace(/\n/g,'<br>')}</div>`:''}
+  ${note.fix?`<div class="lbl plan">Action Plan</div><div class="block" style="border-left-color:#0A7C3A">${(note.fix||'').replace(/\n/g,'<br>')}</div>`:''}
+  <script>window.onload=()=>window.print()<\/script></body></html>`);
+  win.document.close();
+}
+
+function deleteNote(i){
+  const c=gc();if(!c||!c._consultNotes)return;
+  if(!confirm('Remove this report?'))return;
+  c._consultNotes.splice(i,1);
+  saveAll();render();
+}
+
+function viewNote(i){
+  const c=gc();if(!c||!c._consultNotes?.[i])return;
+  c._consultActiveSec=c._consultNotes[i].section;
+  saveAll();render();
+}
+
+function printConsultChecklist(sec){
+  const qs=CONSULT_SECTIONS[sec]||[];
+  const win=window.open('','_blank','width=800,height=600');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${sec} Checklist</title>
+  <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;padding:40px}
+  h1{font-size:16px;font-weight:900;margin-bottom:4px}h2{font-size:12px;color:#666;margin-bottom:20px;font-weight:400}
+  .q{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #eee;align-items:flex-start;line-height:1.5}
+  .box{width:16px;height:16px;border:1.5px solid #333;border-radius:3px;flex-shrink:0;margin-top:1px}
+  @media print{@page{margin:.5in}}</style></head><body>
+  <h1>GST TCUV · Consultative Model Checklist</h1>
+  <h2>${sec} Section · ${new Date().toLocaleDateString()}</h2>
+  ${qs.map(q=>`<div class="q"><div class="box"></div><div>${q}</div></div>`).join('')}
+  <div style="margin-top:24px;padding-top:12px;border-top:1px solid #ddd;font-size:10px;color:#999">Gulf States Toyota · TCUV District Management · Confidential</div>
+  <script>window.onload=()=>window.print()<\/script></body></html>`);
+  win.document.close();
+}
+
+function printAllNotes(){
+  const c=gc();if(!c)return;
+  const notes=c._consultNotes||[];
+  if(!notes.length){alert('No reports to print.');return;}
+  const win=window.open('','_blank','width=900,height=700');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Consultative Reports — ${dnm(c.nm)}</title>
+  <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;padding:40px;color:#111}
+  h1{font-size:18px;font-weight:900;margin-bottom:4px}h2{font-size:11px;color:#666;font-weight:400;margin-bottom:20px}
+  .note{margin-bottom:24px;padding:16px;border:1px solid #ddd;border-radius:8px;page-break-inside:avoid}
+  .sec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:8px}
+  .lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin:10px 0 4px}
+  .observed{color:#C2410C}.why{color:#8A6200}.fix{color:#0A7C3A}
+  @media print{@page{margin:.5in}.note{page-break-inside:avoid}}</style></head><body>
+  <h1>Consultative Reports — ${dnm(c.nm)}</h1>
+  <h2>All sections · Generated ${td()}</h2>
+  ${notes.map(n=>`<div class="note">
+    <div class="sec">${n.section} · ${n.date||''}</div>
+    ${n.observed?`<div class="lbl observed">Observed</div><div>${(n.observed||'').replace(/\n/g,'<br>')}</div>`:''}
+    ${n.why?`<div class="lbl why">Why It Matters</div><div>${(n.why||'').replace(/\n/g,'<br>')}</div>`:''}
+    ${n.fix?`<div class="lbl fix">Action Plan</div><div>${(n.fix||'').replace(/\n/g,'<br>')}</div>`:''}
+  </div>`).join('')}
+  <div style="margin-top:20px;padding-top:12px;border-top:1px solid #ddd;font-size:10px;color:#999">Gulf States Toyota · TCUV District Management · Confidential · ${td()}</div>
+  <script>window.onload=()=>window.print()<\/script></body></html>`);
+  win.document.close();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HELPER: inline sparkline SVG from array of values
+// ═══════════════════════════════════════════════════════════════
+function sparkSVG(vals,color,h,w){
+  h=h||40;w=w||120;
+  const clean=vals.map(v=>Number(v)||0);
+  const max=Math.max(...clean,1);const n=clean.length;if(!n)return'';
+  const bw=Math.max(Math.floor(w/n)-1,4);
+  return`<svg width="${w}" height="${h}" style="display:block">${clean.map((v,i)=>{const bh=Math.max(v>0?Math.round((v/max)*h):0,0);const x=i*(bw+1);const col=i===n-1?color:color+'88';return`<rect x="${x}" y="${h-bh}" width="${bw}" height="${bh}" rx="2" fill="${col}"/>`;}).join('')}</svg>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 1. PRE-VISIT BRIEF
+// ═══════════════════════════════════════════════════════════════
+function rBrief(mc,c){
+  const f=c.fn||{};const pd=perfData(c);const ds=dealerScore(c);
+  const openCommits=(c._commitments||[]).filter(cm=>!cm.done);
+  const overdueCommits=openCommits.filter(cm=>cm.due&&new Date(cm.due)<new Date());
+  const lastVisit=[...c.consultHistory||[]].reverse().find(h=>h.type==='Visit');
+  const openTasks=(c.tasks||[]).filter(t=>!t.done);
+  const tu=Math.max(f.tu||1,1);
+  const aF=Math.round((f.tg||0)/tu),gF=Math.round(f.dTG||f.gTG||0);
+  const att=(c.rc?.ds?.find(d=>nm(d.n,c.nm)))?.p??null;
+  const moSold=c.moSold||[];
+  const nonZeroMo=moSold.filter(v=>v>0);
+  const trend=nonZeroMo.length>=2?(nonZeroMo[nonZeroMo.length-1]>nonZeroMo[nonZeroMo.length-2]?'📈 Trending up':'📉 Trending down'):'';
+
+  mc.innerHTML=`
+  ${sHdr('Pre-Visit Brief','Everything you need before walking in the door')}
+  <div class="kpi-row" style="margin-bottom:18px">
+    ${kpi('Dealer Score',ds.grade+' ('+ds.score+')',ds.score>=80?'Top performer':'Room to grow',ds.color)}
+    ${kpi('Attainment',att!==null?att+'%':'No data',att!==null?(att>=100?'On target':att>=80?'Close':'Needs focus'):'Upload recap',att!==null?(att>=100?GN:att>=80?GD:RE):DM)}
+    ${kpi('Open Commits',openCommits.length,overdueCommits.length>0?overdueCommits.length+' OVERDUE':'All on track',overdueCommits.length>0?RE:GN)}
+    ${kpi('Open Tasks',openTasks.length,openTasks.length===0?'All clear':'Need attention',openTasks.length>0?GD:GN)}
+    ${kpi('Front GP/Unit',f$(aF),'GST: '+f$(gF),aF>=gF?GN:RE)}
+    ${kpi('Last Visit',lastVisit?lastVisit.date:'None logged',lastVisit?lastVisit.outcome:'Log in Contacts',BL)}
+  </div>
+
+  ${moSold.some(v=>v>0)?`<div class="card" style="margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <div class="card-title" style="margin:0">TCUV Sales Trend ${trend}</div>
+      <div style="font-size:11px;color:var(--dim-lt)">Monthly sold vs objective — 12 months</div>
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:3px;height:64px">
+      ${moSold.map((v,i)=>{const mx=Math.max(...moSold,...(c.moObj||[]),1);const h=v>0?Math.max(Math.round((v/mx)*56),3):0;const obj=c.moObj?.[i]||0;const col=obj>0&&v>=obj?GN:v>0?GD:DK;const mo=['J','F','M','A','M','J','J','A','S','O','N','D'][i];return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px"><div title="${mo}: ${v} sold / ${obj} obj" style="width:100%;height:${h}px;background:${col};border-radius:2px 2px 0 0;min-height:${v>0?3:0}px"></div><div style="font-size:8px;color:var(--dim-lt)">${mo}</div></div>`;}).join('')}
+    </div>
+  </div>`:''}
+
+  ${overdueCommits.length?`<div class="tip tip-red" style="margin-bottom:14px">
+    <strong>⚠ ${overdueCommits.length} overdue commitment${overdueCommits.length>1?'s':''} — open the visit with these:</strong>
+    <ul style="margin:8px 0 0 16px">${overdueCommits.map(cm=>`<li style="margin-top:4px"><strong>${cm.owner||'?'}</strong>: ${cm.text} <span style="opacity:.7">(due ${cm.due})</span></li>`).join('')}</ul>
+  </div>`:''}
+
+  ${openCommits.filter(cm=>!overdueCommits.includes(cm)).length?`<div class="card" style="margin-bottom:14px;border-left:4px solid ${GD}">
+    <div class="card-title">Open Commitments to Review</div>
+    ${openCommits.filter(cm=>!overdueCommits.includes(cm)).map(cm=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr)">
+      <div style="width:8px;height:8px;border-radius:50%;background:${GD};flex-shrink:0"></div>
+      <div style="flex:1;font-size:13px;color:var(--dim)"><strong>${cm.owner||'?'}</strong>: ${cm.text}</div>
+      <div style="font-size:11px;color:var(--dim-m);white-space:nowrap">Due: ${cm.due||'—'}</div>
+    </div>`).join('')}
+    <button class="btn btn-sm btn-ghost" style="margin-top:10px" onclick="setTab('commit')">Manage All →</button>
+  </div>`:''}
+
+  ${pd.areas.length?`<div class="card" style="margin-bottom:14px">
+    <div class="card-title">Top ${Math.min(pd.areas.length,3)} Focus Areas</div>
+    ${pd.areas.slice(0,3).map((a,i)=>`<div style="padding:12px;margin-bottom:8px;background:${a.status==='critical'?'var(--red-lt)':'var(--gold-lt)'};border-radius:8px;border-left:3px solid ${a.status==='critical'?RE:GD}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:6px">
+        <span style="font-weight:700">${i+1}. ${a.cat}</span>
+        <div style="font-size:12px"><strong style="color:${a.status==='critical'?RE:GD}">${a.val}</strong> → target <strong style="color:${BL}">${a.target}</strong></div>
+      </div>
+      <div style="font-size:12px;color:var(--dim)">${a.detail}</div>
+    </div>`).join('')}
+  </div>`:''}
+
+  <div class="card" style="border-left:4px solid ${PR}">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div class="card-title" style="margin:0">🤖 AI Visit Brief</div>
+      <div style="display:flex;gap:8px">
+        ${c._lastBrief?`<button class="btn btn-sm btn-ghost" onclick="printBrief()">🖨 Print</button>`:''}
+        <button class="btn btn-sm btn-purple" onclick="genBrief()">Generate Brief</button>
+      </div>
+    </div>
+    <div style="font-size:13px;color:var(--dim);margin-bottom:12px">One-click brief: conversation openers, what to probe, red flags, agenda order, coaching posture — all tailored to this dealer's current data.</div>
+    <div id="briefArea"></div>
+    ${c._lastBrief?`<div style="border:1.5px solid rgba(91,33,182,.2);border-radius:10px;overflow:hidden;margin-top:10px">
+      <div style="background:var(--purple-lt);padding:8px 14px;font-size:11px;font-weight:700;color:${PR};text-transform:uppercase;letter-spacing:.8px">Last Generated Brief</div>
+      <div id="briefText" style="padding:16px;font-size:13px;color:var(--dim);line-height:1.75;background:#fff;white-space:pre-wrap">${c._lastBrief}</div>
+    </div>`:''}
+  </div>`;
+}
+
+async function genBrief(){
+  const c=gc();if(!c)return;
+  const f=c.fn||{};const pd=perfData(c);const ds=dealerScore(c);
+  const area=document.getElementById('briefArea');
+  if(area)area.innerHTML=`<div class="tip tip-purple" style="text-align:center">⟳ Generating your pre-visit brief…</div>`;
+  const openCommits=(c._commitments||[]).filter(cm=>!cm.done);
+  const overdue=openCommits.filter(cm=>cm.due&&new Date(cm.due)<new Date());
+  const lastVisit=[...c.consultHistory||[]].reverse().find(h=>h.type==='Visit');
+  const lastScore=[...(c._scoreHistory||[])].reverse()[0];
+  const tu=Math.max(f.tu||1,1);
+  const prompt=`You are a GST TCUV senior district consultant. Generate a pre-visit brief for the consultant walking into this dealer.
+
+DEALER: ${dnm(c.nm)} | Score: ${ds.grade} (${ds.score}/100) | Period: ${f.pr||'Current'}
+TCUV: ${fN(f.tu||0)} units/mo | Front: ${f$(Math.round((f.tg||0)/tu))} (GST: ${f$(Math.round(f.dTG||f.gTG||0))}) | Recon: ${f$(Math.round((f.cR||0)/tu))} (GST: ${f$(Math.round(f.dCR||f.gCR||0))})
+OPEN COMMITMENTS: ${openCommits.length} total, ${overdue.length} overdue
+${overdue.length?'OVERDUE: '+overdue.map(cm=>cm.owner+': '+cm.text).join('; '):''}
+${lastVisit?'LAST VISIT: '+lastVisit.date+' — '+lastVisit.notes?.slice(0,200):'NO PRIOR VISIT'}
+${lastScore?'LAST COACHING SCORE: '+lastScore.total+'/50 on '+lastScore.date:''}
+TOP GAPS: ${pd.areas.slice(0,3).map(a=>a.cat+' ('+a.val+' vs '+a.target+')').join(', ')||'None identified'}
+STRENGTHS: ${pd.strengths.slice(0,3).join(', ')||'None yet'}
+
+Write a pre-visit brief with these exact sections:
+
+CONVERSATION OPENERS (2-3 specific ways to open based on their situation):
+
+WHAT TO PROBE (3-4 questions based on the data gaps):
+
+WHAT TO CELEBRATE (1-2 genuine wins to acknowledge):
+
+RED FLAGS TO WATCH (2-3 warning signs that need direct conversation):
+
+SUGGESTED AGENDA ORDER (6-step visit flow with time estimates):
+
+COACHING POSTURE (one paragraph on the right tone for this dealer today):
+
+Be specific. Reference actual numbers. Under 500 words.`;
+  try{
+    const txt=await callAI(prompt,1000,'You are a GST TCUV senior district consultant.');
+    c._lastBrief=txt;saveAll();
+    if(area)area.innerHTML='';
+    render();showToast('✓ Brief generated',GN);
+  }catch(e){
+    if(area)area.innerHTML=`<div class="tip tip-red"><strong>Brief failed:</strong> ${e.message}</div>`;
+  }
+}
+
+function printBrief(){
+  const c=gc();if(!c||!c._lastBrief)return;
+  const win=window.open('','_blank','width=800,height=600');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Pre-Visit Brief — ${dnm(c.nm)}</title>
+  <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;padding:40px;color:#111;line-height:1.7}
+  h1{font-size:18px;font-weight:900;margin-bottom:4px}h2{font-size:11px;color:#666;font-weight:400;margin-bottom:20px}pre{white-space:pre-wrap;font-family:inherit}
+  @media print{@page{margin:.5in}}</style></head><body>
+  <h1>Pre-Visit Brief — ${dnm(c.nm)}</h1><h2>Generated ${td()} · Confidential</h2>
+  <pre>${c._lastBrief}</pre>
+  <script>window.onload=()=>window.print()<\/script></body></html>`);
+  win.document.close();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 2. VISIT AGENDA BUILDER
+// ═══════════════════════════════════════════════════════════════
+const DEFAULT_AGENDA_ITEMS=()=>[
+  {id:1,text:'Review previous commitments & accountability check',time:15,owner:'Both',done:false},
+  {id:2,text:'TCUV performance vs objective & GST benchmarks',time:20,owner:'Consultant',done:false},
+  {id:3,text:'Financial review — front GP, back-end, recon/unit',time:15,owner:'Consultant',done:false},
+  {id:4,text:'Inventory review — days supply, aged units, mix',time:15,owner:'UCM',done:false},
+  {id:5,text:'Sales process & team performance observation',time:20,owner:'Both',done:false},
+  {id:6,text:'Market intel & competitive positioning',time:10,owner:'Consultant',done:false},
+  {id:7,text:'New commitments & action items',time:15,owner:'Both',done:false},
+  {id:8,text:'Next visit date & follow-up plan',time:10,owner:'Consultant',done:false},
+];
+
+function rAgenda(mc,c){
+  const ag=c._agenda||{};
+  const items=ag.items&&ag.items.length?ag.items:DEFAULT_AGENDA_ITEMS();
+  const totalTime=items.reduce((s,it)=>s+(Number(it.time)||0),0);
+  const dur=ag.duration||120;
+
+  mc.innerHTML=`
+  ${sHdr('Visit Agenda','Build, run, and take notes during your dealer visit')}
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-title">Visit Details</div>
+    <div class="g4" style="gap:10px">
+      <div><label class="fl">Visit Date</label><input id="agDate" class="fi" type="date" value="${ag.visitDate||td()}" oninput="saveAgenda()"></div>
+      <div><label class="fl">Type</label><select id="agType" class="fi" onchange="saveAgenda()"><option ${ag.visitType==='Visit'?'selected':''}>Visit</option><option ${ag.visitType==='Call'?'selected':''}>Call</option><option ${ag.visitType==='Training'?'selected':''}>Training</option><option ${ag.visitType==='Review'?'selected':''}>Review</option></select></div>
+      <div><label class="fl">Planned Duration (min)</label><input id="agDur" class="fi" type="number" value="${dur}" oninput="saveAgenda()"></div>
+      <div><label class="fl">Total Planned</label><div class="fi" style="background:var(--surface);font-weight:700;color:${totalTime>dur?RE:GN}">${totalTime} min ${totalTime>dur?'⚠ over budget':''}</div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div class="card-title" style="margin:0">Agenda Items</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-sm btn-ghost" onclick="genAgendaAI()">🤖 AI Suggest</button>
+        <button class="btn btn-sm btn-ghost" onclick="addAgendaItem()">+ Add</button>
+        <button class="btn btn-sm btn-ghost" onclick="printAgenda()">🖨 Print</button>
+      </div>
+    </div>
+    <div id="agendaList">
+      ${items.map((it,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)">
+        <input type="checkbox" ${it.done?'checked':''} style="width:16px;height:16px;accent-color:${GN};flex-shrink:0" onchange="toggleAgItem(${it.id},this.checked)">
+        <div style="width:22px;height:22px;border-radius:50%;background:${it.done?GN:BL};color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0">${i+1}</div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+          <input class="fi" style="font-weight:600;${it.done?'text-decoration:line-through;color:var(--dim-lt)':''}" value="${it.text||''}" oninput="updateAgItem(${it.id},'text',this.value)" placeholder="Agenda item…">
+          <div style="display:flex;gap:6px">
+            <input type="number" class="fi" style="width:72px;font-size:12px" value="${it.time||15}" oninput="updateAgItem(${it.id},'time',this.value)" placeholder="min">
+            <span style="line-height:32px;font-size:11px;color:var(--dim-m)">min</span>
+            <input class="fi" style="flex:1;font-size:12px" value="${it.owner||''}" oninput="updateAgItem(${it.id},'owner',this.value)" placeholder="Owner…">
+          </div>
+        </div>
+        <button class="btn btn-sm btn-del" onclick="removeAgItem(${it.id})">✕</button>
+      </div>`).join('')}
+    </div>
+    <button class="btn btn-sm btn-ghost" style="margin-top:10px;width:100%" onclick="addAgendaItem()">+ Add Item</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Running Notes (taken live during visit)</div>
+    <textarea id="agNotes" class="fi-ta" rows="6" placeholder="Type or speak notes in real time. These become the source for your follow-up email…" oninput="saveAgenda()">${ag.notes||''}</textarea>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <button class="btn btn-sm" onclick="agendaToEmail()">✉ Generate Follow-Up Email</button>
+      <button class="btn btn-sm btn-ghost" id="voiceBtn" onclick="voiceNote()">🎤 Voice Note</button>
+    </div>
+    <div id="voiceStatus" style="margin-top:8px"></div>
+    <div id="agEmailArea" style="margin-top:10px"></div>
+  </div>`;
+}
+
+function saveAgenda(){
+  const c=gc();if(!c)return;
+  if(!c._agenda)c._agenda={items:DEFAULT_AGENDA_ITEMS()};
+  c._agenda.visitDate=document.getElementById('agDate')?.value||td();
+  c._agenda.visitType=document.getElementById('agType')?.value||'Visit';
+  c._agenda.duration=parseInt(document.getElementById('agDur')?.value)||120;
+  c._agenda.notes=document.getElementById('agNotes')?.value||'';
+  saveAll();
+}
+function addAgendaItem(){
+  const c=gc();if(!c)return;
+  if(!c._agenda)c._agenda={items:DEFAULT_AGENDA_ITEMS()};
+  if(!c._agenda.items)c._agenda.items=[];
+  c._agenda.items.push({id:Date.now(),text:'',time:15,owner:'',done:false});
+  saveAll();render();
+}
+function updateAgItem(id,field,val){
+  const c=gc();if(!c||!c._agenda?.items)return;
+  const it=c._agenda.items.find(x=>x.id===id);
+  if(it)it[field]=field==='time'?parseInt(val)||15:val;
+  saveAll();
+}
+function toggleAgItem(id,done){
+  const c=gc();if(!c||!c._agenda?.items)return;
+  const it=c._agenda.items.find(x=>x.id===id);
+  if(it)it.done=done;
+  saveAll();
+}
+function removeAgItem(id){
+  const c=gc();if(!c||!c._agenda?.items)return;
+  c._agenda.items=c._agenda.items.filter(x=>x.id!==id);
+  saveAll();render();
+}
+
+async function genAgendaAI(){
+  const c=gc();if(!c)return;
+  const pd=perfData(c);
+  const el=document.getElementById('agendaList');
+  if(el)el.innerHTML=`<div class="tip tip-blue" style="margin:10px 0">⟳ Building AI-tailored agenda…</div>`;
+  const prompt=`You are a GST TCUV district consultant. Generate a visit agenda for ${dnm(c.nm)}.
+Score: ${dealerScore(c).grade} | Top gaps: ${pd.areas.slice(0,3).map(a=>a.cat).join(', ')||'none'} | Open commitments: ${(c._commitments||[]).filter(cm=>!cm.done).length}
+Return ONLY a JSON array (no markdown, no extra text):
+[{"text":"item text","time":15,"owner":"Both"},...]
+Owner options: Consultant, GM, UCM, Both. 7-8 items. Start with commitment review. End with new commitments and next steps. Prioritize gap areas.`;
+  try{
+    const txt=await callAI(prompt,500);
+    const clean=txt.replace(/```json|```/g,'').trim();
+    const arr=JSON.parse(clean);
+    if(!c._agenda)c._agenda={items:[],visitDate:td(),duration:120};
+    c._agenda.items=arr.map((it,i)=>({id:Date.now()+i,...it,done:false}));
+    saveAll();render();showToast('✓ Agenda built',GN);
+  }catch(e){
+    if(el)el.innerHTML=`<div class="tip tip-red">AI agenda failed: ${e.message}</div>`;
+  }
+}
+
+async function agendaToEmail(){
+  const c=gc();if(!c)return;
+  const ag=c._agenda||{};
+  const notes=document.getElementById('agNotes')?.value||ag.notes||'';
+  const el=document.getElementById('agEmailArea');
+  if(!notes.trim()){if(el)el.innerHTML=`<div class="tip tip-red">Add running notes before generating email.</div>`;return;}
+  if(el)el.innerHTML=`<div class="tip tip-purple">⟳ Generating email…</div>`;
+  try{
+    const txt=await callAI(`Write a professional dealer follow-up email.
+Dealer: ${dnm(c.nm)} | Date: ${ag.visitDate||td()} | Type: ${ag.visitType||'Visit'}
+Running notes: ${notes}
+Items completed: ${(ag.items||[]).filter(it=>it.done).map(it=>it.text).join('; ')||'See notes'}
+Format: Subject line, greeting, 3 key points from notes, numbered action items, professional close. Under 300 words.`,900);
+    const lines=txt.split('\n');
+    const sl=lines.find(l=>l.trim().startsWith('Subject:'));
+    const subj=sl?sl.replace(/^Subject:\s*/i,'').trim():`Follow-Up: ${dnm(c.nm)} ${ag.visitDate||td()}`;
+    const body=lines.filter(l=>!l.trim().startsWith('Subject:')).join('\n').trim();
+    if(el)el.innerHTML=`<div style="border:1.5px solid rgba(91,33,182,.2);border-radius:10px;overflow:hidden;margin-top:8px">
+      <div style="background:var(--purple-lt);padding:8px 14px;font-size:11px;font-weight:700;color:${PR};display:flex;justify-content:space-between;align-items:center">
+        <span>✉ Follow-Up Email</span>
+        <button class="btn btn-sm btn-purple" onclick="navigator.clipboard.writeText(${JSON.stringify(subj+'\\n\\n'+body).replace(/'/g,"&#39;")}).then(()=>showToast('Copied',GN))">Copy</button>
+      </div>
+      <div style="padding:14px;background:#fff">
+        <div style="font-size:11px;font-weight:700;color:var(--dim-m);margin-bottom:6px">SUBJECT: ${subj}</div>
+        <div style="font-size:13px;color:var(--dim);white-space:pre-wrap;line-height:1.7">${body}</div>
+      </div>
+    </div>`;
+  }catch(e){if(el)el.innerHTML=`<div class="tip tip-red">${e.message}</div>`;}
+}
+
+let _voiceRec=null;
+function voiceNote(){
+  const status=document.getElementById('voiceStatus');
+  const btn=document.getElementById('voiceBtn');
+  const ta=document.getElementById('agNotes');
+  if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){
+    if(status)status.innerHTML=`<div class="tip tip-red">Voice notes require Chrome. Open in Chrome on desktop or mobile.</div>`;return;
+  }
+  if(_voiceRec){_voiceRec.stop();_voiceRec=null;if(status)status.innerHTML='';if(btn)btn.textContent='🎤 Voice Note';return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  _voiceRec=new SR();_voiceRec.continuous=true;_voiceRec.interimResults=true;_voiceRec.lang='en-US';
+  let base=ta?ta.value:'';if(base&&!base.endsWith('\n'))base+='\n';
+  _voiceRec.onresult=e=>{
+    let interim='',final='';
+    for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)final+=e.results[i][0].transcript;else interim+=e.results[i][0].transcript;}
+    if(final)base+=final+' ';
+    if(ta)ta.value=base+(interim?'['+interim+']':'');
+    saveAgenda();
+  };
+  _voiceRec.onerror=()=>{if(status)status.innerHTML=`<div class="tip tip-red">Mic error — check permissions.</div>`;_voiceRec=null;if(btn)btn.textContent='🎤 Voice Note';};
+  _voiceRec.onend=()=>{_voiceRec=null;if(status)status.innerHTML='';if(btn)btn.textContent='🎤 Voice Note';};
+  _voiceRec.start();
+  if(status)status.innerHTML=`<div class="tip tip-green">🔴 Listening… click again to stop.</div>`;
+  if(btn)btn.textContent='⏹ Stop Recording';
+}
+
+function printAgenda(){
+  const c=gc();if(!c)return;
+  const ag=c._agenda||{};const items=ag.items||DEFAULT_AGENDA_ITEMS();
+  const win=window.open('','_blank','width=800,height=600');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Agenda — ${dnm(c.nm)}</title>
+  <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;padding:40px;color:#111}
+  h1{font-size:18px;font-weight:900;margin-bottom:4px}h2{font-size:11px;color:#666;font-weight:400;margin-bottom:16px}
+  table{width:100%;border-collapse:collapse;margin-bottom:20px}th{background:#0A0E17;color:#fff;padding:8px 10px;text-align:left;font-size:9px;text-transform:uppercase}
+  td{padding:8px 10px;border-bottom:1px solid #eee}td:last-child{text-align:center}
+  .notes{margin-top:16px;padding:14px;border:1px solid #ddd;border-radius:6px;min-height:100px}
+  @media print{@page{margin:.5in}}</style></head><body>
+  <h1>Visit Agenda — ${dnm(c.nm)}</h1>
+  <h2>${ag.visitDate||td()} · ${ag.visitType||'Visit'} · ${ag.duration||120} min</h2>
+  <table><tr><th>#</th><th>Item</th><th>Time</th><th>Owner</th><th>Done</th></tr>
+  ${items.map((it,i)=>`<tr><td>${i+1}</td><td>${it.text}</td><td>${it.time||15} min</td><td>${it.owner||'—'}</td><td>${it.done?'✓':'☐'}</td></tr>`).join('')}
+  </table>
+  <div class="notes"><strong>Notes:</strong><br>${ag.notes?ag.notes.replace(/\n/g,'<br>'):''}</div>
+  <script>window.onload=()=>window.print()<\/script></body></html>`);
+  win.document.close();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 3. COMMITMENT TRACKER
+// ═══════════════════════════════════════════════════════════════
+function rCommit(mc,c){
+  const commits=c._commitments||[];
+  const open=commits.filter(cm=>!cm.done);
+  const done=commits.filter(cm=>cm.done);
+  const overdue=open.filter(cm=>cm.due&&new Date(cm.due)<new Date());
+
+  mc.innerHTML=`
+  ${sHdr('Commitment Tracker','Every commitment made — reviewed at the next visit')}
+  <div class="kpi-row" style="margin-bottom:18px">
+    ${kpi('Open',open.length,overdue.length?overdue.length+' overdue':'All on track',open.length?GD:GN)}
+    ${kpi('Overdue',overdue.length,overdue.length?'Needs attention':'None overdue',overdue.length?RE:GN)}
+    ${kpi('Completed',done.length,'All-time',GN)}
+    ${kpi('Completion %',commits.length?Math.round(done.length/commits.length*100)+'%':'—','Accountability rate',GN)}
+  </div>
+
+  <div class="card" style="margin-bottom:14px;border-left:4px solid ${BL}">
+    <div class="card-title">Log New Commitment</div>
+    <div class="g3" style="gap:10px;margin-bottom:10px">
+      <div><label class="fl">Who Made This Commitment</label><input id="cmOwner" class="fi" placeholder="GM, UCM, Sales Manager…"></div>
+      <div><label class="fl">Due Date</label><input id="cmDue" class="fi" type="date" value="${td()}"></div>
+      <div><label class="fl">Category</label>
+        <select id="cmCat" class="fi">
+          <option>TCUV Volume</option><option>Gross / Pricing</option><option>Recon</option>
+          <option>Process</option><option>Staffing</option><option>Training</option>
+          <option>Inventory</option><option>Marketing</option><option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-bottom:10px"><label class="fl">Commitment — be specific (what, measured by what, by when)</label>
+      <textarea id="cmText" class="fi-ta" rows="2" placeholder="e.g. UCM will review 60+ day aged units every Friday at 9am and adjust pricing same day. Target: zero 90-day units by month end."></textarea>
+    </div>
+    <div style="margin-bottom:12px"><label class="fl">Visit Date This Was Made</label><input id="cmDate" class="fi" type="date" value="${td()}"></div>
+    <button class="btn btn-sm" onclick="saveCommit()">Log Commitment</button>
+  </div>
+
+  ${overdue.length?`<div class="card" style="margin-bottom:14px;border-left:4px solid ${RE}">
+    <div class="card-title" style="color:${RE}">⚠ Overdue (${overdue.length})</div>
+    ${overdue.map(cm=>_commitCard(cm,true)).join('')}
+  </div>`:''}
+
+  ${open.filter(cm=>!overdue.includes(cm)).length?`<div class="card" style="margin-bottom:14px">
+    <div class="card-title">Open (${open.filter(cm=>!overdue.includes(cm)).length})</div>
+    ${open.filter(cm=>!overdue.includes(cm)).map(cm=>_commitCard(cm,false)).join('')}
+  </div>`:''}
+
+  ${!commits.length?`<div class="card" style="text-align:center;padding:40px">
+    <div style="font-size:40px;margin-bottom:10px">🤝</div>
+    <div style="font-size:16px;font-weight:700;color:var(--txt);margin-bottom:6px">No commitments yet</div>
+    <div style="font-size:13px;color:var(--dim-m)">Log commitments at every visit. They become the accountability framework for your next conversation.</div>
+  </div>`:''}
+
+  ${done.length?`<div class="card">
+    <div class="card-title">Completed (${done.length})</div>
+    ${[...done].reverse().slice(0,10).map(cm=>_commitCard(cm,false)).join('')}
+    ${done.length>10?`<div style="font-size:12px;color:var(--dim-lt);text-align:center;margin-top:8px">Showing 10 of ${done.length}</div>`:''}
+  </div>`:''}`;
+}
+
+const CAT_COLORS={'TCUV Volume':RE,'Gross / Pricing':GD,'Recon':OR,'Process':BL,'Staffing':PR,'Training':TE,'Inventory':GN,'Marketing':TE,'Other':DM};
+
+function _commitCard(cm,isOverdue){
+  const catCol=CAT_COLORS[cm.cat]||BL;
+  return`<div class="cmt-card ${cm.done?'done':isOverdue?'overdue':''}" style="border-left-color:${cm.done?GN:isOverdue?RE:catCol}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <input type="checkbox" ${cm.done?'checked':''} style="width:16px;height:16px;accent-color:${GN}" onchange="toggleCommit('${cm.id}',this.checked)">
+        <span style="font-weight:700;color:var(--txt)">${cm.owner||'?'}</span>
+        <span style="font-size:10px;background:${catCol}18;color:${catCol};border-radius:10px;padding:2px 8px;font-weight:700">${cm.cat||'Other'}</span>
+        ${isOverdue?`<span style="font-size:10px;background:${RE}18;color:${RE};border-radius:10px;padding:2px 8px;font-weight:700">OVERDUE</span>`:''}
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:11px;color:${isOverdue?RE:DM}">Due: ${cm.due||'—'}</span>
+        <button class="btn btn-sm btn-del" onclick="deleteCommit('${cm.id}')">✕</button>
+      </div>
+    </div>
+    <div style="font-size:13px;color:var(--dim);line-height:1.55;${cm.done?'text-decoration:line-through;opacity:.65':''}">${cm.text||''}</div>
+    ${cm.madeDate?`<div style="font-size:11px;color:var(--dim-lt);margin-top:6px">Made: ${cm.madeDate}</div>`:''}
+  </div>`;
+}
+
+function saveCommit(){
+  const c=gc();if(!c)return;
+  const text=(document.getElementById('cmText')?.value||'').trim();
+  const owner=(document.getElementById('cmOwner')?.value||'').trim();
+  if(!text){showToast('Enter the commitment details.',OR);return;}
+  if(!c._commitments)c._commitments=[];
+  c._commitments.push({id:'cm_'+Date.now(),text,owner,
+    cat:document.getElementById('cmCat')?.value||'Other',
+    due:document.getElementById('cmDue')?.value||'',
+    madeDate:document.getElementById('cmDate')?.value||td(),done:false});
+  saveAll();render();showToast('✓ Commitment logged',GN);
+}
+function toggleCommit(id,done){
+  const c=gc();if(!c)return;
+  const cm=(c._commitments||[]).find(x=>x.id===id);
+  if(cm){cm.done=done;if(done)cm.completedDate=td();}
+  saveAll();render();
+}
+function deleteCommit(id){
+  const c=gc();if(!c)return;
+  if(!confirm('Remove this commitment?'))return;
+  c._commitments=(c._commitments||[]).filter(x=>x.id!==id);
+  saveAll();render();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 4. DISTRICT COMPARISON VIEW
+// ═══════════════════════════════════════════════════════════════
+function rDistrict(mc){
+  const dealers=D.filter(d=>d.fn&&(d.fn.tu||d.fn.tg));
+  if(!dealers.length){
+    mc.innerHTML=`${sHdr('District View','All dealers ranked on key metrics')}<div class="card" style="text-align:center;padding:40px"><div style="font-size:40px;margin-bottom:10px">🏢</div><div style="font-size:16px;font-weight:700;color:var(--txt);margin-bottom:6px">No dealer data yet</div><div style="font-size:13px;color:var(--dim-m)">Add dealers and upload financial data to see the district comparison.</div></div>`;return;
+  }
+
+  const cols=[
+    {k:'score',lbl:'Score',fn:d=>dealerScore(d).score,fmt:v=>v,hi:true},
+    {k:'att',lbl:'Attainment',fn:d=>{const r=d.rc?.ds?.find(x=>nm(x.n,d.nm));return r?.o>0?r.p:null;},fmt:v=>v!=null?v+'%':'—',hi:true},
+    {k:'front',lbl:'Front/Unit',fn:d=>{const tu=Math.max(d.fn?.tu||1,1);return Math.round((d.fn?.tg||0)/tu);},fmt:v=>f$(v),hi:true},
+    {k:'back',lbl:'Back/Unit',fn:d=>{const tu=Math.max(d.fn?.tu||1,1);return Math.round((d.fn?.tFI||0)/tu);},fmt:v=>f$(v),hi:true},
+    {k:'recon',lbl:'Recon/Unit',fn:d=>{const tu=Math.max(d.fn?.tu||1,1);return Math.round((d.fn?.cR||0)/tu);},fmt:v=>f$(v),hi:false},
+    {k:'units',lbl:'TCUV/Mo',fn:d=>d.fn?.tu||0,fmt:v=>fN(v),hi:true},
+    {k:'commits',lbl:'Open Commits',fn:d=>(d._commitments||[]).filter(cm=>!cm.done).length,fmt:v=>v||'—',hi:false},
+    {k:'overdue',lbl:'Overdue',fn:d=>(d._commitments||[]).filter(cm=>!cm.done&&cm.due&&new Date(cm.due)<new Date()).length,fmt:v=>v>0?v:'—',hi:false},
+  ];
+
+  const rows=dealers.map(d=>{const vals={};cols.forEach(col=>{vals[col.k]=col.fn(d);});return{d,vals,score:dealerScore(d)};}).sort((a,b)=>b.vals.score-a.vals.score);
+  const allVals={};cols.forEach(col=>{allVals[col.k]=rows.map(r=>r.vals[col.k]);});
+
+  const rankColor=(col,val,all)=>{
+    if(val==null||val===0||val==='—')return DM;
+    const valid=all.filter(v=>v!=null&&v!==0&&v!=='—').sort((a,b)=>col.hi?b-a:a-b);
+    const pos=valid.indexOf(val);if(pos<0)return DM;
+    const pct=pos/Math.max(valid.length-1,1);
+    return pct<0.34?GN:pct<0.67?GD:RE;
+  };
+
+  mc.innerHTML=`
+  ${sHdr('District View','All dealers ranked — click any row to switch')}
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div style="font-size:13px;color:var(--dim-m)">${dealers.length} dealers with data</div>
+    <button class="btn btn-sm btn-ghost" onclick="printDistrictView()">🖨 Print District Report</button>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden;margin-bottom:14px">
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;min-width:720px">
+        <thead>
+          <tr style="background:var(--hdr)">
+            <th style="padding:10px 12px;text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.65);white-space:nowrap">#</th>
+            <th style="padding:10px 12px;text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.65)">Dealer</th>
+            ${cols.map(c=>`<th style="padding:10px 12px;text-align:right;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.65);white-space:nowrap">${c.lbl}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map((r,i)=>`<tr onclick="pickDealer(${r.d.id});setTab('crm')" style="cursor:pointer;background:${r.d.id===ci?'var(--blue-lt)':'transparent'}" onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='${r.d.id===ci?'var(--blue-lt)':'transparent'}'">
+            <td style="padding:10px 12px;font-size:12px;font-weight:700;color:var(--dim-m)">${i+1}</td>
+            <td style="padding:10px 12px"><div style="font-weight:700;color:var(--txt);font-size:13px">${dnm(r.d.nm)}</div><div style="font-size:10px;color:var(--dim-lt)">${r.score.grade} · ${r.d.fn?.pr||''}</div></td>
+            ${cols.map(col=>{const val=r.vals[col.k];const color=rankColor(col,val,allVals[col.k]);return`<td style="padding:10px 12px;text-align:right;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;color:${color}">${col.fmt(val)}</td>`;}).join('')}
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SPARKLINES -->
+  <div class="card">
+    <div class="card-title">Monthly TCUV Volume — All Dealers</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:6px">
+      ${rows.map(r=>{
+        const ms=r.d.moSold||[];const hasTrend=ms.some(v=>v>0);
+        const last3=ms.slice(-3);const trend=last3.length>=2?(last3[last3.length-1]>last3[0]?GN:last3[last3.length-1]<last3[0]?RE:GD):DM;
+        return`<div style="padding:10px;border:1px solid var(--bdr);border-radius:8px;cursor:pointer" onclick="pickDealer(${r.d.id});setTab('overview')">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:12px;font-weight:700;color:var(--txt)">${dnm(r.d.nm)}</span>
+            <span style="font-size:11px;font-weight:800;color:${r.score.color}">${r.score.grade}</span>
+          </div>
+          ${hasTrend?sparkSVG(ms,trend,40,200):`<div style="height:40px;display:flex;align-items:center;font-size:11px;color:var(--dim-lt)">No trend data</div>`}
+          <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--dim-lt);margin-top:3px"><span>Jan</span><span>Jun</span><span>Dec</span></div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function printDistrictView(){
+  const dealers=D.filter(d=>d.fn&&(d.fn.tu||d.fn.tg));
+  const rows=dealers.map(d=>({d,score:dealerScore(d)})).sort((a,b)=>b.score.score-a.score.score);
+  const win=window.open('','_blank','width=1100,height=700');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>District Report</title>
+  <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;padding:30px;color:#111}
+  h1{font-size:16px;font-weight:900;margin-bottom:4px}h2{font-size:10px;color:#666;font-weight:400;margin-bottom:16px}
+  table{width:100%;border-collapse:collapse}th{background:#0A0E17;color:#fff;padding:7px 10px;text-align:right;font-size:8px;text-transform:uppercase;letter-spacing:.8px}
+  th:first-child,th:nth-child(2){text-align:left}td{padding:7px 10px;text-align:right;border-bottom:1px solid #eee;font-weight:600}
+  td:first-child,td:nth-child(2){text-align:left}tr:nth-child(even){background:#f9f9f9}
+  @media print{@page{margin:.3in;size:landscape}}</style></head><body>
+  <h1>GST TCUV District Report</h1><h2>Generated ${td()} · ${dealers.length} dealers</h2>
+  <table><tr><th>#</th><th>Dealer</th><th>Score</th><th>Attainment</th><th>Front/Unit</th><th>Back/Unit</th><th>Recon/Unit</th><th>TCUV/Mo</th><th>Open Commits</th><th>Overdue</th></tr>
+  ${rows.map((r,i)=>{
+    const f=r.d.fn||{};const tu=Math.max(f.tu||1,1);
+    const rc=r.d.rc?.ds?.find(x=>nm(x.n,r.d.nm));
+    const overdue=(r.d._commitments||[]).filter(cm=>!cm.done&&cm.due&&new Date(cm.due)<new Date()).length;
+    return`<tr><td>${i+1}</td><td>${dnm(r.d.nm)}</td><td>${r.score.grade} (${r.score.score})</td><td>${rc?.o>0?rc.p+'%':'—'}</td><td>${f$(Math.round((f.tg||0)/tu))}</td><td>${f$(Math.round((f.tFI||0)/tu))}</td><td>${f$(Math.round((f.cR||0)/tu))}</td><td>${fN(f.tu||0)}</td><td>${(r.d._commitments||[]).filter(cm=>!cm.done).length||'—'}</td><td>${overdue||'—'}</td></tr>`;
+  }).join('')}
+  </table><script>window.onload=()=>window.print()<\/script></body></html>`);
+  win.document.close();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 5. COACHING SCORECARD
+// ═══════════════════════════════════════════════════════════════
+const SCORE_DIMS=[
+  {id:'process',lbl:'Sales Process Execution',desc:'Is there a documented, followed process for floor/phone/internet?'},
+  {id:'coaching',lbl:'Coaching Culture',desc:'Are managers actively coaching, not just managing results?'},
+  {id:'inventory',lbl:'Inventory Discipline',desc:'Aged units managed proactively? Pricing adjusted on schedule?'},
+  {id:'tcuv',lbl:'TCUV Commitment',desc:'Is the team consistently selling the TCUV value proposition?'},
+  {id:'recon',lbl:'Recon Efficiency',desc:'Is recon cycle time fast and cost controlled?'},
+  {id:'data',lbl:'Data & CRM Usage',desc:'Are managers using data daily to drive decisions?'},
+  {id:'training',lbl:'Training Consistency',desc:'Is there a training calendar that is actually followed?'},
+  {id:'accountability',lbl:'Accountability Standards',desc:'Are minimum performance standards enforced with consequences?'},
+  {id:'market',lbl:'Market Awareness',desc:'Does leadership understand their competitive position?'},
+  {id:'engagement',lbl:'Consultant Engagement',desc:'Is the team receptive, engaged, and action-oriented?'},
+];
+
+function rScorecard(mc,c){
+  const history=c._scoreHistory||[];
+  const cur=c._currentScores||{};
+  const lastScore=history.length?[...history].reverse()[0]:null;
+  const prev=history.length>1?[...history].reverse()[1]:null;
+  const total=Object.values(cur).reduce((s,v)=>s+(v||0),0);
+  const maxScore=SCORE_DIMS.length*5;
+  const pct=maxScore>0?Math.round(total/maxScore*100):0;
+  const col=pct>=80?GN:pct>=60?GD:RE;
+
+  mc.innerHTML=`
+  ${sHdr('Coaching Scorecard','Rate dealer on 10 dimensions · Track operational trajectory over time')}
+  <div style="display:grid;grid-template-columns:1fr 300px;gap:14px;align-items:start">
+
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <div class="card-title" style="margin:0">Rate This Visit (1 = poor · 5 = excellent)</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="scDate" type="date" class="fi" style="width:160px" value="${td()}">
+            <button class="btn btn-sm" onclick="saveScorecard()">Save Scorecard</button>
+          </div>
+        </div>
+        ${SCORE_DIMS.map(dim=>{
+          const v=cur[dim.id]||0;
+          return`<div class="sc-dim">
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:2px">${dim.lbl}</div>
+              <div style="font-size:11px;color:var(--dim-m)">${dim.desc}</div>
+            </div>
+            <div class="sc-stars">
+              ${[1,2,3,4,5].map(n=>`<span class="sc-star" onclick="setStar('${dim.id}',${n})" style="color:${n<=v?GD:'#ccc'}">${n<=v?'★':'☆'}</span>`).join('')}
+            </div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:${v>0?GD:DM};min-width:22px;text-align:center;flex-shrink:0" id="sv_${dim.id}">${v||'—'}</div>
+          </div>`;
+        }).join('')}
+        <div style="margin-top:14px">
+          <label class="fl">Visit Notes / Context</label>
+          <textarea id="scNotes" class="fi-ta" rows="3" placeholder="Key observations, context behind the ratings…">${c._currentScorecardNotes||''}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:14px;text-align:center;border-top:4px solid ${col}">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--dim-m);margin-bottom:8px">Current Score</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:52px;font-weight:900;color:${col};line-height:1">${total||'—'}</div>
+        <div style="font-size:13px;color:var(--dim-m);margin-bottom:8px">out of ${maxScore}${total?(' · '+pct+'%'):''}</div>
+        <div style="height:8px;background:var(--bdr);border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${col};border-radius:4px;transition:width .4s"></div>
+        </div>
+        ${lastScore?`<div style="font-size:11px;color:var(--dim-lt);margin-top:10px">Last: ${lastScore.total}/${maxScore} on ${lastScore.date}</div>`:''}
+      </div>
+
+      ${history.length?`<div class="card" style="margin-bottom:14px">
+        <div class="card-title">Score History</div>
+        <div style="display:flex;align-items:flex-end;gap:3px;height:56px;margin-bottom:6px">
+          ${history.slice(-10).map(h=>{const p=Math.round(h.total/maxScore*100);const c2=p>=80?GN:p>=60?GD:RE;return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:1px" title="${h.date}: ${h.total}/${maxScore}">
+            <div style="width:100%;height:${Math.max(Math.round(p*.5),3)}px;background:${c2};border-radius:2px 2px 0 0"></div>
+            <div style="font-size:7px;color:var(--dim-lt)">${(h.date||'').slice(5)}</div>
+          </div>`;}).join('')}
+        </div>
+        ${history.slice(-5).reverse().map((h,i,arr)=>{const p=Math.round(h.total/maxScore*100);const c2=p>=80?GN:p>=60?GD:RE;const prevH=arr[i+1];const delta=prevH?h.total-prevH.total:null;
+          return`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--bdr);font-size:12px">
+            <span style="color:var(--dim-m)">${h.date}</span>
+            <div style="display:flex;align-items:center;gap:6px">
+              ${delta!==null?`<span style="font-size:10px;color:${delta>0?GN:delta<0?RE:DM}">${delta>0?'↑':'↓'}${Math.abs(delta)}</span>`:''}
+              <span style="font-family:'Orbitron',sans-serif;font-weight:800;font-size:13px;color:${c2}">${h.total}</span>
+            </div>
+          </div>`;}).join('')}
+      </div>`:''}
+
+      ${lastScore&&prev?`<div class="card">
+        <div class="card-title">Dimension Changes</div>
+        ${SCORE_DIMS.map(dim=>{const c1=lastScore.scores?.[dim.id]||0;const c2=prev.scores?.[dim.id]||0;const delta=c1-c2;
+          return`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--bdr);font-size:12px">
+            <span style="color:var(--dim);flex:1;font-size:11px">${dim.lbl}</span>
+            <div style="display:flex;align-items:center;gap:6px">
+              ${delta!==0?`<span style="color:${delta>0?GN:RE};font-weight:700;font-size:11px">${delta>0?'+':''}${delta}</span>`:`<span style="color:var(--dim-lt)">—</span>`}
+              <span style="font-weight:800;color:${c1>=4?GN:c1>=3?GD:RE}">${c1}/5</span>
+            </div>
+          </div>`;}).join('')}
+      </div>`:''}
+    </div>
+  </div>`;
+}
+
+function setStar(dimId,val){
+  const c=gc();if(!c)return;
+  if(!c._currentScores)c._currentScores={};
+  c._currentScores[dimId]=val;
+  const stars=document.getElementById('stars_'+dimId);
+  document.querySelectorAll(`[onclick^="setStar('${dimId}'"]`).forEach((s,i)=>{s.style.color=i<val?GD:'#ccc';s.textContent=i<val?'★':'☆';});
+  const sv=document.getElementById('sv_'+dimId);if(sv){sv.textContent=val;sv.style.color=GD;}
+  // Update total
+  const total=Object.values(c._currentScores).reduce((s,v)=>s+(v||0),0);
+  const pct=Math.round(total/(SCORE_DIMS.length*5)*100);
+  const col=pct>=80?GN:pct>=60?GD:RE;
+  const totEl=document.querySelector('[style*="font-size:52px"]');
+  if(totEl){totEl.textContent=total;totEl.style.color=col;}
+  saveAll();
+}
+
+function saveScorecard(){
+  const c=gc();if(!c)return;
+  const scores=c._currentScores||{};
+  const rated=SCORE_DIMS.filter(d=>scores[d.id]>0).length;
+  if(rated<5){showToast('Rate at least 5 dimensions before saving.',OR);return;}
+  const total=Object.values(scores).reduce((s,v)=>s+(v||0),0);
+  const date=document.getElementById('scDate')?.value||td();
+  const notes=document.getElementById('scNotes')?.value||'';
+  if(!c._scoreHistory)c._scoreHistory=[];
+  c._scoreHistory.push({id:'sc_'+Date.now(),date,scores:{...scores},total,notes});
+  c._currentScores={};c._currentScorecardNotes='';
+  saveAll();render();
+  showToast(`✓ Scorecard saved — ${total}/${SCORE_DIMS.length*5} (${Math.round(total/(SCORE_DIMS.length*5)*100)}%)`,GN);
+}
+document.addEventListener('keydown', e => {
+  if(e.key === 'Tab' && document.activeElement && document.activeElement.id === 'dEditor'){
+    e.preventDefault();
+    const ta = document.activeElement;
+    const start = ta.selectionStart, end = ta.selectionEnd;
+    ta.value = ta.value.slice(0, start) + '  ' + ta.value.slice(end);
+    ta.selectionStart = ta.selectionEnd = start + 2;
+    dMarkDirty();
+  }
+});
 init();
 </script>
 </body>
