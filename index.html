@@ -47,11 +47,25 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);-webki
 .btn-hdr:hover{background:rgba(255,255,255,.12);color:#fff}
 
 /* ─── NAV ─── */
-.nav{background:#fff;border-bottom:2px solid var(--bdr);padding:0 28px;display:flex;overflow-x:auto;scrollbar-width:none}
+.nav{background:#fff;border-bottom:2px solid var(--bdr);padding:0 20px;display:flex;align-items:stretch;position:relative;z-index:1000}
 .nav::-webkit-scrollbar{display:none}
-.nav button{padding:14px 18px;border:none;border-bottom:3px solid transparent;background:none;color:var(--dim-m);font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;transition:color .15s,border-color .15s;margin-bottom:-2px}
-.nav button:hover{color:var(--txt)}
-.nav button.active{color:var(--red);border-bottom-color:var(--red);font-weight:700}
+/* Top-level nav items */
+.nav-item{position:relative;display:flex;align-items:stretch}
+.nav-btn{padding:0 16px;border:none;border-bottom:3px solid transparent;background:none;color:var(--dim-m);font-weight:600;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:.6px;text-transform:uppercase;white-space:nowrap;transition:color .15s,border-color .15s;margin-bottom:-2px;display:flex;align-items:center;gap:5px;height:46px}
+.nav-btn:hover{color:var(--txt)}
+.nav-btn.active{color:var(--red);border-bottom-color:var(--red);font-weight:700}
+.nav-btn.has-active{color:var(--red);border-bottom-color:var(--red);font-weight:700}
+.nav-caret{font-size:8px;opacity:.5;transition:transform .15s}
+.nav-item:hover .nav-caret{transform:rotate(180deg)}
+/* Dropdown */
+.nav-drop{position:absolute;top:100%;left:0;background:#fff;border:1px solid var(--bdr);border-radius:0 0 10px 10px;box-shadow:0 8px 24px rgba(0,0,0,.12);min-width:200px;z-index:2000;display:none;padding:6px 0}
+.nav-item:hover .nav-drop{display:block}
+.nav-drop-btn{display:block;width:100%;text-align:left;padding:9px 18px;border:none;background:none;color:var(--dim);font-size:12px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;letter-spacing:.3px;white-space:nowrap;transition:background .12s,color .12s}
+.nav-drop-btn:hover{background:var(--surface);color:var(--txt)}
+.nav-drop-btn.active{color:var(--red);font-weight:700;background:var(--red-lt)}
+.nav-drop-divider{height:1px;background:var(--bdr);margin:4px 0}
+/* Overrides badge in nav */
+.nav-ovr-btn{margin-left:auto;padding:0 14px;border:none;border-bottom:3px solid transparent;background:none;font-weight:700;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;height:46px;margin-bottom:-2px;display:flex;align-items:center;gap:5px;transition:color .15s}
 
 /* ─── LAYOUT ─── */
 .pg{max-width:1440px;margin:0 auto;padding:26px 28px}
@@ -832,12 +846,64 @@ async function init(){
 }
 function buildNav(){
   const isAdmin=currentUser&&currentUser.role==='admin';
-  const visible=TABS.filter(t=>!t.adminOnly||isAdmin);
   const c=gc();
   const ovrCount=c&&c._overrides?Object.keys(c._overrides).length:0;
-  document.getElementById('navBar').innerHTML=
-    visible.map(t=>`<button class="${tb===t.id?'active':''}" onclick="setTab('${t.id}')">${t.l}${t.adminOnly?' <span style="font-size:9px;background:var(--red);color:#fff;padding:1px 6px;border-radius:8px;margin-left:4px;letter-spacing:.5px">ADMIN</span>':''}</button>`).join('')+
-    `<button onclick="openOvrModal()" style="margin-left:auto;padding:10px 14px;border:none;border-bottom:3px solid transparent;background:none;color:${ovrCount>0?OR:'var(--dim-m)'};font-weight:700;font-size:12px;cursor:pointer;font-family:\'Inter\',sans-serif;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;transition:color .15s;margin-bottom:-2px;display:flex;align-items:center;gap:5px" title="Manually override any metric">✎ Overrides${ovrCount>0?` <span style="background:${OR};color:#fff;border-radius:10px;padding:1px 7px;font-size:9px">${ovrCount}</span>`:''}</button>`;
+
+  // Define nav groups — each group becomes a dropdown
+  const groups=[
+    {
+      lbl:'Dashboard',
+      tabs:['crm','brief','overview']
+    },
+    {
+      lbl:'Performance',
+      tabs:['fin','recon','sold','inv','perf']
+    },
+    {
+      lbl:'Consulting',
+      tabs:['market','consult','agenda','commit','scorecard']
+    },
+    {
+      lbl:'Reports',
+      tabs:['onepager','district']
+    },
+    {
+      lbl:'Manage',
+      tabs:['contacts','tasks','up']
+    },
+  ];
+
+  // Admin-only group
+  if(isAdmin){
+    groups.push({lbl:'Admin ⚙',tabs:['deploy','admin'],adminOnly:true});
+  }
+
+  const tabLabelMap={
+    crm:'CRM Dashboard',brief:'Pre-Visit Brief',overview:'Overview',
+    fin:'Financial',recon:'Recon',sold:'Sold vs Obj',inv:'Inventory',perf:'Performance Plan',
+    market:'Market Intel',consult:'Consultative',agenda:'Visit Agenda',
+    commit:'Commitments',scorecard:'Coaching Scorecard',
+    onepager:'One-Pager',district:'District View',
+    contacts:'Contacts',tasks:'Tasks',up:'Upload',
+    deploy:'🚀 Deploy',admin:'Admin'
+  };
+
+  const nav=document.getElementById('navBar');
+  nav.innerHTML=groups.map(grp=>{
+    const hasActive=grp.tabs.includes(tb);
+    const items=grp.tabs.map(id=>{
+      if(!tabLabelMap[id])return'';
+      return`<button class="nav-drop-btn${tb===id?' active':''}" onclick="setTab('${id}')">${tabLabelMap[id]}</button>`;
+    }).join('');
+    return`<div class="nav-item">
+      <button class="nav-btn${hasActive?' has-active':''}">${grp.lbl} <span class="nav-caret">▼</span></button>
+      <div class="nav-drop">${items}</div>
+    </div>`;
+  }).join('')+
+  // Overrides button always visible
+  `<button class="nav-ovr-btn" onclick="openOvrModal()" style="color:${ovrCount>0?OR:'var(--dim-m)'}" title="Manual overrides">
+    ✎ Overrides${ovrCount>0?` <span style="background:${OR};color:#fff;border-radius:10px;padding:1px 7px;font-size:9px">${ovrCount}</span>`:''}
+  </button>`;
 }
 function buildSel(){document.getElementById('dealerSel').innerHTML=D.map(d=>`<option value="${d.id}"${d.id===ci?' selected':''}>${dnm(d.nm)}</option>`).join('');}
 function setTab(id){tb=id;buildNav();render();saveAll();}
@@ -4197,8 +4263,17 @@ function rDeploy(mc){
 function dLoadCurrent(){
   const ta = document.getElementById('dEditor');
   if(!ta) return;
-  // Capture the live DOM source — this is the current running version of the CRM
-  const src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  // Capture the live DOM source but scrub any sensitive config values
+  // that may be rendered into input fields (GitHub token, Vercel token)
+  // before pushing to a public repo.
+  let src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  // Remove any actual token values from the deploy config inputs
+  // They are stored in localStorage only and must never appear in the repo
+  src = src.replace(/(<input[^>]*id="dToken"[^>]*value=")[^"]*"/g, '$1"');
+  src = src.replace(/(<input[^>]*id="dVToken"[^>]*value=")[^"]*"/g, '$1"');
+  // Also scrub any ghp_ or sk-ant- patterns just in case
+  src = src.replace(/ghp_[A-Za-z0-9_]+/g, 'ghp_REDACTED');
+  src = src.replace(/sk-ant-[A-Za-z0-9\-_]+/g, 'sk-ant-REDACTED');
   _deployCode = src;
   ta.value = src;
   const kb = (new TextEncoder().encode(src).length / 1024).toFixed(1);
@@ -4750,19 +4825,25 @@ async function loadCompetitors(){
   const c=gc();
   const prompt=`You are a competitive intelligence analyst for a Toyota district sales manager.
 
-Identify the top 5 used car competitors in this market: ${city}
+Identify the top 5 used car competitors within 30 miles of: ${city}
 Dealer we represent: ${c?dnm(c.nm):'Toyota Dealer'}
 
-Must include: CarMax, Carvana (national), and the top 3 local franchise used car dealers.
+STRICT RULES:
+- Only include dealers that actually exist and operate in this specific market
+- Do NOT invent, guess, or hallucinate dealer names — if you are not certain a dealer exists here, omit it
+- Must include CarMax and Carvana
+- The remaining 3 must be real Toyota franchise dealers confirmed within 30 miles — not 35+ miles away
+- Focus ONLY on used Toyota vehicle competition — ignore new car sales entirely
+- Do not use markdown formatting symbols like ** or ### anywhere in your response
+- Write in plain text only
 
-For each competitor, provide:
-NAME: [Competitor name]
-TYPE: [CarMax / Carvana / Toyota Franchise / Other Franchise]
-USED INVENTORY STRENGTH: [Volume / Price positioning description]
+For each competitor provide exactly:
+NAME: [Exact real business name only]
+TYPE: [CarMax / Carvana / Toyota Franchise]
+DISTANCE: [Approximate miles from ${city}]
+USED TOYOTA STRENGTH: [Their used Toyota inventory and pricing approach in plain text]
 TCUV THREAT LEVEL: [High / Medium / Low]
-STRATEGY: [One specific recommendation for how our dealer should compete against this specific competitor]
-
-Be realistic and specific to the ${city} market. Focus on how they compete for Toyota CPO customers.`;
+STRATEGY: [One specific action our dealer should take to compete against them on used Toyotas]`;
   try{
     const txt=await callAI(prompt,1200,'You are a competitive intelligence analyst specializing in the used car market.');
     const comps=txt.split(/(?=NAME:)/g).filter(s=>s.trim().length>20);
