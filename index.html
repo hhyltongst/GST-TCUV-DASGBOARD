@@ -4712,22 +4712,59 @@ function rMarket(mc,c){
     <div id="marketPricingArea" style="margin-top:14px"></div>
   </div>
 
-  <!-- TOP 5 COMPETITOR DEALERS -->
+  <!-- COMPETITIVE LANDSCAPE — MANUAL INPUT -->
   <div class="card" style="margin-bottom:14px;border-left:4px solid ${OR}">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-      <div class="card-title" style="margin:0">🏢 Competitive Landscape</div>
-      <span style="font-size:10px;color:var(--dim-lt);font-style:italic">CarMax · Carvana · Franchise dealers within 25 miles</span>
-    </div>
-    <div style="margin-bottom:10px">
-      <label class="fl">Search market (city / zip)</label>
-      <div style="display:flex;gap:8px">
-        <input id="compCity" class="fi" style="flex:1" placeholder="e.g. Houston TX or 77001" value="${f.city||''}">
-        <button class="btn btn-sm" onclick="loadCompetitors()">Find Competitors</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div class="card-title" style="margin:0">🏢 Competitive Landscape</div>
+        <div style="font-size:11px;color:var(--dim-lt);margin-top:2px">Enter the real dealers in this market — you know them better than any AI. Then generate the competitive analysis.</div>
       </div>
     </div>
-    <div id="competitorArea">
-      <div class="tip tip-orange" style="font-size:12px">Enter the dealer's market to identify the top 5 competing used car operations — CarMax, Carvana, and surrounding franchise dealers — with TCUV competitive positioning notes.</div>
-    </div>
+
+    <!-- SAVED COMPETITORS OR INPUT FORM -->
+    ${(()=>{
+      const saved=c._competitors||[];
+      if(saved.length){
+        return`<div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--dim-m)">${saved.length} Competitors Saved</div>
+            <button class="btn btn-sm btn-ghost" onclick="clearCompetitors()">Edit List</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:12px">
+            ${saved.map(comp=>`<div style="padding:10px 12px;background:var(--surface);border-radius:8px;border-left:3px solid ${comp.type==='CarMax'?OR:comp.type==='Carvana'?PR:BL}">
+              <div style="font-size:12px;font-weight:700;color:var(--txt)">${comp.name}</div>
+              <div style="font-size:10px;color:var(--dim-m)">${comp.type} · ${comp.miles} mi</div>
+            </div>`).join('')}
+          </div>
+          <button class="btn btn-sm" style="background:${OR}" onclick="analyzeCompetitors()">🤖 Generate Competitive Analysis</button>
+        </div>`;
+      }
+      // Input form
+      const rows=[1,2,3,4,5];
+      return`<div class="tip tip-orange" style="font-size:12px;margin-bottom:14px">
+        Enter your real local competitors. Include CarMax, Carvana, and the actual Toyota franchise dealers within 30 miles. You control the list — no AI guessing.
+      </div>
+      <div style="margin-bottom:12px">
+        <div style="display:grid;grid-template-columns:2fr 1fr 100px;gap:8px;margin-bottom:6px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--dim-m)">Dealer Name</div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--dim-m)">Type</div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--dim-m)">Miles Away</div>
+        </div>
+        ${rows.map(i=>`<div style="display:grid;grid-template-columns:2fr 1fr 100px;gap:8px;margin-bottom:8px">
+          <input class="fi" id="compName${i}" placeholder="${i===1?'e.g. Gullo Toyota':i===2?'e.g. CarMax Spring':i===3?'e.g. Carvana':i===4?'e.g. Fredy Kia':'e.g. Space City Toyota'}" style="font-size:12px">
+          <select class="fi" id="compType${i}" style="font-size:12px">
+            <option value="Toyota Franchise">Toyota Franchise</option>
+            <option value="CarMax">CarMax</option>
+            <option value="Carvana">Carvana</option>
+            <option value="Other Franchise">Other Franchise</option>
+            <option value="Independent">Independent</option>
+          </select>
+          <input class="fi" id="compMiles${i}" type="number" placeholder="e.g. 12" min="0" style="font-size:12px">
+        </div>`).join('')}
+      </div>
+      <button class="btn btn-sm" onclick="saveCompetitors()">Save &amp; Analyze</button>`;
+    })()}
+    <div id="competitorArea" style="margin-top:14px"></div>
   </div>`;
 }
 
@@ -4816,57 +4853,86 @@ Use realistic current market data. Be specific with dollar ranges.`;
   }
 }
 
-async function loadCompetitors(){
-  const city=(document.getElementById('compCity')?.value||'').trim();
+function saveCompetitors(){
+  const c=gc();if(!c)return;
+  const list=[];
+  for(let i=1;i<=5;i++){
+    const name=(document.getElementById('compName'+i)?.value||'').trim();
+    const type=document.getElementById('compType'+i)?.value||'Toyota Franchise';
+    const miles=document.getElementById('compMiles'+i)?.value||'';
+    if(name)list.push({name,type,miles:miles||'?'});
+  }
+  if(!list.length){showToast('Enter at least one competitor.',OR);return;}
+  c._competitors=list;
+  saveAll();render();
+  setTimeout(()=>analyzeCompetitors(),200);
+}
+
+function clearCompetitors(){
+  const c=gc();if(!c)return;
+  if(!confirm('Clear the competitor list and start over?'))return;
+  c._competitors=[];
+  saveAll();render();
+}
+
+async function analyzeCompetitors(){
+  const c=gc();if(!c)return;
+  const competitors=c._competitors||[];
+  if(!competitors.length){showToast('No competitors saved.',OR);return;}
   const area=document.getElementById('competitorArea');
   if(!area)return;
-  if(!city){area.innerHTML=`<div class="tip tip-red">Enter a city or zip code to search.</div>`;return;}
-  area.innerHTML=`<div class="tip tip-orange" style="text-align:center">⟳ Identifying top competitors in ${city}…</div>`;
-  const c=gc();
+  area.innerHTML=`<div class="tip tip-orange" style="text-align:center"><span style="animation:spin 1s linear infinite;display:inline-block">⟳</span> Generating competitive analysis for ${competitors.length} dealers…</div>`;
+  const f=c.fn||{};
   const prompt=`You are a competitive intelligence analyst for a Toyota district sales manager.
 
-Identify the top 5 used car competitors within 30 miles of: ${city}
-Dealer we represent: ${c?dnm(c.nm):'Toyota Dealer'}
+Our dealer: ${dnm(c.nm)}
+TCUV units/mo: ${fN(f.tu||0)} | Front GP/unit: ${f$(Math.round((f.tg||0)/Math.max(f.tu||1,1)))}
 
-STRICT RULES:
-- Only include dealers that actually exist and operate in this specific market
-- Do NOT invent, guess, or hallucinate dealer names — if you are not certain a dealer exists here, omit it
-- Must include CarMax and Carvana
-- The remaining 3 must be real Toyota franchise dealers confirmed within 30 miles — not 35+ miles away
-- Focus ONLY on used Toyota vehicle competition — ignore new car sales entirely
-- Do not use markdown formatting symbols like ** or ### anywhere in your response
-- Write in plain text only
+Analyze ONLY these specific competitors — do not add or substitute any other dealers:
+${competitors.map((comp,i)=>`${i+1}. ${comp.name} | Type: ${comp.type} | Distance: ${comp.miles} miles`).join('\n')}
 
-For each competitor provide exactly:
-NAME: [Exact real business name only]
-TYPE: [CarMax / Carvana / Toyota Franchise]
-DISTANCE: [Approximate miles from ${city}]
-USED TOYOTA STRENGTH: [Their used Toyota inventory and pricing approach in plain text]
-TCUV THREAT LEVEL: [High / Medium / Low]
-STRATEGY: [One specific action our dealer should take to compete against them on used Toyotas]`;
+For EACH competitor above, provide EXACTLY this format (plain text only, no ** or ### markdown):
+
+NAME: [exact name as provided above]
+TYPE: [as provided]
+DISTANCE: [as provided] miles
+USED TOYOTA THREAT: [High / Medium / Low]
+WHY THEY MATTER: [2 sentences on how they compete for used Toyota customers]
+OUR STRATEGY: [1-2 specific actions to win against them on used Toyotas and TCUV]
+
+Analyze all ${competitors.length} competitors. Focus on used Toyota competition only. Plain text.`;
   try{
-    const txt=await callAI(prompt,1200,'You are a competitive intelligence analyst specializing in the used car market.');
-    const comps=txt.split(/(?=NAME:)/g).filter(s=>s.trim().length>20);
-    area.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
-      ${comps.slice(0,5).map(comp=>{
-        const name=comp.match(/NAME:\s*(.+)/)?.[1]?.trim()||'Competitor';
-        const type=comp.match(/TYPE:\s*(.+)/)?.[1]?.trim()||'';
-        const inv=comp.match(/USED INVENTORY STRENGTH:\s*([\s\S]+?)(?=TCUV THREAT|$)/)?.[1]?.trim()||'';
-        const threat=comp.match(/TCUV THREAT LEVEL:\s*(.+)/)?.[1]?.trim()||'';
-        const strat=comp.match(/STRATEGY:\s*([\s\S]+?)(?=NAME:|$)/)?.[1]?.trim()||'';
-        const tc={'High':RE,'Medium':GD,'Low':GN}[threat]||BL;
+    const txt=await callAI(prompt,1200,'You are a competitive intelligence analyst specializing in the used Toyota market.');
+    const blocks=txt.split(/(?=NAME:)/g).filter(s=>s.trim().length>10);
+    if(!blocks.length){area.innerHTML=`<div style="padding:14px;font-size:13px;color:var(--dim);line-height:1.7;white-space:pre-wrap">${txt}</div>`;return;}
+    area.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:4px">
+      ${blocks.map(block=>{
+        const name=block.match(/NAME:\s*(.+)/)?.[1]?.trim()||'Competitor';
+        const type=block.match(/TYPE:\s*(.+)/)?.[1]?.trim()||'';
+        const dist=block.match(/DISTANCE:\s*(.+)/)?.[1]?.trim()||'';
+        const threat=block.match(/USED TOYOTA THREAT:\s*(.+)/)?.[1]?.trim()||'';
+        const why=block.match(/WHY THEY MATTER:\s*([\s\S]+?)(?=OUR STRATEGY:|$)/)?.[1]?.trim()||'';
+        const strat=block.match(/OUR STRATEGY:\s*([\s\S]+?)(?=NAME:|$)/)?.[1]?.trim()||'';
+        const tc={High:RE,Medium:GD,Low:GN}[threat]||BL;
+        const typeCol={'CarMax':OR,'Carvana':PR,'Toyota Franchise':BL}[type]||DM;
         return`<div style="padding:14px;border:1.5px solid var(--bdr);border-radius:10px;border-top:3px solid ${tc};background:var(--card);box-shadow:var(--sh)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
-            <div><div style="font-size:14px;font-weight:700;color:var(--txt)">${name}</div><div style="font-size:11px;color:var(--dim-m)">${type}</div></div>
-            <span style="font-size:10px;font-weight:800;background:${tc};color:#fff;border-radius:4px;padding:2px 7px">${threat||'?'} THREAT</span>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--txt)">${name}</div>
+              <div style="display:flex;gap:6px;margin-top:3px;flex-wrap:wrap">
+                <span style="font-size:10px;font-weight:700;background:${typeCol}18;color:${typeCol};border-radius:4px;padding:2px 7px">${type}</span>
+                ${dist?`<span style="font-size:10px;color:var(--dim-m)">${dist}</span>`:''}
+              </div>
+            </div>
+            ${threat?`<span style="font-size:10px;font-weight:800;background:${tc};color:#fff;border-radius:4px;padding:3px 8px">${threat} THREAT</span>`:''}
           </div>
-          ${inv?`<div style="font-size:12px;color:var(--dim);margin-bottom:8px;line-height:1.5">${inv}</div>`:''}
+          ${why?`<div style="font-size:12px;color:var(--dim);line-height:1.55;margin-bottom:10px">${why}</div>`:''}
           ${strat?`<div style="font-size:12px;color:${BL};font-weight:600;background:var(--blue-lt);border-radius:6px;padding:8px 10px;line-height:1.5">→ ${strat}</div>`:''}
         </div>`;
       }).join('')}
     </div>`;
   }catch(e){
-    area.innerHTML=`<div class="tip tip-red"><strong>Competitive analysis unavailable:</strong> ${e.message}</div>`;
+    area.innerHTML=`<div class="tip tip-red"><strong>Analysis failed:</strong> ${e.message}</div>`;
   }
 }
 
