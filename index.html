@@ -1,15 +1,9 @@
 <!DOCTYPE html>
-<!--
-  Gulf States Toyota TCUV CRM Dashboard v9
-  Created by: Hussein Hylton
-  Copyright (c) 2026 All Rights Reserved
--->
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>GST TCUV CRM v10</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Orbitron:wght@700;800;900&amp;display=swap" rel="stylesheet">
 <style>
 :root{
   --red:#C8102E;--red-lt:rgba(200,16,46,.07);--red-dk:#a30e26;
@@ -278,7 +272,7 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
 @keyframes spin{to{transform:rotate(360deg)}}
 @media print{.nav,.btn,.btn-hdr,.ds-sel,.dp,.fi-ta,.hdr-r,.pipe-add{display:none!important}.pg{padding:4px}.card,.kpi{box-shadow:none!important}}
 </style>
-</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script></head>
 <body>
 
 <div class="hdr">
@@ -292,24 +286,111 @@ footer{text-align:center;padding:16px 28px;border-top:2px solid var(--bdr);backg
     <span class="hdr-badge">v10 · build 30</span>
   </div>
   <div class="hdr-r">
-    <div id="userPill" style="display:none;align-items:center;gap:8px;padding:5px 12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:20px;color:#fff;font-size:12px;font-weight:600">
-      <span style="width:22px;height:22px;border-radius:50%;background:var(--red);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;font-family:'Orbitron',sans-serif" id="userInitials">?</span>
-      <span id="userNameDisp">Guest</span>
-      <span id="userRoleBadge" style="font-size:9px;background:rgba(255,255,255,.2);padding:1px 7px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase"></span>
+    <div id="userPill" style="display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 20px; color: rgb(255, 255, 255); font-size: 12px; font-weight: 600;">
+      <span style="width:22px;height:22px;border-radius:50%;background:var(--red);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;font-family:'Orbitron',sans-serif" id="userInitials">HH</span>
+      <span id="userNameDisp">HUSSEIN HYLTON</span>
+      <span id="userRoleBadge" style="font-size:9px;background:rgba(255,255,255,.2);padding:1px 7px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase">admin</span>
     </div>
     <button class="btn-hdr" id="demoBtn" onclick="toggleDemoMode()" title="Anonymize dealer names for external demos - keeps all financial data intact">Demo Mode</button>
     <button class="btn-hdr" onclick="printFullReport()">Print</button>
     <button class="btn-hdr" style="color:#ff6b6b;border-color:rgba(255,107,107,.4)" onclick="clearAllData()">Clear Data</button>
-    <button class="btn-hdr" id="signOutBtn" style="display:none;color:#ffd166;border-color:rgba(255,209,102,.4)" onclick="signOut()">Sign Out</button>
+    <button class="btn-hdr" id="signOutBtn" style="display: inline-flex; color: rgb(255, 209, 102); border-color: rgba(255, 209, 102, 0.4);" onclick="signOut()">Sign Out</button>
     <div class="hdr-vr"></div>
-    <select class="ds-sel" id="dealerSel" onchange="pickDealer(this.value)"></select>
+    <select class="ds-sel" id="dealerSel" onchange="pickDealer(this.value)"><option value="1">Orion Toyota</option><option value="1781621874814">Loving Toyota</option><option value="1781621892370" selected="">Loving Toyota</option></select>
   </div>
 </div>
 
-<div class="nav" id="navBar"></div>
-<div class="pg" id="mainContent"></div>
+<div class="nav" id="navBar"><div class="nav-item">
+      <button class="nav-btn">Dashboard <span class="nav-caret">▼</span></button>
+      <div class="nav-drop"><button class="nav-drop-btn" onclick="setTab('crm')">CRM Dashboard</button><button class="nav-drop-btn" onclick="setTab('brief')">Pre-Visit Brief</button><button class="nav-drop-btn" onclick="setTab('overview')">Overview</button></div>
+    </div><div class="nav-item">
+      <button class="nav-btn">Performance <span class="nav-caret">▼</span></button>
+      <div class="nav-drop"><button class="nav-drop-btn" onclick="setTab('fin')">Financial</button><button class="nav-drop-btn" onclick="setTab('recon')">Recon</button><button class="nav-drop-btn" onclick="setTab('sold')">Sold vs Obj</button><button class="nav-drop-btn" onclick="setTab('inv')">Inventory</button><button class="nav-drop-btn" onclick="setTab('perf')">Performance Plan</button></div>
+    </div><div class="nav-item">
+      <button class="nav-btn">Consulting <span class="nav-caret">▼</span></button>
+      <div class="nav-drop"><button class="nav-drop-btn" onclick="setTab('market')">Market Intel</button><button class="nav-drop-btn" onclick="setTab('consult')">Consultative</button><button class="nav-drop-btn" onclick="setTab('agenda')">Visit Agenda</button><button class="nav-drop-btn" onclick="setTab('commit')">Commitments</button><button class="nav-drop-btn" onclick="setTab('scorecard')">Coaching Scorecard</button></div>
+    </div><div class="nav-item">
+      <button class="nav-btn">Reports <span class="nav-caret">▼</span></button>
+      <div class="nav-drop"><button class="nav-drop-btn" onclick="setTab('onepager')">One-Pager</button><button class="nav-drop-btn" onclick="setTab('district')">District View</button></div>
+    </div><div class="nav-item">
+      <button class="nav-btn">Manage <span class="nav-caret">▼</span></button>
+      <div class="nav-drop"><button class="nav-drop-btn" onclick="setTab('contacts')">Contacts</button><button class="nav-drop-btn" onclick="setTab('tasks')">Tasks</button><button class="nav-drop-btn" onclick="setTab('up')">Upload</button></div>
+    </div><div class="nav-item">
+      <button class="nav-btn has-active">Admin ⚙ <span class="nav-caret">▼</span></button>
+      <div class="nav-drop"><button class="nav-drop-btn active" onclick="setTab('deploy')">🚀 Deploy</button><button class="nav-drop-btn" onclick="setTab('admin')">Admin</button></div>
+    </div><button class="nav-ovr-btn" onclick="openOvrModal()" style="color:var(--dim-m)" title="Manual overrides">
+    ✎ Overrides
+  </button></div>
+<div class="pg" id="mainContent">
+  <div class="sec-hdr"><div class="sec-dot"></div><div><div class="sec-ttl">🚀 Deploy</div><div class="sec-sub">Edit the CRM source, push to GitHub — Vercel deploys automatically</div></div></div>
 
-<footer>&copy; 2026 Gulf States Toyota &nbsp;&middot;&nbsp; TCUV CRM Dashboard v10 (build 30) &nbsp;&middot;&nbsp; Engineered by <strong style="color:var(--red)">Hussein Hylton</strong> &nbsp;&middot;&nbsp; All rights reserved</footer>
+  <!-- ── CONFIG STRIP ──────────────────────────────────────── -->
+  <div class="card" style="margin-bottom:14px;border-left:4px solid var(--blue)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div class="card-title" style="margin:0">GitHub Connection</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <a href="https://github.com/settings/tokens/new?description=GST+CRM+Deploy&amp;scopes=repo" target="_blank" rel="noopener" class="btn btn-sm btn-ghost">Get Token ↗</a>
+        <button class="btn btn-sm btn-blue" onclick="dSaveCfg()">Save Config</button>
+      </div>
+    </div>
+    <div class="g3" style="gap:10px">
+      <div>
+        <label class="fl">GitHub Repo <span style="color:var(--dim-lt);font-weight:400">(owner/repo)</span></label>
+        <input id="dRepo" class="fi" placeholder="hhyltongst/gst-tcuv-dashboard" value="hhyltongst/GST-TCUV-DASGBOARD">
+      </div>
+      <div>
+        <label class="fl">Branch</label>
+        <input id="dBranch" class="fi" placeholder="main" value="main">
+      </div>
+      <div>
+        <label class="fl">File path in repo</label>
+        <input id="dFilePath" class="fi" placeholder="index.html" value="index.html">
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <label class="fl">GitHub Personal Access Token <span style="color:var(--red);font-weight:400">(stored locally only, never sent anywhere except GitHub)</span></label>
+      <input id="dToken" class="fi" type="password" placeholder="ghp_REDACTED" value="">
+    </div>
+    
+    <div style="margin-top:10px">
+      <label class="fl">Vercel Token <span style="color:var(--dim-lt);font-weight:400">(optional — enables live deploy status polling)</span></label>
+      <input id="dVToken" class="fi" type="password" placeholder="xxxxxxxxxxxxxxxxxxxxxxxx" value="">
+    </div>
+    <div id="dCfgMsg" style="margin-top:8px"></div>
+  </div>
+
+  <!-- ── EDITOR ────────────────────────────────────────────── -->
+  <div class="card" style="margin-bottom:14px;padding:0;overflow:hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--bdr);background:var(--surface);flex-wrap:wrap;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;color:var(--txt)">SOURCE EDITOR</div>
+        <span id="dEditorSize" style="font-size:11px;color:var(--dim-m)"></span>
+        <span id="dDirtyBadge" style="display:none;font-size:10px;background:var(--orange);color:#fff;border-radius:10px;padding:2px 8px;font-weight:700">UNSAVED CHANGES</span>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-sm btn-ghost" onclick="dLoadCurrent()" title="Reload the current page source into the editor">↺ Reload Source</button>
+        <button class="btn btn-sm btn-ghost" onclick="dFormatCheck()" title="Run a quick syntax check">✓ Check Syntax</button>
+        <button class="btn btn-sm " onclick="dDeploy()" style="">
+          🚀 Push &amp; Deploy
+        </button>
+      </div>
+    </div>
+    <textarea id="dEditor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" oninput="dMarkDirty()" style="width:100%;height:70vh;padding:14px 16px;border:none;outline:none;
+             font-family:'SF Mono',Menlo,Consolas,monospace;font-size:12px;line-height:1.6;
+             color:#cdd3de;background:#0d1117;resize:vertical;tab-size:2;
+             white-space:pre;overflow-wrap:normal;overflow-x:auto"></textarea>
+  </div>
+
+  <!-- ── DEPLOY STATUS LOG ─────────────────────────────────── -->
+  <div class="card" id="dStatusCard" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="card-title" style="margin:0">Deploy Status</div>
+      <button class="btn btn-sm btn-ghost" onclick="dClearStatus()">Clear</button>
+    </div>
+    <div id="dStatusLog" style="font-family:'SF Mono',Menlo,monospace;font-size:12px;line-height:1.8;color:var(--txt)"></div>
+  </div></div>
+
+<footer>© 2026 Gulf States Toyota &nbsp;·&nbsp; TCUV CRM Dashboard v10 (build 30) &nbsp;·&nbsp; Engineered by <strong style="color:var(--red)">Hussein Hylton</strong> &nbsp;·&nbsp; All rights reserved</footer>
 
 <div id="loginOverlay" style="position:fixed;inset:0;background:linear-gradient(135deg,#0A0E17 0%,#1a2035 100%);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px">
   <div style="width:100%;max-width:440px;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);overflow:hidden">
@@ -1265,7 +1346,7 @@ function rOv(mc,c){
   <div class="kpi-row">
     ${kpi('Dept Total GP',f$(f.dGP),fN(f.tot||0)+' total used units',BL,'fn.dGP')}
     ${kpi('TCUV Avg Front/Unit',f$(aF),'GST: '+f$(gF),aF>=gF?GN:RE,'fn.tg')}
-    ${kpi('TCUV Avg Back/Unit',f$(aB),aB===0&&gB>0?'⚠ No TCUV F&I recorded':'GST: '+f$(gB),aB===0&&gB>0?RE:aB>=gB?GN:GD,'fn.tFI')}
+    ${kpi('TCUV Avg Back/Unit',f$(aB),'GST: '+f$(gB),aB>=gB?GN:GD,'fn.tFI')}
     ${kpi('TCUV Total GP/Unit',f$(aT),'Front+F&I, GST: '+f$(gT),aT>=gT?GN:GD)}
     ${kpi('TCUV Avg Recon/Unit',f$(aR),'GST: '+f$(gR),aR<=gR?GN:RE,'fn.cR')}
     ${ovN>0?kpi('Units to Target',fN(ovN),pace2+' units/day · '+dl+'d left',RE):kpi('Units to Target','On Track',rcD?'Obj met':'No recap',GN)}
@@ -1476,7 +1557,7 @@ function rFin(mc,c){
   </div>
   <div class="kpi-row">
     ${kpi('TCUV Avg Front/Unit',f$(aF),'GST: '+f$(gF),aF>=gF?GN:RE,'fn.tg')}
-    ${kpi('TCUV Avg Back/Unit',f$(aB),aB===0&&gB>0?'⚠ No TCUV F&I recorded':'GST: '+f$(gB),aB===0&&gB>0?RE:aB>=gB?GN:GD,'fn.tFI')}
+    ${kpi('TCUV Avg Back/Unit',f$(aB),'GST: '+f$(gB),aB>=gB?GN:GD,'fn.tFI')}
     ${kpi('TCUV Avg Recon/Unit',f$(aR),'GST: '+f$(gR),aR<=gR?GN:RE,'fn.cR')}
     ${kpi('TCUV Total GP/Unit',f$(aTcuv),'Front+F&I, GST: '+f$(gF+gB),aTcuv>=gF+gB?GN:GD)}
     ${kpi('Dept GP / All Used',f$(deptGPpu),f$(f.dGP)+' ÷ '+fN(totU)+' units',BL)}
@@ -2157,7 +2238,6 @@ function perfData(c){
   if(att>0&&att<100)areas.push({cat:'Objective Attainment',status:att>=90?'caution':'critical',val:att+'%',target:'100%',gap:(100-att)+'% below',detail:'Currently at '+att+'% attainment. '+(rc?'Sold '+rc.t+' of '+rc.o+' objective.':''),priority:att<80?1:2});
   if(gF>0&&aF<gF)areas.push({cat:'Front-End Gross Profit',status:aF>=gF*0.85?'caution':'critical',val:f$(aF),target:'GST: '+f$(gF),gap:f$(gF-aF)+'/unit below',detail:'Averaging '+f$(aF)+'/unit vs GST benchmark of '+f$(gF)+'/unit. Leaving '+f$(gF-aF)+' per unit on the table.',priority:aF<gF*0.75?1:2});
   if(gB>0&&aB<gB)areas.push({cat:'Back-End / F&I',status:aB>=gB*0.85?'caution':'critical',val:f$(aB),target:'GST: '+f$(gB),gap:f$(gB-aB)+'/unit below',detail:'F&I averaging '+f$(aB)+'/unit vs GST '+f$(gB)+'. Opportunity to improve VSC, GAP, and protection product penetration.',priority:aB<gB*0.75?1:2});
-  if(aB===0&&tu>0)areas.push({cat:'TCUV F&I / Back-End',status:'critical',val:'$0',target:'> $0',gap:'No TCUV F&I recorded',detail:'No back-end F&I products recorded against TCUV units. Financial statement shows $0 for Certified Used Vehicle F&I. Ensure finance office is booking VSC, GAP, and protection products on TCUV transactions and that they are posting to the correct account codes.',priority:1});
   if(gR>0&&aR>gR)areas.push({cat:'Reconditioning Cost',status:aR<=gR*1.2?'caution':'critical',val:f$(aR),target:'GST: '+f$(gR),gap:f$(aR-gR)+'/unit over',detail:'Recon at '+f$(aR)+'/unit vs GST '+f$(gR)+'. Over-spending '+f$(aR-gR)+' per unit. Across '+fN(tu)+' units that is '+f$((aR-gR)*tu)+' excess.',priority:aR>gR*1.5?1:2});
   if(inv&&cPct<30)areas.push({cat:'Certified Inventory Mix',status:cPct>=20?'caution':'critical',val:cPct+'%',target:'30-40%',gap:(30-cPct)+'% below floor',detail:'Only '+cPct+'% of total used inventory is certified. Target 30-40% to ensure adequate stock for objectives.',priority:cPct<15?1:3});
   // Compute the real TCUV-vs-Non-Cert-Toyota front gap from stored data if we
@@ -2175,7 +2255,6 @@ function perfData(c){
   if(att>=100)strengths.push('Objective attainment at '+att+'% (exceeding target)');
   if(gF>0&&aF>=gF)strengths.push('Front GP at '+f$(aF)+'/unit (at or above GST '+f$(gF)+')');
   if(gB>0&&aB>=gB)strengths.push('Back-end at '+f$(aB)+'/unit (at or above GST '+f$(gB)+')');
-  if(gB===0&&aB>0)strengths.push('Back-end at '+f$(aB)+'/unit (no GST benchmark available for comparison)');
   if(gR>0&&aR<=gR)strengths.push('Recon at '+f$(aR)+'/unit (at or below GST '+f$(gR)+')');
   if(inv&&cPct>=33)strengths.push('Certified mix at '+cPct+'% of total (on target)');
   if(nuR>=1.0)strengths.push('Used-to-new ratio at '+nuR.toFixed(2)+' (meets 1:1 target)');
@@ -4213,12 +4292,12 @@ function rDeploy(mc){
     </div>
     <div style="margin-top:10px">
       <label class="fl">GitHub Personal Access Token <span style="color:var(--red);font-weight:400">(stored locally only, never sent anywhere except GitHub)</span></label>
-      <input id="dToken" class="fi" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+      <input id="dToken" class="fi" type="password" placeholder="ghp_REDACTED" value="">
     </div>
-    ${cfg.vercelToken!==undefined?'':`
+    ${cfg.vercelToken?'':`
     <div style="margin-top:10px">
       <label class="fl">Vercel Token <span style="color:var(--dim-lt);font-weight:400">(optional — enables live deploy status polling)</span></label>
-      <input id="dVToken" class="fi" type="password" placeholder="xxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+      <input id="dVToken" class="fi" type="password" placeholder="xxxxxxxxxxxxxxxxxxxxxxxx" value="">
     </div>`}
     <div id="dCfgMsg" style="margin-top:8px"></div>
   </div>
@@ -4258,17 +4337,6 @@ function rDeploy(mc){
     <div id="dStatusLog" style="font-family:'SF Mono',Menlo,monospace;font-size:12px;line-height:1.8;color:var(--txt)"></div>
   </div>`;
 
-  // Populate token fields via JS AFTER render — tokens must NEVER appear in HTML source
-  // because dLoadCurrent() captures outerHTML and GitHub's secret scanner would flag them.
-  // By setting .value in JS (not in the HTML attribute), the value stays out of the DOM source.
-  setTimeout(()=>{
-    const cfg2=dCfgGet();
-    const t=document.getElementById('dToken');
-    const vt=document.getElementById('dVToken');
-    if(t&&cfg2.ghToken)t.value=cfg2.ghToken;
-    if(vt&&cfg2.vercelToken)vt.value=cfg2.vercelToken;
-  },50);
-
   // Load current source into editor
   dLoadCurrent();
 }
@@ -4276,11 +4344,15 @@ function rDeploy(mc){
 function dLoadCurrent(){
   const ta = document.getElementById('dEditor');
   if(!ta) return;
-  // Capture the live DOM source.
-  // Tokens are populated via JS (never in HTML attributes) so they won't
-  // appear in outerHTML. The regex below is a safety net only.
+  // Capture the live DOM source but scrub any sensitive config values
+  // that may be rendered into input fields (GitHub token, Vercel token)
+  // before pushing to a public repo.
   let src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-  // Safety net: scrub any token patterns that should never be in source
+  // Remove any actual token values from the deploy config inputs
+  // They are stored in localStorage only and must never appear in the repo
+  src = src.replace(/(<input[^>]*id="dToken"[^>]*value=")[^"]*"/g, '$1"');
+  src = src.replace(/(<input[^>]*id="dVToken"[^>]*value=")[^"]*"/g, '$1"');
+  // Also scrub any ghp_ or sk-ant- patterns just in case
   src = src.replace(/ghp_[A-Za-z0-9_]+/g, 'ghp_REDACTED');
   src = src.replace(/sk-ant-[A-Za-z0-9\-_]+/g, 'sk-ant-REDACTED');
   _deployCode = src;
@@ -6276,5 +6348,6 @@ document.addEventListener('keydown', e => {
 });
 init();
 </script>
-</body>
-</html>
+
+
+<div id="_toast" style="position: fixed; top: 20px; right: 20px; z-index: 9999; padding: 12px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; box-shadow: rgba(0, 0, 0, 0.18) 0px 8px 24px; color: rgb(255, 255, 255); opacity: 0; transition: opacity 0.25s; max-width: 380px; pointer-events: none; background: rgb(10, 124, 58);">✓ Loaded 12 dealers (619 sold / 655 obj)</div></body></html>
